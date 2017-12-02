@@ -1,6 +1,6 @@
 # import the ET API
 import xml.etree.ElementTree as ET
-tree = ET.parse('3 MARC CADD.xml')
+tree = ET.parse('0 MARC.xml')
 root = tree.getroot()
 
 marc_object=root.findall('O')
