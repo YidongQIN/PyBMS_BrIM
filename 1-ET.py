@@ -6,3 +6,4 @@ root = tree.getroot()
 marc_object=root.findall('O')
 for a in marc_object:
 	print(a.attrib)
+
