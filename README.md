@@ -13,6 +13,7 @@ Aiming at realizing three functions:
 ## Ideas
 Func.1 can wait.
 Func.2 and 3 is similar, its core is locating elements and then querying the attributes.
+
 In OpenBrIM, the tag is either 'O' or 'P'.
 The XPath can be useful when locating elements.
 
