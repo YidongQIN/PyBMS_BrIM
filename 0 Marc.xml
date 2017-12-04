@@ -31,8 +31,8 @@
 			<P N="Fy" V="60" D="" />
 			<P N="Fu" V="90" D="" />
 		</O>
-		<O N="A992Fy50" T="Material">
-			<P N="d" V="0.0000007345" Type="steel" D="Density" />
+		<O N="A992Fy50" T="Material" Type="steel" >
+			<P N="d" V="0.0000007345" D="Density" />
 			<P N="E" V="29000" D="modulus of elasticity" />
 			<P N="Nu" V="0.3" D="Poisson's Ratio" />
 			<P N="a" V="0.0000065" D="Coefficient of Thermal Expansion" />
