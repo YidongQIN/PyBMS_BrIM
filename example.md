@@ -18,14 +18,14 @@ from xml.etree.ElementTree import ElementTree,Element
 #        out_path: 写出路径'''
 #     tree.write(out_path, encoding="utf-8",xml_declaration=True)
 
-def if_match(node, kv_map):
-    '''''判断某个节点是否包含所有传入参数属性
-       node: 节点
-       kv_map: 属性及属性值组成的map'''
-    for key in kv_map:
-        if node.get(key) != kv_map.get(key):
-            return False
-    return True
+# def if_match(node, kv_map):
+#     '''''判断某个节点是否包含所有传入参数属性
+#        node: 节点
+#        kv_map: 属性及属性值组成的map'''
+#     for key in kv_map:
+#         if node.get(key) != kv_map.get(key):
+#             return False
+#     return True
 
 #---------------search -----
 
@@ -36,15 +36,15 @@ def find_nodes(tree, path):
     return tree.findall(path)
 
 
-def get_node_by_keyvalue(nodelist, kv_map):
-    '''''根据属性及属性值定位符合的节点，返回节点
-       nodelist: 节点列表
-       kv_map: 匹配属性及属性值map'''
-    result_nodes = []
-    for node in nodelist:
-        if if_match(node, kv_map):
-            result_nodes.append(node)
-    return result_nodes
+# def get_node_by_keyvalue(nodelist, kv_map):
+#     '''''根据属性及属性值定位符合的节点，返回节点
+#        nodelist: 节点列表
+#        kv_map: 匹配属性及属性值map'''
+#     result_nodes = []
+#     for node in nodelist:
+#         if if_match(node, kv_map):
+#             result_nodes.append(node)
+#     return result_nodes
 
 #---------------change -----
 
