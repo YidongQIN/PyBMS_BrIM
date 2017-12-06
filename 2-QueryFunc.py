@@ -9,9 +9,10 @@ def write_xml(tree, out_path):
 	tree.write(out_path, encoding="utf-8",xml_declaration=True)
 # search
 ##
-# change
-# ----main----
 
+
+
+# ----main----
 tree = read_xml('0 MARC.xml')
 root = tree.getroot()
 
