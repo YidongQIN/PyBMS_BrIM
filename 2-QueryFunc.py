@@ -28,10 +28,13 @@ def get_node_by_keyvalue(nodelist, kv_map):
         if if_match(node, kv_map):
             result_nodes.append(node)
     return result_nodes
-
+#
+def find_nodes(tree, path):
+    '''查找某个路径匹配的所有节点
+       tree: xml树
+       path: 节点路径'''
+    return tree.findall(path)
 # ----main----
 tree = read_xml('0 MARC.xml')
 root = tree.getroot()
-
-
 
