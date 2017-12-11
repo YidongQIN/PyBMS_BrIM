@@ -27,7 +27,6 @@ def get_node_by_keyvalue(nodelist, kv_map):
     for node in nodelist:
         if if_match(node, kv_map):
             result_nodes.append(node)
-
     return result_nodes
 
 
@@ -50,11 +49,17 @@ def O_or_P(op):
 tree = read_xml('0 MARC.xml')
 root = tree.getroot()
 # input and search path
-print(root.attrib)
-path = input('input the path\n')
-results = find_nodes(root, path)
 
+# path = input('input the path\n')
+# result = find_nodes(root, path)
+
+# input and search by attrib
+op = input('Object or Parameter? Type "O" or "P" please.\n')
+# kv = input('Input attributes in format of dict \{ \}')
+kv = {"T":"Node", "Y":"0"}
+nodes = root.iter(op)
+results = get_node_by_keyvalue(nodes, kv)
 # output results
 for anode in results:
     op = O_or_P(anode.tag)
-    print('The tag is ', op, 'whose attribute is', anode.attrib)
+    print('Tag is', op, 'and attribute is', anode.attrib)
