@@ -1,5 +1,4 @@
 <O N="3 Marc CADD" T="Project" Alignment="None" TransAlignRule="Right">
-	<!-- 单位采用kip，inch -->
 	<!-- 单位kip，inch -->
 	<O N="Units" T="Group">
 		<O N="Internal" T="Unit" Length="Inch" Force="Kip" Angle="Radian" Temperature="Fahrenheit" />
@@ -660,12 +659,10 @@
 			</O>
 		</O>
 	</O>
-	<!-- 最后手动设计Design Code用于FEM计算 -->
 	<!-- 手动设计Design Code用于FEM计算 -->
 	<O N="SW" T="AnalysisCase">
 		<P N="WeightFactor" V="-1" />
 	</O>
-	<!-- 用CADD功能得到CAD图纸 -->
 	<!-- CADD功能得到CAD图纸 -->
 	<O N="CADD" T="Group">
 		<O N="Top Plan" T="CADDFrom3D" RZ="PI">
