@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import prettytable as pt
 
 # read XML
 def read_xml(in_path):
@@ -31,23 +32,36 @@ def O_or_P(op):
         return 'Parameter'
     else:
         return 'Not correct tag'
-
+def other_attribute(dict):
+    dict.pop('N')
+    dict.pop('T')
+    atts = ''
+    for key, value in dict.items():
+        print(key, value)
+        atts = atts + key + '=' + value + ',\r '
+    return atts
 # ----main----
 
 tree = read_xml('0 MARC.xml')
 root = tree.getroot()
-# input and search path
 
+# input and search path
 # path = input('input the path\n')
 # result = find_nodes(root, path)
 
 # input and search by attrib
-op = input('Object or Parameter? Type "O" or "P" please.\n')
+# op = input('Object or Parameter? Type "O" or "P" please.\n')
 # kv = input('Input attributes in format of dict \{ \}')
+op = "O"
 kv = {"T":"Node", "Y":"0"}
 nodes = root.iter(op)
 results = get_node_by_keyvalue(nodes, kv)
+
 # output results
+# PrettyTable
+tb = pt.PrettyTable(["Tag","Name","Type","Other Attributes"])
+tb.align["Other Attributes"]="l"
 for anode in results:
-    op = O_or_P(anode.tag)
-    print('Tag is', op, 'and attribute is', anode.attrib)
+    row = [anode.tag, anode.attrib.get("N"),anode.attrib.get("T"),other_attribute(anode.attrib)]
+    tb.add_row(row)
+print(tb)
