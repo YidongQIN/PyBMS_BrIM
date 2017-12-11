@@ -38,7 +38,7 @@ def other_attribute(dict):
     atts = ''
     for key, value in dict.items():
         print(key, value)
-        atts = atts + key + '=' + value + ',\r '
+        atts = atts + key + '=' + value + ', '
     return atts
 # ----main----
 
