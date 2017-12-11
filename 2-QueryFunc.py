@@ -50,7 +50,7 @@ root = tree.getroot()
 # result = find_nodes(root, path)
 
 # input and search by attrib
-op = input('Object or Parameter? Type "O" or "P" please.\n')
+# op = input('Object or Parameter? Type "O" or "P" please.\n')
 # kv = input('Input attributes in format of dict \{ \}')
 op = 'O'
 kv = {"T":"Node", "Y":"0"}
