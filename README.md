@@ -10,9 +10,20 @@ Aiming at realizing three functions:
 2. Mapping ParamML models to other format
 3. Querying project information
 
-## Ideas
-Func.1 can wait.
-Func.2 and 3 is similar, its core is locating elements and then querying the attributes.
+## Progess
+
+### Dec.12
+Querying function is realized:
+- by path, based on Xpath.
+- by attributes, which is formatted as dictionary in Python.
+
+Output format is based on
+- [PrettyTable](https://pypi.python.org/pypi/PrettyTable)
+
+
+## Ideas for Next
+concentrate on Func.1.
+
 
 ## Special Tips
 In OpenBrIM, the tag is either 'O' or 'P', so the element.tag is not very useful.
