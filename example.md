@@ -29,11 +29,11 @@ from xml.etree.ElementTree import ElementTree,Element
 
 #---------------search -----
 
-def find_nodes(tree, path):
-    '''查找某个路径匹配的所有节点
-       tree: xml树
-       path: 节点路径'''
-    return tree.findall(path)
+# def find_nodes(tree, path):
+#     '''查找某个路径匹配的所有节点
+#        tree: xml树
+#        path: 节点路径'''
+#     return tree.findall(path)
 
 
 # def get_node_by_keyvalue(nodelist, kv_map):
