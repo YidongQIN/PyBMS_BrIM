@@ -49,7 +49,7 @@ from xml.etree.ElementTree import ElementTree,Element
 #---------------change -----
 
 def change_node_properties(nodelist, kv_map, is_delete=False):
-    '''''修改/增加 /删除 节点的属性及属性值
+    '''修改/增加 /删除 节点的属性及属性值
        nodelist: 节点列表
        kv_map:属性及属性值map'''
     for node in nodelist:
@@ -61,7 +61,7 @@ def change_node_properties(nodelist, kv_map, is_delete=False):
                 node.set(key, kv_map.get(key))
 
 def change_node_text(nodelist, text, is_add=False, is_delete=False):
-    '''''改变/增加/删除一个节点的文本
+    '''改变/增加/删除一个节点的文本
        nodelist:节点列表
        text : 更新后的文本'''
     for node in nodelist:
@@ -73,7 +73,7 @@ def change_node_text(nodelist, text, is_add=False, is_delete=False):
             node.text = text
 
 def create_node(tag, property_map, content):
-    '''''新造一个节点
+    '''新造一个节点
        tag:节点标签
        property_map:属性及属性值map
        content: 节点闭合标签里的文本内容
@@ -83,14 +83,14 @@ def create_node(tag, property_map, content):
     return element
 
 def add_child_node(nodelist, element):
-    '''''给一个节点添加子节点
+    '''给一个节点添加子节点
        nodelist: 节点列表
        element: 子节点'''
     for node in nodelist:
         node.append(element)
 
 def del_node_by_tagkeyvalue(nodelist, tag, kv_map):
-    '''''同过属性及属性值定位一个节点，并删除之
+    '''同过属性及属性值定位一个节点，并删除之
        nodelist: 父节点列表
        tag:子节点标签
        kv_map: 属性及属性值列表'''
