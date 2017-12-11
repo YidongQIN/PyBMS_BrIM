@@ -5,13 +5,9 @@ import json
 def read_xml(in_path):
     tree = ET.parse(in_path)
     return tree
-
-
 ## write XML
 def write_xml(tree, out_path):
     tree.write(out_path, encoding="utf-8", xml_declaration=True)
-
-
 # search
 ## search by key and value of attributes
 def if_match(node, kv_map):
@@ -20,8 +16,6 @@ def if_match(node, kv_map):
             return False
     return True
 
-
-#
 def get_node_by_keyvalue(nodelist, kv_map):
     result_nodes = []
     for node in nodelist:
@@ -29,11 +23,13 @@ def get_node_by_keyvalue(nodelist, kv_map):
             result_nodes.append(node)
     return result_nodes
 
+## search by path
+def find_nodes(tree, path):
+    return tree.findall(path)
 
 # search by node path
 def find_nodes(tree, path):
     return tree.findall(path)
-
 
 # output format
 def O_or_P(op):
@@ -56,6 +52,7 @@ root = tree.getroot()
 # input and search by attrib
 op = input('Object or Parameter? Type "O" or "P" please.\n')
 # kv = input('Input attributes in format of dict \{ \}')
+op = 'O'
 kv = {"T":"Node", "Y":"0"}
 nodes = root.iter(op)
 results = get_node_by_keyvalue(nodes, kv)

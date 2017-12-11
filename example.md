@@ -46,6 +46,7 @@ from xml.etree.ElementTree import ElementTree,Element
 #             result_nodes.append(node)
 #     return result_nodes
 
+
 #---------------change -----
 
 def change_node_properties(nodelist, kv_map, is_delete=False):
