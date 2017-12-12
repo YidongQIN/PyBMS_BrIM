@@ -37,7 +37,7 @@ def other_attribute(dict):
     dict.pop('T')
     atts = ''
     for key, value in dict.items():
-        print(key, value)
+        # print(key, value)
         atts = atts + key + '=' + value + ', '
     return atts
 # ----main----

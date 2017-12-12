@@ -37,7 +37,6 @@ def other_attribute(dict):
     dict.pop('T')
     atts = ''
     for key, value in dict.items():
-        print(key, value)
         atts = atts + key + '=' + value + ', '
     return atts
 
@@ -53,18 +52,6 @@ def change_node_properties(nodelist, kv_map, is_delete=False):
                     del node.attrib[key]
             else:
                 node.set(key, kv_map.get(key))
-
-def change_node_text(nodelist, text, is_add=False, is_delete=False):
-    '''改变/增加/删除一个节点的文本
-       nodelist:节点列表
-       text : 更新后的文本'''
-    for node in nodelist:
-        if is_add:
-            node.text += text
-        elif is_delete:
-            node.text = ""
-        else:
-            node.text = text
 
 def create_node(tag, property_map, content):
     '''新造一个节点
