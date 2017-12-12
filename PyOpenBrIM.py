@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+' a OpenBrIM module '
+
+__author__ = 'Yidong QIN'
+
 import xml.etree.ElementTree as ET
 import prettytable as pt
 
