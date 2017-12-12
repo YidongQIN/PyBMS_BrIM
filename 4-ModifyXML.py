@@ -8,7 +8,9 @@ def read_xml(in_path):
 # write XML
 def write_xml(tree, out_path):
     tree.write(out_path, encoding="utf-8", xml_declaration=True)
-# search
+# search by path
+def find_nodes(tree, path):
+    return tree.findall(path)
 ## search by key and value of attributes
 def if_match(node, kv_map):
     for key in kv_map:
@@ -21,9 +23,6 @@ def get_node_by_keyvalue(nodelist, kv_map):
         if if_match(node, kv_map):
             result_nodes.append(node)
     return result_nodes
-# search by node path
-def find_nodes(tree, path):
-    return tree.findall(path)
 # output format
 def O_or_P(op):
     if op is 'O':
@@ -42,9 +41,6 @@ def other_attribute(dict):
 
 # ----change----
 def change_node_properties(nodelist, kv_map, is_delete=False):
-    '''修改/增加 /删除 节点的属性及属性值
-       nodelist: 节点列表
-       kv_map:属性及属性值map'''
     for node in nodelist:
         for key in kv_map:
             if is_delete:
@@ -53,20 +49,11 @@ def change_node_properties(nodelist, kv_map, is_delete=False):
             else:
                 node.set(key, kv_map.get(key))
 
-def create_node(tag, property_map, content):
-    '''新造一个节点
-       tag:节点标签
-       property_map:属性及属性值map
-       content: 节点闭合标签里的文本内容
-       return 新节点'''
-    element = Element(tag, property_map)
-    element.text = content
+def create_node(tag, property_map):
+    element = ET.Element(tag, property_map)
     return element
 
 def add_child_node(nodelist, element):
-    '''给一个节点添加子节点
-       nodelist: 节点列表
-       element: 子节点'''
     for node in nodelist:
         node.append(element)
 
@@ -91,18 +78,27 @@ root = tree.getroot()
 # result = find_nodes(root, path)
 
 # input and search by attrib
-# op = input('Object or Parameter? Type "O" or "P" please.\n')
-# kv = input('Input attributes in format of dict \{ \}')
+# op = input('Object or Parameter? Type "O" or "P" in.\n')
+# kv = input('Input attributes in format of dict {"key":"value",}')
+
+# test
 op = "O"
-kv = {"T":"Node", "Y":"0"}
+kv = {"T":"Material"}
+
+# find the node
 nodes = root.iter(op)
 results = get_node_by_keyvalue(nodes, kv)
 
+# modify the XML file
+# modify_kv=input('Input new attribute')
+modify_kv={"D":"This is concrete"}
+change_node_properties(results,modify_kv)
+
+# new node
+new_node_kv = {"N":"Nu", "V":"0.2", "D":"Poisson's Ratio"}
+a = create_node("P", new_node_kv)
+add_child_node(results, a)
+
 # output results
-# PrettyTable
-tb = pt.PrettyTable(["Tag","Name","Type","Other Attributes"])
-tb.align["Other Attributes"]="l"
-for anode in results:
-    row = [anode.tag, anode.attrib.get("N"),anode.attrib.get("T"),other_attribute(anode.attrib)]
-    tb.add_row(row)
-print(tb)
+# new XML
+write_xml(tree,"./new.xml")
