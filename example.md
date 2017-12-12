@@ -49,57 +49,57 @@ from xml.etree.ElementTree import ElementTree,Element
 
 #---------------change -----
 
-def change_node_properties(nodelist, kv_map, is_delete=False):
-    '''修改/增加 /删除 节点的属性及属性值
-       nodelist: 节点列表
-       kv_map:属性及属性值map'''
-    for node in nodelist:
-        for key in kv_map:
-            if is_delete:
-                if key in node.attrib:
-                    del node.attrib[key]
-            else:
-                node.set(key, kv_map.get(key))
+# def change_node_properties(nodelist, kv_map, is_delete=False):
+#     '''修改/增加 /删除 节点的属性及属性值
+#        nodelist: 节点列表
+#        kv_map:属性及属性值map'''
+#     for node in nodelist:
+#         for key in kv_map:
+#             if is_delete:
+#                 if key in node.attrib:
+#                     del node.attrib[key]
+#             else:
+#                 node.set(key, kv_map.get(key))
 
-def change_node_text(nodelist, text, is_add=False, is_delete=False):
-    '''改变/增加/删除一个节点的文本
-       nodelist:节点列表
-       text : 更新后的文本'''
-    for node in nodelist:
-        if is_add:
-            node.text += text
-        elif is_delete:
-            node.text = ""
-        else:
-            node.text = text
+# def change_node_text(nodelist, text, is_add=False, is_delete=False):
+#     '''改变/增加/删除一个节点的文本
+#        nodelist:节点列表
+#        text : 更新后的文本'''
+#     for node in nodelist:
+#         if is_add:
+#             node.text += text
+#         elif is_delete:
+#             node.text = ""
+#         else:
+#             node.text = text
 
-def create_node(tag, property_map, content):
-    '''新造一个节点
-       tag:节点标签
-       property_map:属性及属性值map
-       content: 节点闭合标签里的文本内容
-       return 新节点'''
-    element = Element(tag, property_map)
-    element.text = content
-    return element
+# def create_node(tag, property_map, content):
+#     '''新造一个节点
+#        tag:节点标签
+#        property_map:属性及属性值map
+#        content: 节点闭合标签里的文本内容
+#        return 新节点'''
+#     element = Element(tag, property_map)
+#     element.text = content
+#     return element
 
-def add_child_node(nodelist, element):
-    '''给一个节点添加子节点
-       nodelist: 节点列表
-       element: 子节点'''
-    for node in nodelist:
-        node.append(element)
+# def add_child_node(nodelist, element):
+#     '''给一个节点添加子节点
+#        nodelist: 节点列表
+#        element: 子节点'''
+#     for node in nodelist:
+#         node.append(element)
 
-def del_node_by_tagkeyvalue(nodelist, tag, kv_map):
-    '''同过属性及属性值定位一个节点，并删除之
-       nodelist: 父节点列表
-       tag:子节点标签
-       kv_map: 属性及属性值列表'''
-    for parent_node in nodelist:
-        children = parent_node.getchildren()
-        for child in children:
-            if child.tag == tag and if_match(child, kv_map):
-                parent_node.remove(child)
+# def del_node_by_tagkeyvalue(nodelist, tag, kv_map):
+#     '''同过属性及属性值定位一个节点，并删除之
+#        nodelist: 父节点列表
+#        tag:子节点标签
+#        kv_map: 属性及属性值列表'''
+#     for parent_node in nodelist:
+#         children = parent_node.getchildren()
+#         for child in children:
+#             if child.tag == tag and if_match(child, kv_map):
+#                 parent_node.remove(child)
 
 
 

@@ -37,7 +37,7 @@ def other_attribute(dict):
     dict.pop('T')
     atts = ''
     for key, value in dict.items():
-        print(key, value)
+        # print(key, value)
         atts = atts + key + '=' + value + ', '
     return atts
 # ----main----
@@ -53,7 +53,7 @@ root = tree.getroot()
 # op = input('Object or Parameter? Type "O" or "P" please.\n')
 # kv = input('Input attributes in format of dict \{ \}')
 op = "O"
-kv = {"T":"Node", "Y":"0"}
+kv = {"T":"Material"}
 nodes = root.iter(op)
 results = get_node_by_keyvalue(nodes, kv)
 
