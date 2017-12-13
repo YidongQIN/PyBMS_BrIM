@@ -40,7 +40,7 @@ def get_node_by_keyvalue(nodelist, kv_map):
 
 
 # change node
-def change_node_properties(nodelist, kv_map, is_delete=False):
+def change_node_attributes(nodelist, kv_map, is_delete=False):
     for node in nodelist:
         for key in kv_map:
             if is_delete:
@@ -58,7 +58,8 @@ def create_node(tag, attribute_new):
 
 def add_child_node(nodelist, element):
     for node in nodelist:
-        node.append(element)
+        node.SubElement(element)
+        # node.append(element)
 
 
 # delete a node by attribute
@@ -154,7 +155,7 @@ if __name__ == '__main__':
     # modify the XML file
     # modify_kv=input('Input new attribute')
     modify_kv = {"D": "This is concrete"}
-    change_node_properties(results, modify_kv)
+    change_node_attributes(results, modify_kv)
 
     # creat new node
     # new_node_tag = input('Input the tag of new node')

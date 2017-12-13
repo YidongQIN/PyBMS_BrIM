@@ -1,13 +1,8 @@
 import PyOpenBrIM as ob
+from xml.etree.ElementTree import *
 
 # ----main----
-tree = ob.read_xml('0 MARC.xml')
+tree = ob.read_xml('new_proj.xml')
 root = tree.getroot()
 
-# find the node
-op = "*"
-kv = {"T": "Material"}
-results = ob.get_node_by_keyvalue(root.iter(op), kv)
-if ob.select_OBJECT(results):
-    ob.table_OBJECT(ob.select_OBJECT(results))
-
+ob.write_xml(tree, "./new_proj.xml")
