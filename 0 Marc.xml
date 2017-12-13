@@ -49,7 +49,7 @@
 	</O>
 	<O N="Sections" T="Group">
 		<O N="Section_BottomChord" T="Section">
-			<P N="MaterialS2" V="A992Fy50" T="Material" />
+			<P N="MaterialS2" V="A992Fy50" T="Material" D="Bottom Chord is steel"/>
 			<P N="Ax" V="7.58" />
 			<P N="Iy" V="39.5" />
 			<P N="Iz" V="39.5" />

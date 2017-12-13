@@ -96,6 +96,8 @@ def other_attribute(dict):
         dict.pop('N')
     if 'V' in dict:
         dict.pop('V')
+    if 'D' in dict:
+        dict.pop('D')
     atts = ''
     for key, value in dict.items():
         atts = atts + key + '=' + value + ', '
@@ -104,10 +106,10 @@ def other_attribute(dict):
 
 # pretty table
 def table_OBJECT(result_Object):
-    tb = pt.PrettyTable(["Name", "OBJECT Type", "Other Attributes"])
+    tb = pt.PrettyTable(["Name", "OBJECT Type", "Description","Other Attributes"])
     tb.align["Other Attributes"] = "l"
     for anode in result_Object:
-        row = [anode.attrib.get("N"), anode.attrib.get("T"), other_attribute(anode.attrib)]
+        row = [anode.attrib.get("N"), anode.attrib.get("T"), anode.attrib.get("D"), other_attribute(anode.attrib)]
         tb.add_row(row)
     print('\n Table of OBJECT found')
     print(tb)
