@@ -50,7 +50,7 @@ def change_node_attributes(nodelist, kv_map, is_delete=False):
                 node.set(key, kv_map.get(key))
 
 
-# creat and add a new node
+# create and add a new node
 def create_node(tag, attribute_new):
     element = ET.Element(tag, attribute_new)
     return element
