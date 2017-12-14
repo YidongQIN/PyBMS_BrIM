@@ -21,6 +21,7 @@ def write_xml(tree, out_path):
 # search by path
 def find_nodes(tree, path):
     return tree.findall(path)
+    # results is a list[] of elements
 
 
 # search by key and value of attributes
@@ -37,6 +38,7 @@ def get_node_by_keyvalue(nodelist, kv_map):
         if if_match(node, kv_map):
             result_nodes.append(node)
     return result_nodes
+    # results is a list[] of elements, same as def find_nodes
 
 
 # change node
@@ -58,8 +60,7 @@ def create_node(tag, attribute_new):
 
 def add_child_node(nodelist, element):
     for node in nodelist:
-        node.SubElement(element)
-        # node.append(element)
+        node.append(element)
 
 
 # delete a node by attribute
@@ -71,7 +72,7 @@ def del_node_by_tagkeyvalue(nodelist, tag, kv_map):
                 parent_node.remove(child)
 
 
-# seperate OBJECT and PARAMETER
+# separate OBJECT and PARAMETER
 def select_OBJECT(nodelist):
     node_O = ET.Element("", {})
     for node in nodelist:
@@ -173,4 +174,4 @@ if __name__ == '__main__':
     del_node_by_tagkeyvalue(results, del_tag, del_attribute)
 
     # output results in new XML
-    write_xml(tree, "./new.xml")
+    write_xml(tree, "xx.xml")

@@ -1,14 +1,15 @@
 import PyOpenBrIM as ob
 import xml.etree.ElementTree as ET
 
-
 # ----main----
-# tree = ob.read_xml('new_proj.xml')
-# root = tree.getroot()
-#
-# for node in root.iter():
-#     print(node,node.attrib)
-#
-# for node in root.findall('*'):
-#     print(node, node.attrib)
 
+
+root_attrib = {"Alignment":"None" , "N":"new" , "T":"Project" , "TransAlignRule":"Right"}
+root = ob.create_node('O',root_attrib)
+node1_attrib = {"N":"Units","T":"Group"}
+node1 = ob.create_node('O', node1_attrib)
+
+root = ob.find_nodes(root,'.')
+
+tree = ET.ElementTree(root)
+tree.write('xx.xml')
