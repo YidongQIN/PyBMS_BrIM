@@ -25,7 +25,7 @@ if ob.select_PARAMETER(results):
 # modify the XML file
 # modify_kv=input('Input new attribute')
 modify_kv = {"D": "This is concrete"}
-ob.change_node_properties(results, modify_kv)
+ob.change_node_attributes(results, modify_kv)
 
 # creat new node
 # new_node_tag = input('Input the tag of new node')
@@ -35,6 +35,9 @@ new_node_kv = {"N": "Nu", "V": "0.2", "D": "Poisson's Ratio"}
 a = ob.create_node(new_node_tag, new_node_kv)
 ob.add_child_node(results, a)
 
+print(results)
+print(a)
+
 # delete node
 # del_tag=input('Input the tag of the node to delete')
 # del_attribute=input('Input the attributes of the node to delete')
@@ -43,4 +46,4 @@ del_attribute = {"N": "Fy"}
 ob.del_node_by_tagkeyvalue(results, del_tag, del_attribute)
 
 # output results in new XML
-ob.write_xml(tree, "./new.xml")
+ob.write_xml(tree, "xx.xml")

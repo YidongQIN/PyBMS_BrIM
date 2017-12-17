@@ -18,9 +18,26 @@ def write_xml(tree, out_path):
     tree.write(out_path, encoding="utf-8", xml_declaration=True)
 
 
+# create a new OpenBrIM project and name it
+def new_OpenBrIM(name):
+    # default new OpenBrIM project with new name
+    origin_string = '<O Alignment="None" N="new" T="Project" TransAlignRule="Right">\n    <O N="Units" T="Group">\n        <O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit" />\n        <O Angle="Degree" Force="Kip" Length="Feet" N="Geometry" T="Unit" Temperature="Fahrenheit" />\n        <O Angle="Degree" Force="Kip" Length="Inch" N="Property" T="Unit" Temperature="Fahrenheit" />\n    </O>\n    <O N="SW" T="AnalysisCase" WeightFactor="-1" />\n    <O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen" />\n</O>'
+    root = ET.fromstring(origin_string)
+    root.attrib['N'] = name
+    return root
+
+
+# save the OpenBrIM model with the name in project attribute
+def save_OpenBrIM(root):
+    tree = ET.ElementTree(root)
+    out_path = root.attrib['N'] + '.xml'
+    tree.write(out_path, encoding="utf-8", xml_declaration=True)
+
+
 # search by path
 def find_nodes(tree, path):
     return tree.findall(path)
+    # results is a list[] of elements
 
 
 # search by key and value of attributes
@@ -37,10 +54,11 @@ def get_node_by_keyvalue(nodelist, kv_map):
         if if_match(node, kv_map):
             result_nodes.append(node)
     return result_nodes
+    # results is a list[] of elements, same as def find_nodes
 
 
 # change node
-def change_node_properties(nodelist, kv_map, is_delete=False):
+def change_node_attributes(nodelist, kv_map, is_delete=False):
     for node in nodelist:
         for key in kv_map:
             if is_delete:
@@ -50,9 +68,35 @@ def change_node_properties(nodelist, kv_map, is_delete=False):
                 node.set(key, kv_map.get(key))
 
 
-# creat and add a new node
+# create and add a new node
 def create_node(tag, attribute_new):
     element = ET.Element(tag, attribute_new)
+    return element
+
+
+# N and V is mandatory for PARAMETER
+def del_empty_value(dict):
+    new_dict = {}
+    for key in dict:
+        if dict[key] != '':
+            new_dict[key] = dict[key]
+    return new_dict
+
+
+def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
+    attribute_P = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
+    attribute_P = del_empty_value(attribute_P)
+    element = ET.Element('P', attribute_P)
+    return element
+
+
+def new_O(type_O, *name):
+    # object 需要创建模板，即此处是一个总体的，后面根据每种type编写模板化的
+    if name == ():
+        attribute_O = {'T': type_O}
+    else:
+        attribute_O = {'T': type_O, 'N': name[0]}
+    element = ET.Element('O', attribute_O)
     return element
 
 
@@ -70,7 +114,7 @@ def del_node_by_tagkeyvalue(nodelist, tag, kv_map):
                 parent_node.remove(child)
 
 
-# seperate OBJECT and PARAMETER
+# separate OBJECT and PARAMETER
 def select_OBJECT(nodelist):
     node_O = ET.Element("", {})
     for node in nodelist:
@@ -106,7 +150,7 @@ def other_attribute(dict):
 
 # pretty table
 def table_OBJECT(result_Object):
-    tb = pt.PrettyTable(["Name", "OBJECT Type", "Description","Other Attributes"])
+    tb = pt.PrettyTable(["Name", "OBJECT Type", "Description", "Other Attributes"])
     tb.align["Other Attributes"] = "l"
     for anode in result_Object:
         row = [anode.attrib.get("N"), anode.attrib.get("T"), anode.attrib.get("D"), other_attribute(anode.attrib)]
@@ -154,9 +198,9 @@ if __name__ == '__main__':
     # modify the XML file
     # modify_kv=input('Input new attribute')
     modify_kv = {"D": "This is concrete"}
-    change_node_properties(results, modify_kv)
+    change_node_attributes(results, modify_kv)
 
-    # creat new node
+    # create new node
     # new_node_tag = input('Input the tag of new node')
     # new_node_kv = input('Input the attributes of new node')
     new_node_tag = 'P'
@@ -172,4 +216,4 @@ if __name__ == '__main__':
     del_node_by_tagkeyvalue(results, del_tag, del_attribute)
 
     # output results in new XML
-    write_xml(tree, "./new.xml")
+    write_xml(tree, "xx.xml")
