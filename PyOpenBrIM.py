@@ -74,6 +74,32 @@ def create_node(tag, attribute_new):
     return element
 
 
+# N and V is mandatory for PARAMETER
+def del_empty_value(dict):
+    new_dict = {}
+    for key in dict:
+        if dict[key] != '':
+            new_dict[key] = dict[key]
+    return new_dict
+
+
+def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
+    attribute_P = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
+    attribute_P = del_empty_value(attribute_P)
+    element = ET.Element('P', attribute_P)
+    return element
+
+
+def new_O(type_O, *name):
+    # object 需要创建模板，即此处是一个总体的，后面根据每种type编写模板化的
+    if name == ():
+        attribute_O = {'T': type_O}
+    else:
+        attribute_O = {'T': type_O, 'N': name[0]}
+    element = ET.Element('O', attribute_O)
+    return element
+
+
 def add_child_node(nodelist, element):
     for node in nodelist:
         node.append(element)

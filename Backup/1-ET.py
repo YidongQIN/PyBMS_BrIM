@@ -79,3 +79,10 @@ root = tree.getroot()
 	# for a in marc_object:
 	# 	print(a.tag, a.attrib)
 	# print('---E---N---D---')
+
+# 以下代码成功的创建了xml并输入信息，可用于对比
+	# root = ET.Element('ParamML')
+	# node1 = ET.Element('Node1',{'name':'China'})
+	# root.append(node1)
+	# tree = ET.ElementTree(root)
+	# tree.write('xx.xml')
