@@ -200,7 +200,7 @@ if __name__ == '__main__':
     modify_kv = {"D": "This is concrete"}
     change_node_attributes(results, modify_kv)
 
-    # creat new node
+    # create new node
     # new_node_tag = input('Input the tag of new node')
     # new_node_kv = input('Input the attributes of new node')
     new_node_tag = 'P'

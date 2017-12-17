@@ -1,10 +1,6 @@
 import xml.etree.ElementTree as ET
 import PyOpenBrIM as ob
 
-
-# create OBJECT or PARAMETER automatically
-# 之前的create node等可以作为参考。此处的newOP也是要作为ob程序包的一部分
-
 # N and V is mandatory
 def del_empty_value(dict):
     new_dict = {}
