@@ -86,6 +86,7 @@ def del_empty_value(dict):
 
 
 def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
+# def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
     attribute_P = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
     attribute_P = del_empty_value(attribute_P)
     element = ET.Element('P', attribute_P)
