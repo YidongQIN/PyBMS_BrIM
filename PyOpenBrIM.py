@@ -25,6 +25,7 @@ def new_OpenBrIM(name):
     origin_string = '<O Alignment="None" N="new" T="Project" TransAlignRule="Right">\n    <O N="Units" T="Group">\n        <O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit" />\n        <O Angle="Degree" Force="Kip" Length="Feet" N="Geometry" T="Unit" Temperature="Fahrenheit" />\n        <O Angle="Degree" Force="Kip" Length="Inch" N="Property" T="Unit" Temperature="Fahrenheit" />\n    </O>\n    <O N="SW" T="AnalysisCase" WeightFactor="-1" />\n    <O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen" />\n</O>'
     root = ET.fromstring(origin_string)
     root.attrib['N'] = name
+    # tree = ET.ElementTree(root)
     return root
 
 
@@ -101,9 +102,20 @@ def new_O(type_O, *name):
     return element
 
 
-def add_child_node(nodelist, element):
-    for node in nodelist:
-        node.append(element)
+def add_child_node(parentElement, childElement):
+    # for node in nodelist: # this is wrong because node is child element of nodelist
+    #     node.append(element) #the element will be the child of child elements of nodelist
+
+    # if parement is a node list, append childElement to each of them
+    # if not, parement is only ONE node, append
+    if isinstance(parentElement, ET.Element):
+        parentElement.append(childElement)
+    elif isinstance(parentElement, list):
+        for node in parentElement:
+            node.append(childElement)
+
+
+# print(len(parentElement))
 
 
 # delete a node by attribute
@@ -164,7 +176,8 @@ def table_PARAMETER(result_Parameter):
     tb = pt.PrettyTable(["Name", "Value", "Description", "Other Attributes"])
     tb.align["Other Attributes"] = "l"
     for anode in result_Parameter:
-        row = [anode.attrib.get("N"), anode.attrib.get("V"), anode.attrib.get("D"), other_attribute(anode.attrib)]
+        row = [anode.attrib.get("N"), anode.attrib.get("V"), anode.attrib.get("D"),
+               other_attribute(anode.attrib)]
         tb.add_row(row)
     print('\n Table of PARAMETER found')
     print(tb)

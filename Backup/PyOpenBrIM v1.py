@@ -3,7 +3,10 @@
 
 
 __author__ = 'Yidong QIN'
-# work before Mar2018
+'''
+work before Mar 2018
+function: querying information from ParamML.xml
+'''
 
 import xml.etree.ElementTree as ET
 
@@ -166,7 +169,8 @@ def table_PARAMETER(result_Parameter):
     tb = pt.PrettyTable(["Name", "Value", "Description", "Other Attributes"])
     tb.align["Other Attributes"] = "l"
     for anode in result_Parameter:
-        row = [anode.attrib.get("N"), anode.attrib.get("V"), anode.attrib.get("D"), other_attribute(anode.attrib)]
+        row = [anode.attrib.get("N"), anode.attrib.get("V"), anode.attrib.get("D"),
+               other_attribute(anode.attrib)]
         tb.add_row(row)
     print('\n Table of PARAMETER found')
     print(tb)
