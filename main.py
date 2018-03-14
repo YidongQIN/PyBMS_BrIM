@@ -38,27 +38,13 @@ for par in MAT_S2_P:
     add_child_node(MAT_S2, par)
 
 PrmtsOfSections = new_O('Group', 'Parameters of Sections')
-PrmtsOfSections_P = []
-PrmtsOfSections_P.append(new_P("BottomChord_width", "6" , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("BottomChord_depth", "6" , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("BottomChord_thickness", "0.375", role="Input"))
-PrmtsOfSections_P.append(new_P("TopChord_width", "6" , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("TopChord_depth", "6" , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("TopChord_thickness", "0.3125", role="Input"))
-PrmtsOfSections_P.append(new_P("deck_thick", "5" , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("VertiBeam_width", "6"    , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("VertiBeam_depth", "6"    , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("VertiBeam_thickness", "0.25" , UT="Length", role="Input"))
-PrmtsOfSections_P.append(new_P("WebRadius", "1"  , UT="Length", role="Input"))
-for par in PrmtsOfSections_P:
-    add_child_node(PrmtsOfSections, par)
-
+MAT_S2_P = []
+MAT_S2_P.append(new_P('d', "0.0000007345", des="Density"))
 
 
 add_child_node(materialGroup, MAT_C)
 add_child_node(materialGroup, MAT_S1)
 add_child_node(root, materialGroup)
-add_child_node(root,PrmtsOfSections)
 
 # ---write to .xml file---
 save_OpenBrIM(root)
