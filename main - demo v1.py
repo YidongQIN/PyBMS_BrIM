@@ -3,7 +3,7 @@ import PyOpenBrIM as ob
 tree = ob.read_xml('0 MARC.xml')
 root = tree.getroot()
 
-'''
+
 # find the node
 search_method = input('Search by 1.Path or 2.Attributes?\n')
 if search_method is '1':
@@ -35,11 +35,11 @@ ob.change_node_attributes(results, modify_kv)
 new_node_tag = 'P'
 new_node_kv = {"N": "Nu", "V": "0.2", "D": "Poisson's Ratio"}
 a = ob.create_node(new_node_tag, new_node_kv)
-ob.add_child_node(results, a)
+ob.add_subNode(results, a)
 
 print(results)
 print(a)
-'''
+
 # delete node
 # del_tag=input('Input the tag of the node to delete')
 # del_attribute=input('Input the attributes of the node to delete')

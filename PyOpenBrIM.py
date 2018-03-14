@@ -4,7 +4,7 @@
 __author__ = 'Yidong QIN'
 
 import xml.etree.ElementTree as ET
-
+from xml.dom import minidom
 import prettytable as pt
 
 
@@ -34,6 +34,10 @@ def save_OpenBrIM(root):
     tree = ET.ElementTree(root)
     out_path = root.attrib['N'] + '.xml'
     tree.write(out_path, encoding="utf-8", xml_declaration=True)
+    # rawText = ET.tostring(root)
+    # dom = minidom.parseString(rawText)
+    # with open(out_path, 'w') as f:
+    #     dom.writexml(f, indent='\t', newl='\n', encoding="utf-8")
 
 
 # search by path
@@ -86,10 +90,10 @@ def del_empty_value(dict):
 
 
 def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
-# def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
-    attribute_P = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
-    attribute_P = del_empty_value(attribute_P)
-    element = ET.Element('P', attribute_P)
+    # def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
+    attributeOfParameter = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
+    attributeOfParameter = del_empty_value(attributeOfParameter)
+    element = ET.Element('P', attributeOfParameter)
     return element
 
 
@@ -103,20 +107,25 @@ def new_O(type_O, *name, **attributesDict):
     return element
 
 
-def add_child_node(parentElement, childElement):
+def add_subNode(parentElement, childElement):
     # for node in nodelist: # this is wrong because node is child element of nodelist
     #     node.append(element) #the element will be the child of child elements of nodelist
-
     # if parement is a node list, append childElement to each of them
     # if not, parement is only ONE node, append
     if isinstance(parentElement, ET.Element):
-        parentElement.append(childElement)
+        if isinstance(childElement, ET.Element):
+            parentElement.append(childElement)
+        elif isinstance(childElement, list):
+            for child in childElement:
+                parentElement.append(child)
     elif isinstance(parentElement, list):
-        for node in parentElement:
-            node.append(childElement)
-
-
-# print(len(parentElement))
+        if isinstance(childElement, ET.Element):
+            for parent in parentElement:
+                parent.append(childElement)
+        elif isinstance(childElement, list):
+            for child in childElement:
+                for parent in parentElement:
+                    parent.append(child)
 
 
 # delete a node by attribute
