@@ -3,7 +3,7 @@
 
 __author__ = 'Yidong QIN'
 '''
-try to use OOP for OpenBrIM
+Object-oriented programming for OpenBrIM
 '''
 import xml.etree.ElementTree as et
 
@@ -15,7 +15,6 @@ class PyOpenBrIMElmt(object):
 
     def __init__(self, name):
         """ name is project name"""
-        # @TODO automatically project name = instance name
         self.name = name
         self.elmt = et.Element("", {})
 
@@ -53,22 +52,25 @@ class PyOpenBrIMElmt(object):
         self.elmt = root
 
     # save the OpenBrIM model with the name in project attribute
-    # @TODO define a new path to save the xml file. regular express may be needed
-    # if path:
-    #     out_path = self.root.attrib['N'] + '.xml'
-    # else:
-    #     out_path=path
     def save_project(self):
         tree = et.ElementTree(self.elmt)
         out_path = self.elmt.attrib['N'] + '.xml'
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
+        # @TODO accept a path to save the xml file. regular express may be needed
+        # if path:
+        #     out_path = self.root.attrib['N'] + '.xml'
+        # else:
+        #     out_path=path
 
     # # create and add a new node
     # def create_node(self, tag, attribute_new):
     #     element = ET.Element(tag, attribute_new)
     #     return element
 
-    def add_sub(self):
+    def add_sub(self, child_elmt):
+        self.elmt.append(child_elmt.elmt)
+        print(self.elmt)
+        ResultsTable(self.elmt)
         # get child node
         pass
 
@@ -90,7 +92,7 @@ class PyOpenBrIMElmt(object):
                 return False
         return True
 
-    # @TODO
+    # @TODO modify, search and delete functions
     def find_by_keyvalue(self, **kv_map):
         pass
         # result_nodes = []
@@ -126,12 +128,11 @@ class PyOpenBrIMElmt(object):
 class ObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
 
-    def __init__(self, object_type, name, **obj_attri):
-        if name == ():
-            attributes = {'T': object_type}
-        else:
-            attributes = {'T': object_type, 'N': name[0]}
-        attributes = {**attributes, **obj_attri}
+    def __init__(self, object_type, name='', **obj_attri):
+        temp_dict = dict(T=object_type)
+        if name != '':
+            temp_dict['N'] = name
+        attributes = {**temp_dict, **obj_attri}
         self.element = et.Element('O', attributes)
         super(ObjElmt, self).__init__(name)
 
