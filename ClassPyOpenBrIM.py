@@ -5,205 +5,263 @@ __author__ = 'Yidong QIN'
 '''
 try to use OOP for OpenBrIM
 '''
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as et
 
 import prettytable as pt
 
 
 class PyOpenBrIMElmt(object):
     """basic class for ParamML file of OpenBrIM"""
-    tree = ''
 
-    def __int__(self, name):
+    def __init__(self, name):
         """ name is project name"""
+        # @TODO automatically project name = instance name
         self.name = name
-        # self.tree = tree  # may not use
-        # self.root=tree.getroot()
+        self.elmt = et.Element("", {})
 
     # read XML from .xml file or String and get root
     def read_xmlfile(self, in_path):
-        tree = ET.parse(in_path)
-        root = tree.getroot()
-        return root
+        # @TODO check path function
+        tree = et.parse(in_path)
+        self.elmt = tree.getroot()
 
-    def read_xmlstr(self, str):
-        root = ET.fromstring(str)
-        return root
+    def read_xmlstr(self, xmlstr):
+        self.elmt = et.fromstring(xmlstr)
 
-    # write XML
-    def write_xml(self, tree, out_path):
-        tree.write(out_path, encoding="utf-8", xml_declaration=True)
-
-    def open_project(self, name):
-        pass
-
-    # create a new OpenBrIM project and name it
-    def new_project(self):
+    def new_project(self, template='default'):
+        # @TODO more template may be added
+        if template == 'default':
+            origin_string = '''<O Alignment="None" N="" T="Project" 
+            TransAlignRule="Right">\n\t<O N="Units" T="Group">
+            \n\t\t<O Angle="Radian" Force="Kip" Length="Inch" N="Internal" 
+            T="Unit" Temperature="Fahrenheit" />\n\t\t<O Angle="Degree" 
+            Force="Kip" Length="Feet" N="Geometry" T="Unit" 
+            Temperature="Fahrenheit" />\n\t\t<O Angle="Degree" 
+            Force="Kip" Length="Inch" N="Property" T="Unit" 
+            Temperature="Fahrenheit" />\n\t</O>\n\t
+            <O N="SW" T="AnalysisCase" WeightFactor="-1" />\n\t
+            <O Gravity="386.09" Modes="1" N="Seismic" 
+            T="AnalysisCaseEigen" />\n</O>'''
+        else:
+            origin_string = '<O Alignment="None" N="" T="Project" TransAlignRule="Right">\n</O>'
+        root = et.fromstring(origin_string)
         # default new OpenBrIM project named as self.name
-        origin_string = '<O Alignment="None" N="" T="Project" TransAlignRule="Right">\n\t<O N="Units" T="Group">\n\t\t<O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit" />\n\t\t<O Angle="Degree" Force="Kip" Length="Feet" N="Geometry" T="Unit" Temperature="Fahrenheit" />\n\t\t<O Angle="Degree" Force="Kip" Length="Inch" N="Property" T="Unit" Temperature="Fahrenheit" />\n\t</O>\n\t<O N="SW" T="AnalysisCase" WeightFactor="-1" />\n\t<O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen" />\n</O>'
-        # origin_string='<O Alignment="None" N="" T="Project" TransAlignRule="Right">\n</O>'
-        root = ET.fromstring(origin_string)
         root.attrib['N'] = self.name
         # tree = ET.ElementTree(root)
         # root is ET.node = xml.element <></>
-        return root
+        # return root
+        self.elmt = root
 
     # save the OpenBrIM model with the name in project attribute
-    def save_project(self, root):
-        tree = ET.ElementTree(root)
-        out_path = root.attrib['N'] + '.xml'
+    # @TODO define a new path to save the xml file. regular express may be needed
+    # if path:
+    #     out_path = self.root.attrib['N'] + '.xml'
+    # else:
+    #     out_path=path
+    def save_project(self):
+        tree = et.ElementTree(self.elmt)
+        out_path = self.elmt.attrib['N'] + '.xml'
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
 
+    # # create and add a new node
+    # def create_node(self, tag, attribute_new):
+    #     element = ET.Element(tag, attribute_new)
+    #     return element
+
+    def add_sub(self):
+        # get child node
+        pass
+
+    def attach(self):
+        # attach this element/node to a parent
+        pass
+
     # search by path
-    def find_nodes(self, tree, path):
+    def findall_by_path(self, path):
+        tree = et.ElementTree(self.elmt)
         return tree.findall(path)
         # results is a list[] of elements
 
     # search by key and value of attributes
-    def if_match(self, node, kv_map):
+    @staticmethod
+    def if_match(node, **kv_map):
         for key in kv_map:
             if node.get(key) != kv_map.get(key):
                 return False
         return True
 
-    def get_node_by_keyvalue(self, nodelist, kv_map):
-        result_nodes = []
-        for node in nodelist:
-            if if_match(node, kv_map):
-                result_nodes.append(node)
-        return result_nodes
+    # @TODO
+    def find_by_keyvalue(self, **kv_map):
+        pass
+        # result_nodes = []
+        # for node in self.elmt:
+        #     for k,v in kv_map:
+        #         map={k:v}
+        #         if self.if_match(node, map):
+        #             result_nodes.append(node)
+        # return result_nodes
         # results is a list[] of elements, same as def find_nodes
 
     # change node
     def change_node_attributes(self, nodelist, kv_map, is_delete=False):
-        for node in nodelist:
-            for key in kv_map:
-                if is_delete:
-                    if key in node.attrib:
-                        del node.attrib[key]
-                else:
-                    node.set(key, kv_map.get(key))
-
-    # create and add a new node
-    def create_node(self, tag, attribute_new):
-        element = ET.Element(tag, attribute_new)
-        return element
+        pass
+        # for node in nodelist:
+        #     for key in kv_map:
+        #         if is_delete:
+        #             if key in node.attrib:
+        #                 del node.attrib[key]
+        #         else:
+        #             node.set(key, kv_map.get(key))
 
     # delete a node by attribute
-    def del_node_by_tagkeyvalue(nodelist, tag, kv_map):
-        for parent_node in nodelist:
-            children = parent_node.iter()
-            for child in children:
-                if child.tag == tag and if_match(child, kv_map):
-                    parent_node.remove(child)
+    def del_node_by_tagkeyvalue(self, tag, kv_map):
+        pass
+        # for parent_node in self.elmt:
+        #     children = parent_node.iter()
+        #     for child in children:
+        #         if child.tag == tag and self.if_match(child, kv_map):
+        #             parent_node.remove(child)
 
 
 class ObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
 
-    def __init__(self):
-        pass
-
-    def new_O(self, type_O, *name, **attributesDict):
+    def __init__(self, object_type, name, **obj_attri):
         if name == ():
-            attribute_O = {'T': type_O}
+            attributes = {'T': object_type}
         else:
-            attribute_O = {'T': type_O, 'N': name[0]}
-        attribute_O = {**attribute_O, **attributesDict}
-        element = ET.Element('O', attribute_O)
-        return element
+            attributes = {'T': object_type, 'N': name[0]}
+        attributes = {**attributes, **obj_attri}
+        self.element = et.Element('O', attributes)
+        super(ObjElmt, self).__init__(name)
 
-    def add_child_node(self, parentElement, childElement):
-        if isinstance(parentElement, ET.Element):
-            parentElement.append(childElement)
-        elif isinstance(parentElement, list):
-            for node in parentElement:
-                node.append(childElement)
+    # @TODO !!! add sub/child element
+    def add_child_node(self, parent, child):
+        pass
+    # examples:
+    #     if isinstance(parent, ET.Element):
+    #         parent.append(child)
+    #     elif isinstance(parent, list):
+    #         for node in parent:
+    #             node.append(child)
+    #
+    # OR:
+    #     if isinstance(parent, ET.Element):
+    #         if isinstance(child, ET.Element):
+    #             parent.append(child)
+    #         elif isinstance(child, list):
+    #             for child in child:
+    #                 parent.append(child)
+    #     elif isinstance(parent, list):
+    #         if isinstance(child, ET.Element):
+    #             for parent in parent:
+    #                 parent.append(child)
+    #         elif isinstance(child, list):
+    #             for child in child:
+    #                 for parent in parent:
+    #                     parent.append(child)
 
 
 class PrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
 
-    def __init__(self):
-        pass
+    def __init__(self, name):
+        self.tag = 'P'
+        super(PrmElmt, self).__init__(name)
 
-    def del_empty_value(self, dict):
-        new_dict = {}
-        for key in dict:
-            if dict[key] != '':
-                new_dict[key] = dict[key]
-        return new_dict
+    @staticmethod
+    def del_empty_value(attributes):
+        new_attributes = {}
+        for key in attributes:
+            if attributes[key] != '':
+                new_attributes[key] = attributes[key]
+        return new_attributes
 
     # N and V is mandatory for PARAMETER
-    def new_P(self, name, value, des='', UT='', UC='', role='Input', type_P=''):
-        # def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
-        attribute_P = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
-        attribute_P = self.del_empty_value(attribute_P)
-        element = ET.Element('P', attribute_P)
+    def new_par(self, name, value, des='', ut='', uc='', role='Input', type_of_par=''):
+        # def new_par(name, value, des='', UT='', UC='', role='Input', type_P=''):
+        attributes = dict(N=name, V=value, D=des, UT=ut, UC=uc, Role=role, T=type_of_par)
+        attributes = self.del_empty_value(attributes)
+        element = et.Element('P', attributes)
         return element
 
 
 class ResultsTable(object):
-    """# these methods are used for show search results in table format"""
+    """this class is used for show search results in table format"""
 
-    def __init__(self, results):
-        self.results = results
-        self.showTable()
-
-    def showTable(self):
-        if self.result_obj:
-            self.table_OBJECT(self.result_obj)
-        if self.result_par:
-            self.table_PARAMETER(self.result_par)
+    def __init__(self, result):
+        self.rowdata = []
+        if isinstance(result, PyOpenBrIMElmt):
+            self.rowdata = result.elmt
+        elif isinstance(result, (list or et.Element)):
+            self.rowdata = result
+        else:
+            print('Unacceptable type of input result.')
+        self.result_obj = et.Element("", {})
+        self.result_par = et.Element("", {})
+        self.classify_nodes()
+        self.show_table()
 
     # separate OBJECT and PARAMETER
-    def select_OBJECT(self):
-        self.result_obj = ET.Element("", {})
-        for node in self.results:
-            if node.tag is 'O':
-                self.result_obj.append(node)
-        return self.result_obj
+    def classify_nodes(self):
+        for node in self.rowdata:
+            self.obj_or_par(node)
+        # if isinstance(self.results, ET.Element):
+        #     self.obj_or_par(self.results)
+        # elif isinstance(self.results, list):
+        #     for node in self.results:
+        #         self.obj_or_par(node)
 
-    def select_PARAMETER(self):
-        self.result_par = ET.Element("", {})
-        for node in self.results:
-            if node.tag is 'P':
-                self.result_par.append(node)
-        return self.result_par
+    def obj_or_par(self, node):
+        if node.tag is 'P':
+            self.result_par.append(node)
+        if node.tag is 'O':
+            self.result_obj.append(node)
+
+    def show_table(self):
+        if self.result_obj:
+            self.show_objects(self.result_obj)
+        if self.result_par:
+            self.show_parameters(self.result_par)
 
     # T -- main attribute for OBJECT
     # N, V -- main attribute for PARAMETER
-    def other_attribute(self, dict):
-        if 'T' in dict:
-            dict.pop('T')
-        if 'N' in dict:
-            dict.pop('N')
-        if 'V' in dict:
-            dict.pop('V')
-        if 'D' in dict:
-            dict.pop('D')
+    @staticmethod
+    def other_attribute(attrb_dict):
+        # T,N V,D are important attributes for ParamML elements
+        # other attributes will be shown in tha last column
+        if 'T' in attrb_dict:
+            attrb_dict.pop('T')
+        if 'N' in attrb_dict:
+            attrb_dict.pop('N')
+        if 'V' in attrb_dict:
+            attrb_dict.pop('V')
+        if 'D' in attrb_dict:
+            attrb_dict.pop('D')
         atts = ''
-        for key, value in dict.items():
+        for key, value in attrb_dict.items():
             atts = atts + key + '=' + value + ', '
+        atts = atts[0:-2]  # delete the last,
         return atts
 
     # pretty table
-    def table_OBJECT(self, result_Object):
+    # @TODO try pandas instead of prettytable?
+    def show_objects(self, result_object):
         tb = pt.PrettyTable(["Name", "OBJECT Type", "Description", "Other Attributes"])
         tb.align["Other Attributes"] = "l"
-        for anode in result_Object:
+        for anode in result_object:
             row = [anode.attrib.get("N"), anode.attrib.get("T"), anode.attrib.get("D"),
                    self.other_attribute(anode.attrib)]
             tb.add_row(row)
-        print('\n Table of OBJECT found')
+        print('\n Table of Result OBJECT')
         print(tb)
 
-    def table_PARAMETER(self, result_Parameter):
+    def show_parameters(self, result_parameter):
         tb = pt.PrettyTable(["Name", "Value", "Description", "Other Attributes"])
         tb.align["Other Attributes"] = "l"
-        for anode in result_Parameter:
+        for anode in result_parameter:
             row = [anode.attrib.get("N"), anode.attrib.get("V"), anode.attrib.get("D"),
                    self.other_attribute(anode.attrib)]
             tb.add_row(row)
-        print('\n Table of PARAMETER found')
+        print('\n Table of Result PARAMETER')
         print(tb)

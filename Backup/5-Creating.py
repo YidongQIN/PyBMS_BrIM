@@ -37,7 +37,7 @@ def new_O(type_O, *name):
 # root = ob.new_OpenBrIM('New_OpenBrIM_project')
 #
 # results = ob.find_nodes(root, './O')
-# ob.table_OBJECT(ob.select_OBJECT(results))
+# ob.show_objects(ob.select_objects(results))
 
 a = new_O("z_height", "108")
 print(a.attrib)
