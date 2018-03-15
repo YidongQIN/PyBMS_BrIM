@@ -4,7 +4,6 @@
 __author__ = 'Yidong QIN'
 
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 import prettytable as pt
 
 
