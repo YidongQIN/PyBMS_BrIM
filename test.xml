@@ -1,13 +1,8 @@
 <O Alignment="None" N="new" T="Project" TransAlignRule="Right">
     <O N="Units" T="Group">
-        <O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit"/>
-        <O Angle="Degree" Force="Kip" Length="Feet" N="Geometry" T="Unit" Temperature="Fahrenheit"/>
-        <O Angle="Degree" Force="Kip" Length="Inch" N="Property" T="Unit" Temperature="Fahrenheit"/>
         <O N="SW" T="AnalysisCase" WeightFactor="-1"/>
         <O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen"/>
     </O>
     <P D="Density" N="d" Role="Input" V="0.0000002248"/>
-    <P D="modulus of elasticity" N="E" Role="Input" V="3604.9965"/>
-    <P D="Coefficient of Thermal Expansion" N="a" UT="xxx" UC="87889" Role="Input" V="0.0000055"/>
-    <P D="Concrete Compressive Strength" N="Fc28" UT="xxx" UC="87889" Role="Input" V="4"/>
+    <P D="Concrete Compressive Strength" N="Fc28" Role="Input" V="4"/>
 </O>
