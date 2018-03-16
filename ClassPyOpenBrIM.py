@@ -11,7 +11,6 @@ import xml.etree.ElementTree as eET
 
 import prettytable as pt
 
-import time
 
 class PyOpenBrIMElmt(object):
     """basic class for ParamML file of OpenBrIM"""
@@ -23,6 +22,7 @@ class PyOpenBrIMElmt(object):
         if name != '':
             self.elmt.attrib['N'] = name
 
+    # 3 way to create a new project: XML file, XML string or from template
     # read XML from .xml file or String and get root
     def read_xmlfile(self, in_path):
         # @TODO check path function
@@ -65,17 +65,29 @@ class PyOpenBrIMElmt(object):
         for a in to_elmt_list(child):
             self.elmt.append(a)
 
-
     def attach(self, parent):
-        pass
         # attach this element/node to a parent
+        for p in to_elmt_list(parent):
+            p.append(self.elmt)
 
-    # search by path
+    # search by xpath
     def findall_by_xpath(self, xpath):
         tree = eET.ElementTree(self.elmt)
         return tree.findall(xpath)
         # results is a list[] of elements
 
+    def show_it(self):
+        print(self.elmt.tag, self.elmt.attrib)
+
+    def show_super(self):
+        #@TODO
+        pass
+
+    def show_sub(self):
+        for c in self.elmt:
+            print(c.tag,c.attrib)
+
+    # @TODO modify, search and delete functions
     # search by key and value of attributes
     @staticmethod
     def if_match(node, **kv_map):
@@ -84,7 +96,6 @@ class PyOpenBrIMElmt(object):
                 return False
         return True
 
-    # @TODO modify, search and delete functions
     def find_by_keyvalue(self, **kv_map):
         pass
         # result_nodes = []
@@ -135,7 +146,6 @@ class PrmElmt(PyOpenBrIMElmt):
         super(PrmElmt, self).__init__(name)
         self.elmt.tag = 'P'
         attrib = dict(V=value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
-        assert attrib['T'] != ''
         for k, v in attrib.items():
             if v:
                 self.elmt.attrib[k] = v
@@ -152,14 +162,12 @@ def add_child_node(parent, child):
 def to_elmt_list(nodes):
     # change PyOpenBrIM object to et.element
     def to_ob_elmt(node):
-        elmt = eET.Element('', {})
         if isinstance(node, eET.Element):
-            elmt = node
+            return node
         elif isinstance(node, PyOpenBrIMElmt):
-            elmt = node.elmt
+            return node.elmt
         else:
             print('Unacceptable type of input result.')
-        return elmt
 
     if isinstance(nodes, list):
         node_list = list(map(to_ob_elmt, nodes))

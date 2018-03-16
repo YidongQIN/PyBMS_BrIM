@@ -62,7 +62,6 @@ class PyOpenBrIMElmt(object):
         for a in to_elmt_list(child):
             self.elmt.append(a)
 
-
     # search by path
     def findall_by_xpath(self, xpath):
         tree = eET.ElementTree(self.elmt)
