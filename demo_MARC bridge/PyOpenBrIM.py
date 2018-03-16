@@ -24,7 +24,6 @@ def new_OpenBrIM(name):
     origin_string = '<O Alignment="None" N="new" T="Project" TransAlignRule="Right">\n    <O N="Units" T="Group">\n        <O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit" />\n        <O Angle="Degree" Force="Kip" Length="Feet" N="Geometry" T="Unit" Temperature="Fahrenheit" />\n        <O Angle="Degree" Force="Kip" Length="Inch" N="Property" T="Unit" Temperature="Fahrenheit" />\n    </O>\n    <O N="SW" T="AnalysisCase" WeightFactor="-1" />\n    <O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen" />\n</O>'
     root = ET.fromstring(origin_string)
     root.attrib['N'] = name
-    # tree = ET.ElementTree(root)
     return root
 
 
@@ -33,16 +32,10 @@ def save_OpenBrIM(root):
     tree = ET.ElementTree(root)
     out_path = root.attrib['N'] + '.xml'
     tree.write(out_path, encoding="utf-8", xml_declaration=True)
-    # rawText = ET.tostring(root)
-    # dom = minidom.parseString(rawText)
-    # with open(out_path, 'w') as f:
-    #     dom.writexml(f, indent='\t', newl='\n', encoding="utf-8")
-
 
 # search by path
 def find_nodes(tree, path):
     return tree.findall(path)
-    # results is a list[] of elements
 
 
 # search by key and value of attributes
@@ -59,7 +52,6 @@ def get_node_by_keyvalue(nodelist, kv_map):
         if if_match(node, kv_map):
             result_nodes.append(node)
     return result_nodes
-    # results is a list[] of elements, same as def find_nodes
 
 
 # change node
@@ -89,7 +81,6 @@ def del_empty_value(dict):
 
 
 def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
-    # def new_P(name, value, des='', UT='', UC='', role='Input', type_P=''):
     attributeOfParameter = {'N': name, 'V': value, 'D': des, 'UT': UT, 'UC': UC, 'Role': role, 'T': type_P}
     attributeOfParameter = del_empty_value(attributeOfParameter)
     element = ET.Element('P', attributeOfParameter)
@@ -107,8 +98,6 @@ def new_O(type_O, *name, **attributesDict):
 
 
 def add_subNode(parentElement, childElement):
-    # for node in nodelist: # this is wrong because node is child element of nodelist
-    #     node.append(element) #the element will be the child of child elements of nodelist
     # if parement is a node list, append childElement to each of them
     # if not, parement is only ONE node, append
     if isinstance(parentElement, ET.Element):
@@ -190,4 +179,3 @@ def table_PARAMETER(result_Parameter):
         tb.add_row(row)
     print('\n Table of PARAMETER found')
     print(tb)
-    # return tb

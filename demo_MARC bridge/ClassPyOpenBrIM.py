@@ -11,7 +11,6 @@ import xml.etree.ElementTree as eET
 
 import prettytable as pt
 
-import time
 
 class PyOpenBrIMElmt(object):
     """basic class for ParamML file of OpenBrIM"""
@@ -25,7 +24,6 @@ class PyOpenBrIMElmt(object):
 
     # read XML from .xml file or String and get root
     def read_xmlfile(self, in_path):
-        # @TODO check path function
         tree = eET.parse(in_path)
         self.elmt = tree.getroot()
 
@@ -33,7 +31,6 @@ class PyOpenBrIMElmt(object):
         self.elmt = eET.fromstring(xmlstr)
 
     def new_project(self, template='default'):
-        # @TODO more template may be added
         if template == 'default':
             origin_string = '''
 <O Alignment="None" N="" T="Project" TransAlignRule="Right">
@@ -66,55 +63,10 @@ class PyOpenBrIMElmt(object):
             self.elmt.append(a)
 
 
-    def attach(self, parent):
-        pass
-        # attach this element/node to a parent
-
     # search by path
     def findall_by_xpath(self, xpath):
         tree = eET.ElementTree(self.elmt)
         return tree.findall(xpath)
-        # results is a list[] of elements
-
-    # search by key and value of attributes
-    @staticmethod
-    def if_match(node, **kv_map):
-        for key in kv_map:
-            if node.get(key) != kv_map.get(key):
-                return False
-        return True
-
-    # @TODO modify, search and delete functions
-    def find_by_keyvalue(self, **kv_map):
-        pass
-        # result_nodes = []
-        # for node in self.elmt:
-        #     for k,v in kv_map:
-        #         map={k:v}
-        #         if self.if_match(node, map):
-        #             result_nodes.append(node)
-        # return result_nodes
-        # results is a list[] of elements, same as def find_nodes
-
-    # change node
-    def change_node_attributes(self, nodelist, kv_map, is_delete=False):
-        pass
-        # for node in nodelist:
-        #     for key in kv_map:
-        #         if is_delete:
-        #             if key in node.attrib:
-        #                 del node.attrib[key]
-        #         else:
-        #             node.set(key, kv_map.get(key))
-
-    # delete a node by attribute
-    def del_node_by_tagkeyvalue(self, tag, kv_map):
-        pass
-        # for parent_node in self.elmt:
-        #     children = parent_node.iter()
-        #     for child in children:
-        #         if child.tag == tag and self.if_match(child, kv_map):
-        #             parent_node.remove(child)
 
 
 class ObjElmt(PyOpenBrIMElmt):

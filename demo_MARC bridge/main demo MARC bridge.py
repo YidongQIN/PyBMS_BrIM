@@ -1,7 +1,7 @@
 # import PyOpenBrIM as ob
 from PyOpenBrIM import *
 
-root = new_OpenBrIM('newTree')  # an Element
+root = new_OpenBrIM('demo_MARC')  # an Element
 
 # Material
 materialGroup = new_O('Group', "Parameters of Material")
@@ -258,6 +258,6 @@ for i in range(span_num):
     add_subNode(deck, PointBR[i])
     add_subNode(deck, PointBR[i + 1])
     add_subNode(deck, PointBL[i + 1])
-    add_subNode(root,deck)
+    add_subNode(root, deck)
 # ---write to .xml file---
 save_OpenBrIM(root)
