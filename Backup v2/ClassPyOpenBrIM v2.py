@@ -158,8 +158,8 @@ class PrmElmt(PyOpenBrIMElmt):
 
 def add_child_node(parent, child):
     # @TODO modify by to_elmt_list
-    parent_list=to_elmt_list(parent)
-    child_list=to_elmt_list(child)
+    parent_list = to_elmt_list(parent)
+    child_list = to_elmt_list(child)
     for p in parent_list:
         for c in child_list:
             p.append(c)
