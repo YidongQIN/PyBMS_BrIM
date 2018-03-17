@@ -7,6 +7,7 @@ __author__ = 'Yidong QIN'
 Object-oriented programming for OpenBrIM
 '''
 
+import re
 import xml.etree.ElementTree as eET
 
 import prettytable as pt
@@ -14,6 +15,8 @@ import prettytable as pt
 
 class PyOpenBrIMElmt(object):
     """basic class for ParamML file of OpenBrIM"""
+
+    global root
 
     def __init__(self, name):
         """ name is project name"""
@@ -25,9 +28,11 @@ class PyOpenBrIMElmt(object):
     # 3 way to create a new project: XML file, XML string or from template
     # read XML from .xml file or String and get root
     def read_xmlfile(self, in_path):
-        # @TODO check path function
-        tree = eET.parse(in_path)
-        self.elmt = tree.getroot()
+        if re.match(r'.*\.xml', in_path):
+            tree = eET.parse(in_path)
+            self.elmt = tree.getroot()
+        else:
+            print('"%s" is not a .xml file' % in_path)
 
     def read_xmlstr(self, xmlstr):
         self.elmt = eET.fromstring(xmlstr)
@@ -80,12 +85,14 @@ class PyOpenBrIMElmt(object):
         print(self.elmt.tag, self.elmt.attrib)
 
     def show_super(self):
-        #@TODO
+        # @TODO
+        # impossible unless one py is only one tree
+        # then the PyOpenBrIM is a global variable
         pass
 
     def show_sub(self):
         for c in self.elmt:
-            print(c.tag,c.attrib)
+            print(c.tag, c.attrib)
 
     # @TODO modify, search and delete functions
     # search by key and value of attributes
