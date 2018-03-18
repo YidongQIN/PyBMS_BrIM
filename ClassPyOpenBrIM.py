@@ -6,7 +6,7 @@ __author__ = 'Yidong QIN'
 '''
 Object-oriented programming for OpenBrIM
 '''
-
+import re
 import xml.etree.ElementTree as eET
 
 import prettytable as pt
@@ -25,9 +25,11 @@ class PyOpenBrIMElmt(object):
     # 3 way to create a new project: XML file, XML string or from template
     # read XML from .xml file or String and get root
     def read_xmlfile(self, in_path):
-        # @TODO check path function
-        tree = eET.parse(in_path)
-        self.elmt = tree.getroot()
+        if re.match('.*\.xml', in_path):
+            tree = eET.parse(in_path)
+            self.elmt = tree.getroot()
+        else:
+            print('"{}" is not a .xml file!'.format(in_path))
 
     def read_xmlstr(self, xmlstr):
         self.elmt = eET.fromstring(xmlstr)
@@ -35,7 +37,7 @@ class PyOpenBrIMElmt(object):
     def new_project(self, template='default'):
         # @TODO more template may be added
         if template == 'default':
-            origin_string = '''
+            origin_string = """
 <O Alignment="None" N="" T="Project" TransAlignRule="Right">
     <O N="Units" T="Group">
         <O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit"/>
@@ -45,7 +47,7 @@ class PyOpenBrIMElmt(object):
     <O N="SW" T="AnalysisCase" WeightFactor="-1"/>
     <O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen"/>
 </O>
-            '''
+           """
         else:
             origin_string = '<O Alignment="None" N="" T="Project" TransAlignRule="Right">\n</O>'
         root = eET.fromstring(origin_string)
@@ -76,12 +78,11 @@ class PyOpenBrIMElmt(object):
         return tree.findall(xpath)
         # results is a list[] of elements
 
-    def show_it(self):
-        print(self.elmt.tag, self.elmt.attrib)
+    def show(self):
+        print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
 
-    def show_super(self):
-        #@TODO
-        pass
+    # def show_super(self):
+        # do not set a root as global variable. a so-called root can be sub to another node
 
     def show_sub(self):
         for c in self.elmt:
@@ -119,7 +120,7 @@ class PyOpenBrIMElmt(object):
         #             node.set(key, kv_map.get(key))
 
     # delete a node by attribute
-    def del_node_by_tagkeyvalue(self, tag, kv_map):
+    def del_node(self, tag, kv_map):
         pass
         # for parent_node in self.elmt:
         #     children = parent_node.iter()
