@@ -20,7 +20,6 @@ class PyOpenBrIMElmt(object):
 
     # read XML from .xml file or String and get root
     def read_xmlfile(self, in_path):
-        # @TODO check path function
         tree = et.parse(in_path)
         self.elmt = tree.getroot()
 
@@ -28,7 +27,6 @@ class PyOpenBrIMElmt(object):
         self.elmt = et.fromstring(xmlstr)
 
     def new_project(self, template='default'):
-        # @TODO more template may be added
         if template == 'default':
             origin_string = '''<O Alignment="None" N="" T="Project" 
             TransAlignRule="Right">\n\t<O N="Units" T="Group">
@@ -86,7 +84,6 @@ class PyOpenBrIMElmt(object):
                 return False
         return True
 
-    # @TODO modify, search and delete functions
     def find_by_keyvalue(self, **kv_map):
         pass
         # result_nodes = []
@@ -157,7 +154,6 @@ class PrmElmt(PyOpenBrIMElmt):
 
 
 def add_child_node(parent, child):
-    # @TODO modify by to_elmt_list
     parent_list = to_elmt_list(parent)
     child_list = to_elmt_list(child)
     for p in parent_list:
@@ -259,7 +255,6 @@ class ResultsTable(object):
         return atts
 
     # pretty table
-    # @TODO try pandas instead of prettytable?
     def show_objects(self, result_object):
         tb = pt.PrettyTable(["Name", "OBJECT Type", "Description", "Other Attributes"])
         tb.align["Other Attributes"] = "l"
