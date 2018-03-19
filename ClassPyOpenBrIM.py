@@ -74,7 +74,6 @@ class PyOpenBrIMElmt(object):
         self.elmt.attrib['N'] = self.name
         if path == '':
             out_path = self.elmt.attrib['N'] + '.xml'
-            print('Project will be save as "{}.xml".'.format(self.elmt.attrib['N']))
         elif re.match('.*\.xml', path):
             out_path = path
         else:
@@ -82,6 +81,7 @@ class PyOpenBrIMElmt(object):
             return
         tree = eET.ElementTree(self.elmt)
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
+        print('Project is saved @ "{}".'.format(out_path))
 
     def add_sub(self, *child):
         # children=list(child)
@@ -98,18 +98,24 @@ class PyOpenBrIMElmt(object):
     def show_info(self, if_self='Y', if_sub='N'):
         """show element's tag and attributes
         show self or sub elements"""
-        if if_self == 'Y':
+        if if_self.upper() == 'Y':
             print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
-            if if_sub == 'Y':
-                print('Sub-elements below:')
-        if if_sub == 'Y':
+            if if_sub.upper() == 'Y':
+                pass
+        if if_sub.upper() == 'Y':
+            print('Sub-elements of "{}" below:'.format(self.name))
             for c in self.elmt:
                 print('<{}> {}'.format(c.tag, c.attrib))
+            print('---End of sub elements list---')
 
     def show_sub(self):
         """show all sub elements' tags and attributes"""
+        count = 0
+        print('---sub elements list below: ---')
         for c in self.elmt:
+            count = count + 1
             print('<{}> {}'.format(c.tag, c.attrib))
+        print('---totally {} sub elements---'.format(count))
 
     # change node
     def update(self, **kv_map):
@@ -132,7 +138,7 @@ class PyOpenBrIMElmt(object):
         (xpath)[https://docs.python.org/3/library/xml.etree.elementtree.html?highlight=xpath#xpath-support]"""
         tree = eET.ElementTree(self.elmt)
         results = tree.findall(xpath)
-        if if_print == 'Y':
+        if if_print.upper() == 'Y':
             for a in results:
                 print('<{}> {}'.format(a.tag, a.attrib))
         return results
@@ -147,14 +153,14 @@ class PyOpenBrIMElmt(object):
         return results
 
     def del_all_sub(self):
-        #@TODO cannot delete
-        for child in self.elmt:
-            print(child)
-            self.elmt.remove(child)
-        self.save_project()
+        """remove all sub elements from this node"""
+        # do not use self.elmt.clear() because it remove all sub and attributes
+        to_del = self.elmt.findall('./')
+        for c in to_del:
+            print('<{}> {}'.format(c.tag, c.attrib))
+            self.elmt.remove(c)
 
-
-    def del_sub(self, tag, **kv_map):
+    def del_sub(self, tag='OP', **kv_map):
         """remove node with particular tag and attributes"""
         node_to_del = []
         confirm = ''
@@ -166,13 +172,14 @@ class PyOpenBrIMElmt(object):
             print('Confirm the Elements to be deleted')
             for one in node_to_del:
                 print('<{}> {}'.format(one.tag, one.attrib))
-            confirm = input('Sure to delete? Y/N:')
+            confirm = input('Sure to delete? Y/N:\n')
         else:
             print('Find NO element to delete')
         # verify if delete or not
-        if confirm == 'Y':
+        if confirm.upper() == 'Y':
             for one in node_to_del:
                 self.elmt.remove(one)
+            print('Totally {} elements deleted'.format(len(node_to_del)))
 
     def verify_tag(self, tag):
         """verify the tag (OBJECT or PARAMETER) with the input"""
@@ -256,7 +263,10 @@ class PrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
 
     def __init__(self, name, value, des='', role='Input', par_type='', ut='', uc=''):
-        """create a new PARAMETER in OpenBrIM ParamML """
+        """create a new PARAMETER in OpenBrIM ParamML. \n
+        Mandatory: name, value.\n
+        D-> des is description of the parameter.\n
+        par_type is the Type of parameter, such as Material, but not important in fact. """
         super(PrmElmt, self).__init__(name)
         self.elmt.tag = 'P'
         attrib = dict(V=value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
