@@ -149,7 +149,9 @@ class PyOpenBrIMElmt(object):
     def del_all_sub(self):
         #@TODO cannot delete
         for child in self.elmt:
+            print(child)
             self.elmt.remove(child)
+        self.save_project()
 
 
     def del_sub(self, tag, **kv_map):
