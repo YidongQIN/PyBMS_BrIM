@@ -167,7 +167,7 @@ class PyOpenBrIMElmt(object):
     # format PyOpenBrIM instance, et.element to [list of et.element]
     @staticmethod
     def to_elmt_list(nodes):
-        # change PyOpenBrIM object to et.element
+        """transfer PyOpenBrIM object or element to a list of et.element"""
         if isinstance(nodes, list):
             node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, nodes))
         else:
@@ -176,6 +176,7 @@ class PyOpenBrIMElmt(object):
 
     @staticmethod
     def to_ob_elmt(node):
+        """make sure PyOpenBrIM instance has been transferred into et.element"""
         if isinstance(node, eET.Element):
             return node
         elif isinstance(node, PyOpenBrIMElmt):
@@ -188,6 +189,13 @@ class ObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
 
     def __init__(self, object_type, name='', **obj_attrib):
+        """create a new OBJECT in OpenBrIM ParamML
+        <O T=? >
+        type is mandatory: Point, Line, Group,...
+        N=? name is recommended to be provided.
+        attributes are required.
+        """
+        # sub classes,such as clall Point, Line, will override this method
         super(ObjElmt, self).__init__(name)
         self.elmt.tag = 'O'
         self.elmt.attrib['T'] = object_type
@@ -199,12 +207,25 @@ class PrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
 
     def __init__(self, name, value, des='', role='Input', par_type='', ut='', uc=''):
+        """create a new PARAMETER in OpenBrIM ParamML """
         super(PrmElmt, self).__init__(name)
         self.elmt.tag = 'P'
         attrib = dict(V=value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
         for k, v in attrib.items():
             if v:
                 self.elmt.attrib[k] = v
+
+
+class Point(ObjElmt):
+    """T=Point
+    Mandatory attribute: X, Y, Z"""
+
+    def __init__(self, x, y, z, point_name=''):
+        coordinate =dict(X=x,Y=y,Z=z)
+        super(Point, self).__init__('Point', name=point_name,**coordinate)
+        self.x = x
+        self.y = y
+        self.z = z
 
 
 class ResultsTable(object):
