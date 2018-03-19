@@ -8,6 +8,7 @@ Object-oriented programming for OpenBrIM
 '''
 
 import re
+import time
 import xml.etree.ElementTree as eET
 
 import prettytable as pt
@@ -61,20 +62,20 @@ class PyOpenBrIMElmt(object):
     # save the OpenBrIM model with the name in project attribute
     def save_project(self, path=''):
         """save this element as a Project in a xml file.
-        Must have an element name.
+        Must have an Project name as the file name.
         Must be a project object as <O T=Project >.
         default path is the same folder with .py.
         default file name is the element name.
         may input a new file path to """
-        if self.elmt.tag != 'O' or self.elmt.attrib['T'] != 'Project':
+        if self.elmt.tag != 'O' or self.elmt.attrib.get('T') != 'Project':
             print('! WARNING: "{}" is not a Project object as <O T=Project>'.format(self.name))
             return
         if self.elmt.attrib['N'] == '':
             self.name = input('Please name the project:\n')
-            self.elmt.attrib['N'] = self.name
+        self.elmt.attrib['N'] = self.name
         if path == '':
             out_path = self.elmt.attrib['N'] + '.xml'
-            print('Project will be save as {}.xml.'.format(self.elmt.attrib['N']))
+            print('Project will be save as "{}.xml".'.format(self.elmt.attrib['N']))
         elif re.match('.*\.xml', path):
             out_path = path
         else:
@@ -83,8 +84,10 @@ class PyOpenBrIMElmt(object):
         tree = eET.ElementTree(self.elmt)
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
 
-    def add_sub(self, child):
+    def add_sub(self, *child):
+        # @TODO child is a list of obejcts or elements
         """add one or a list of child elements as sub node"""
+        assert isinstance(child, list)
         for a in PyOpenBrIMElmt.to_elmt_list(child):
             self.elmt.append(a)
 
@@ -93,27 +96,21 @@ class PyOpenBrIMElmt(object):
         for p in PyOpenBrIMElmt.to_elmt_list(parent):
             p.append(self.elmt)
 
-    def show_self(self):
-        """show element's tag and attributes"""
-        print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
+    def show_info(self, if_self='Y', if_sub='N'):
+        """show element's tag and attributes
+        show self or sub elements"""
+        if if_self == 'Y':
+            print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
+            if if_sub == 'Y':
+                print('Sub-elements below:')
+        if if_sub == 'Y':
+            for c in self.elmt:
+                print('<{}> {}'.format(c.tag, c.attrib))
 
     def show_sub(self):
         """show all sub elements' tags and attributes"""
         for c in self.elmt:
             print('<{}> {}'.format(c.tag, c.attrib))
-
-    def verify_tag(self, tag):
-        """verify the tag (OBJECT or PARAMETER) with the input"""
-        if self.elmt.tag != tag:
-            return False
-        return True
-
-    def verify_attrib(self, **attrib_dict):
-        """verify the attributes with the input"""
-        for key in attrib_dict:
-            if self.elmt.attrib.get(key) != attrib_dict.get(key):
-                return False
-        return True
 
     # change node
     def update(self, **kv_map):
@@ -122,7 +119,7 @@ class PyOpenBrIMElmt(object):
             if key in self.elmt.attrib:
                 self.elmt.set(key, kv_map.get(key))
 
-    def copy_from(self, node, attributes={}):
+    def copy_from(self, node, **attributes):
         """copy all attributes of a node, and then change some attribute if needed"""
         temp = PyOpenBrIMElmt.to_ob_elmt(node)
         for key in temp:
@@ -131,46 +128,88 @@ class PyOpenBrIMElmt(object):
             self.elmt.set(key, attributes[key])
 
     # search by xpath
-    def findall_by_xpath(self, xpath):
+    def findall_by_xpath(self, xpath, if_print='N'):
         """find all sub node matched the xpath
         (xpath)[https://docs.python.org/3/library/xml.etree.elementtree.html?highlight=xpath#xpath-support]"""
         tree = eET.ElementTree(self.elmt)
-        return tree.findall(xpath)
+        results = tree.findall(xpath)
+        if if_print == 'Y':
+            for a in results:
+                print('<{}> {}'.format(a.tag, a.attrib))
+        return results
 
-    def find_by_kv(self, **kv_map):
-        #@TODO how to find by attributes
+    def findall_by_attribute(self, **attributes):
         """find all sub nodes by the attributes"""
-        pass
-        # result_nodes = []
-        # for node in self.elmt:
-        #     for k,v in kv_map:
-        #         map={k:v}
-        #         if self.attrib_match(node, map):
-        #             result_nodes.append(node)
-        # return result_nodes
-        # results is a list[] of elements, same as def find_nodes
+        # results is a list[] of elements
+        results = []
+        for any_node in self.elmt.iter():
+            if PyOpenBrIMElmt.match_attribute(any_node, **attributes):
+                results.append(any_node)
+        return results
 
     # delete a node by attribute
-    def del_sub(self, tag, **kv_map):
-        #@TODO how to delete
+    def del_sub_info(self, tag, **kv_map):
         """remove node with particular tag and attributes"""
+        node_to_del = []
+        confirm = ''
+        for child in self.elmt:
+            if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **kv_map):
+                    node_to_del.append(child)
         # list all node to be deleted
+        if node_to_del:
+            print('Confirm the Elements to be deleted')
+            for one in node_to_del:
+                print('<{}> {}'.format(one.tag, one.attrib))
+            confirm = input('Sure to delete? Y/N:')
+        else:
+            print('Find NO element to delete')
         # verify if delete or not
-        pass
+        if confirm == 'Y':
+            for one in node_to_del:
+                self.elmt.remove(one)
+
+    def verify_tag(self, tag):
+        """verify the tag (OBJECT or PARAMETER) with the input"""
+        verified=PyOpenBrIMElmt.match_tag(self.elmt, tag)
+        if verified:
+            print('"{}".tag is {}'.format(self.name, tag))
+        else:
+            print('"{}".tag is NOT {}'.format(self.name, tag))
+        return verified
+
+    def verify_attributes(self, **attrib_dict):
+        """verify the attributes with the input"""
+        verified=PyOpenBrIMElmt.match_attribute(self.elmt,**attrib_dict)
+        if verified:
+            print('"{}" attributes match'.format(self.name))
+        else:
+            print('"{}" attributes NOT match'.format(self.name))
+        return verified
 
     @staticmethod
-    def add_child_node(parent, child):
-        """ forget it, use .add_sub() method instead."""
-        # list(map(lambda p,c:p.append(c),to_elmt_list(parent),to_elmt_list(child)))
-        for p in PyOpenBrIMElmt.to_elmt_list(parent):
-            for c in PyOpenBrIMElmt.to_elmt_list(child):
-                p.append(c)
+    def match_attribute(node, **kv_map):
+        for key in kv_map.keys():
+            if PyOpenBrIMElmt.to_ob_elmt(node).attrib.get(key) != kv_map[key]:
+                return False
+        return True
+
+    @staticmethod
+    def match_tag(node, tag):
+        """tag = 'O', 'P' or 'OP'"""
+        if tag == 'OP':
+            return True
+        elif tag == 'O' or tag == 'P':
+            if node.tag == tag:
+                return True
+        else:
+            print('tag should be "O", "P" or "OP".')
+        return False
 
     # format PyOpenBrIM instance, et.element to [list of et.element]
     @staticmethod
     def to_elmt_list(nodes):
         """transfer PyOpenBrIM object or element to a list of et.element"""
-        if isinstance(nodes, list):
+        if isinstance(nodes, (list,tuple)):
             node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, nodes))
         else:
             node_list = [PyOpenBrIMElmt.to_ob_elmt(nodes)]
@@ -222,10 +261,27 @@ class Point(ObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
 
+    # @TODO Point methods?
+
     def __init__(self, x, y, z, point_name=''):
-        coordinate =dict(X=x,Y=y,Z=z)
-        #@TODO Point methods?
-        super(Point, self).__init__('Point', name=point_name,**coordinate)
+        start = time.clock()
+        # if not(isinstance(x, int or float) and isinstance(y,int or float) and isinstance(z,int or float)):
+        #     print('! ERROR: Coordinate must be a number.')
+        #     return
+        if not isinstance(x, (int, float)):
+            print('! ERROR: X Coordinate must be a number.')
+            # return
+        if not isinstance(y, (int, float)):
+            print('! ERROR: Y Coordinate must be a number.')
+            # return
+        if not isinstance(z, (int, float)):
+            print('! ERROR: Z Coordinate must be a number.')
+            # return
+        print(time.clock() - start)
+        super(Point, self).__init__('Point', name=point_name)
+        self.elmt.attrib['X'] = str(x)
+        self.elmt.attrib['Y'] = str(y)
+        self.elmt.attrib['Z'] = str(z)
         self.x = x
         self.y = y
         self.z = z
