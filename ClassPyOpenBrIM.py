@@ -6,6 +6,7 @@ __author__ = 'Yidong QIN'
 '''
 Object-oriented programming for OpenBrIM
 '''
+
 import re
 import xml.etree.ElementTree as eET
 
@@ -15,27 +16,28 @@ import prettytable as pt
 class PyOpenBrIMElmt(object):
     """basic class for ParamML file of OpenBrIM"""
 
-    def __init__(self, name):
+    def __init__(self, name=''):
         """ name is project name"""
         self.name = name
-        self.elmt = eET.Element("", {})
-        if name != '':
-            self.elmt.attrib['N'] = name
+        self.elmt = eET.Element("", {'N': name})
+        self.if_root = False
 
     # 3 way to create a new project: XML file, XML string or from template
     # read XML from .xml file or String and get root
-    def read_xmlfile(self, in_path):
-        if re.match('.*\.xml', in_path):
-            tree = eET.parse(in_path)
+    def read_xmlfile(self, xml_path):
+        """ read in a xml file"""
+        if re.match('.*\.xml', xml_path):
+            tree = eET.parse(xml_path)
             self.elmt = tree.getroot()
         else:
-            print('"{}" is not a .xml file!'.format(in_path))
+            print('"{}" is not a .xml file!'.format(xml_path))
 
     def read_xmlstr(self, xmlstr):
+        """read xml string"""
         self.elmt = eET.fromstring(xmlstr)
 
     def new_project(self, template='default'):
-        # @TODO more template may be added
+        """create new project with a template"""
         if template == 'default':
             origin_string = """
 <O Alignment="None" N="" T="Project" TransAlignRule="Right">
@@ -54,79 +56,132 @@ class PyOpenBrIMElmt(object):
         # default new OpenBrIM project named as self.name
         root.attrib['N'] = self.name
         self.elmt = root
+        self.if_root = True
 
     # save the OpenBrIM model with the name in project attribute
     def save_project(self, path=''):
-        tree = eET.ElementTree(self.elmt)
-        out_path = self.elmt.attrib['N'] + '.xml'
-        if path != '':
+        """save this element as a Project in a xml file.
+        Must have an element name.
+        Must be a project object as <O T=Project >.
+        default path is the same folder with .py.
+        default file name is the element name.
+        may input a new file path to """
+        if self.elmt.tag != 'O' or self.elmt.attrib['T'] != 'Project':
+            print('! WARNING: "{}" is not a Project object as <O T=Project>'.format(self.name))
+            return
+        if self.elmt.attrib['N'] == '':
+            self.name = input('Please name the project:\n')
+            self.elmt.attrib['N'] = self.name
+        if path == '':
+            out_path = self.elmt.attrib['N'] + '.xml'
+            print('Project will be save as {}.xml.'.format(self.elmt.attrib['N']))
+        elif re.match('.*\.xml', path):
             out_path = path
+        else:
+            print('Error: should be a xml file')
+            return
+        tree = eET.ElementTree(self.elmt)
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
 
     def add_sub(self, child):
-        for a in to_elmt_list(child):
+        """add one or a list of child elements as sub node"""
+        for a in PyOpenBrIMElmt.to_elmt_list(child):
             self.elmt.append(a)
 
-    def attach(self, parent):
-        # attach this element/node to a parent
-        for p in to_elmt_list(parent):
+    def attach_to(self, parent):
+        """attach this element to a parent element"""
+        for p in PyOpenBrIMElmt.to_elmt_list(parent):
             p.append(self.elmt)
 
-    # search by xpath
-    def findall_by_xpath(self, xpath):
-        tree = eET.ElementTree(self.elmt)
-        return tree.findall(xpath)
-        # results is a list[] of elements
-
-    def show(self):
+    def show_self(self):
+        """show element's tag and attributes"""
         print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
 
-    # def show_super(self):
-        # do not set a root as global variable. a so-called root can be sub to another node
-
     def show_sub(self):
+        """show all sub elements' tags and attributes"""
         for c in self.elmt:
-            print(c.tag,c.attrib)
+            print('<{}> {}'.format(c.tag, c.attrib))
 
-    # @TODO modify, search and delete functions
-    # search by key and value of attributes
-    @staticmethod
-    def if_match(node, **kv_map):
-        for key in kv_map:
-            if node.get(key) != kv_map.get(key):
+    def verify_tag(self, tag):
+        """verify the tag (OBJECT or PARAMETER) with the input"""
+        if self.elmt.tag != tag:
+            return False
+        return True
+
+    def verify_attrib(self, **attrib_dict):
+        """verify the attributes with the input"""
+        for key in attrib_dict:
+            if self.elmt.attrib.get(key) != attrib_dict.get(key):
                 return False
         return True
 
-    def find_by_keyvalue(self, **kv_map):
+    # change node
+    def update(self, **kv_map):
+        """update the attributes"""
+        for key in kv_map:
+            if key in self.elmt.attrib:
+                self.elmt.set(key, kv_map.get(key))
+
+    def copy_from(self, node, attributes={}):
+        """copy all attributes of a node, and then change some attribute if needed"""
+        temp = PyOpenBrIMElmt.to_ob_elmt(node)
+        for key in temp:
+            self.elmt.set(key, temp.attrib[key])
+        for key in attributes:
+            self.elmt.set(key, attributes[key])
+
+    # search by xpath
+    def findall_by_xpath(self, xpath):
+        """find all sub node matched the xpath
+        (xpath)[https://docs.python.org/3/library/xml.etree.elementtree.html?highlight=xpath#xpath-support]"""
+        tree = eET.ElementTree(self.elmt)
+        return tree.findall(xpath)
+
+    def find_by_kv(self, **kv_map):
+        """find all sub nodes by the attributes"""
         pass
         # result_nodes = []
         # for node in self.elmt:
         #     for k,v in kv_map:
         #         map={k:v}
-        #         if self.if_match(node, map):
+        #         if self.attrib_match(node, map):
         #             result_nodes.append(node)
         # return result_nodes
         # results is a list[] of elements, same as def find_nodes
 
-    # change node
-    def change_node_attributes(self, nodelist, kv_map, is_delete=False):
-        pass
-        # for node in nodelist:
-        #     for key in kv_map:
-        #         if is_delete:
-        #             if key in node.attrib:
-        #                 del node.attrib[key]
-        #         else:
-        #             node.set(key, kv_map.get(key))
-
     # delete a node by attribute
-    def del_node(self, tag, kv_map):
+    def del_sub(self, tag, **kv_map):
+        """remove node with particular tag and attributes"""
+        # list all node to be deleted
+        # verify if delete or not
         pass
-        # for parent_node in self.elmt:
-        #     children = parent_node.iter()
-        #     for child in children:
-        #         if child.tag == tag and self.if_match(child, kv_map):
-        #             parent_node.remove(child)
+
+    @staticmethod
+    def add_child_node(parent, child):
+        """ forget it, use .add_sub() method instead."""
+        # list(map(lambda p,c:p.append(c),to_elmt_list(parent),to_elmt_list(child)))
+        for p in PyOpenBrIMElmt.to_elmt_list(parent):
+            for c in PyOpenBrIMElmt.to_elmt_list(child):
+                p.append(c)
+
+    # format PyOpenBrIM instance, et.element to [list of et.element]
+    @staticmethod
+    def to_elmt_list(nodes):
+        # change PyOpenBrIM object to et.element
+        if isinstance(nodes, list):
+            node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, nodes))
+        else:
+            node_list = [PyOpenBrIMElmt.to_ob_elmt(nodes)]
+        return node_list
+
+    @staticmethod
+    def to_ob_elmt(node):
+        if isinstance(node, eET.Element):
+            return node
+        elif isinstance(node, PyOpenBrIMElmt):
+            return node.elmt
+        else:
+            print('Unacceptable type of input result.')
 
 
 class ObjElmt(PyOpenBrIMElmt):
@@ -152,36 +207,11 @@ class PrmElmt(PyOpenBrIMElmt):
                 self.elmt.attrib[k] = v
 
 
-def add_child_node(parent, child):
-    # list(map(lambda p,c:p.append(c),to_elmt_list(parent),to_elmt_list(child)))
-    for p in to_elmt_list(parent):
-        for c in to_elmt_list(child):
-            p.append(c)
-
-
-# format PyOpenBrIM instance, et.element to [list of et.element]
-def to_elmt_list(nodes):
-    # change PyOpenBrIM object to et.element
-    def to_ob_elmt(node):
-        if isinstance(node, eET.Element):
-            return node
-        elif isinstance(node, PyOpenBrIMElmt):
-            return node.elmt
-        else:
-            print('Unacceptable type of input result.')
-
-    if isinstance(nodes, list):
-        node_list = list(map(to_ob_elmt, nodes))
-    else:
-        node_list = [to_ob_elmt(nodes)]
-    return node_list
-
-
 class ResultsTable(object):
     """this class is used to show search results in format of table"""
 
     def __init__(self, result):
-        self.rowdata = to_elmt_list(result)
+        self.rowdata = PyOpenBrIMElmt.to_elmt_list(result)
         self.result_obj = eET.Element("", {})
         self.result_par = eET.Element("", {})
         self.classify_nodes()
