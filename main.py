@@ -1,5 +1,6 @@
 # import ClassPyOpenBrIM
 from ClassPyOpenBrIM import *
+import time
 
 newproj = PyOpenBrIMElmt('new proj')
 newproj.read_xmlfile('xml file/new proj.xml')
@@ -17,10 +18,14 @@ new_node = ObjElmt('Line', 'object name', D='description of object', UC='test')
 new_node2 = ObjElmt('Not Line', 'object2', D='des')
 # new_par = PrmElmt('test param', '666', 'de', par_type='p_tag')
 # new_node2.add_sub(new_par)
-#@TODO
-newproj.add_sub([new_node2,new_node])
+add_list=[new_node2,new_node]
+newproj.add_sub(new_node2,new_node)
 newproj.show_info('','Y')
-
+newproj.del_all_sub()
+# newproj.del_sub('P',D='Density')
+print('----')
+newproj.save_project()
+newproj.show_info('','Y')
 # print('--- change attribute test ---')
 # newproj.show_sub()
 # new_node2.update(D='this has been changed!')

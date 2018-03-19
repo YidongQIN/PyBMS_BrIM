@@ -8,7 +8,6 @@ Object-oriented programming for OpenBrIM
 '''
 
 import re
-import time
 import xml.etree.ElementTree as eET
 
 import prettytable as pt
@@ -85,9 +84,9 @@ class PyOpenBrIMElmt(object):
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
 
     def add_sub(self, *child):
-        # @TODO child is a list of obejcts or elements
+        # children=list(child)
         """add one or a list of child elements as sub node"""
-        assert isinstance(child, list)
+        # assert isinstance(child, list)
         for a in PyOpenBrIMElmt.to_elmt_list(child):
             self.elmt.append(a)
 
@@ -147,14 +146,19 @@ class PyOpenBrIMElmt(object):
                 results.append(any_node)
         return results
 
-    # delete a node by attribute
-    def del_sub_info(self, tag, **kv_map):
+    def del_all_sub(self):
+        #@TODO cannot delete
+        for child in self.elmt:
+            self.elmt.remove(child)
+
+
+    def del_sub(self, tag, **kv_map):
         """remove node with particular tag and attributes"""
         node_to_del = []
         confirm = ''
         for child in self.elmt:
             if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **kv_map):
-                    node_to_del.append(child)
+                node_to_del.append(child)
         # list all node to be deleted
         if node_to_del:
             print('Confirm the Elements to be deleted')
@@ -170,7 +174,7 @@ class PyOpenBrIMElmt(object):
 
     def verify_tag(self, tag):
         """verify the tag (OBJECT or PARAMETER) with the input"""
-        verified=PyOpenBrIMElmt.match_tag(self.elmt, tag)
+        verified = PyOpenBrIMElmt.match_tag(self.elmt, tag)
         if verified:
             print('"{}".tag is {}'.format(self.name, tag))
         else:
@@ -179,7 +183,7 @@ class PyOpenBrIMElmt(object):
 
     def verify_attributes(self, **attrib_dict):
         """verify the attributes with the input"""
-        verified=PyOpenBrIMElmt.match_attribute(self.elmt,**attrib_dict)
+        verified = PyOpenBrIMElmt.match_attribute(self.elmt, **attrib_dict)
         if verified:
             print('"{}" attributes match'.format(self.name))
         else:
@@ -209,8 +213,10 @@ class PyOpenBrIMElmt(object):
     @staticmethod
     def to_elmt_list(nodes):
         """transfer PyOpenBrIM object or element to a list of et.element"""
-        if isinstance(nodes, (list,tuple)):
+        if isinstance(nodes, list):
             node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, nodes))
+        elif isinstance(nodes, tuple):
+            node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, list(nodes)))
         else:
             node_list = [PyOpenBrIMElmt.to_ob_elmt(nodes)]
         return node_list
@@ -257,27 +263,32 @@ class PrmElmt(PyOpenBrIMElmt):
                 self.elmt.attrib[k] = v
 
 
+class Material(ObjElmt):
+    pass
+
+
+class Section(ObjElmt):
+    pass
+
+
+class Shape(ObjElmt):
+    pass
+
+
+class Unit(ObjElmt):
+    pass
+
+
+class Group(ObjElmt):
+    pass
+
+
 class Point(ObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
 
-    # @TODO Point methods?
-
     def __init__(self, x, y, z, point_name=''):
-        start = time.clock()
-        # if not(isinstance(x, int or float) and isinstance(y,int or float) and isinstance(z,int or float)):
-        #     print('! ERROR: Coordinate must be a number.')
-        #     return
-        if not isinstance(x, (int, float)):
-            print('! ERROR: X Coordinate must be a number.')
-            # return
-        if not isinstance(y, (int, float)):
-            print('! ERROR: Y Coordinate must be a number.')
-            # return
-        if not isinstance(z, (int, float)):
-            print('! ERROR: Z Coordinate must be a number.')
-            # return
-        print(time.clock() - start)
+        # coordinates may be parameters not numbers!
         super(Point, self).__init__('Point', name=point_name)
         self.elmt.attrib['X'] = str(x)
         self.elmt.attrib['Y'] = str(y)
@@ -285,6 +296,31 @@ class Point(ObjElmt):
         self.x = x
         self.y = y
         self.z = z
+        self.check_num()
+
+    def check_num(self):
+        if not isinstance(self.x, (int, float)):
+            print('WARNING: X Coordinate is NOT a number.')
+        if not isinstance(self.y, (int, float)):
+            print('WARNING: Y Coordinate is NOT a number.')
+        if not isinstance(self.z, (int, float)):
+            print('WARNING: Z Coordinate is NOT a number.')
+
+
+class Line(ObjElmt):
+    pass
+
+
+class Surface(ObjElmt):
+    pass
+
+
+class FELine(ObjElmt):
+    pass
+
+
+class FESurface(ObjElmt):
+    pass
 
 
 class ResultsTable(object):
