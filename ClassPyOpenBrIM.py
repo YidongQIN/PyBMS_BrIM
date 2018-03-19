@@ -138,6 +138,7 @@ class PyOpenBrIMElmt(object):
         return tree.findall(xpath)
 
     def find_by_kv(self, **kv_map):
+        #@TODO how to find by attributes
         """find all sub nodes by the attributes"""
         pass
         # result_nodes = []
@@ -151,6 +152,7 @@ class PyOpenBrIMElmt(object):
 
     # delete a node by attribute
     def del_sub(self, tag, **kv_map):
+        #@TODO how to delete
         """remove node with particular tag and attributes"""
         # list all node to be deleted
         # verify if delete or not
@@ -222,6 +224,7 @@ class Point(ObjElmt):
 
     def __init__(self, x, y, z, point_name=''):
         coordinate =dict(X=x,Y=y,Z=z)
+        #@TODO Point methods?
         super(Point, self).__init__('Point', name=point_name,**coordinate)
         self.x = x
         self.y = y
