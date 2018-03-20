@@ -24,7 +24,7 @@ class PyOpenBrIMElmt(object):
 
     # 3 way to create a new project: XML file, XML string or from template
     # read XML from .xml file or String and get root
-    def read_xmlfile(self, xml_path):
+    def parse_xmlfile(self, xml_path):
         """ read in a xml file"""
         if re.match('.*\.xml', xml_path):
             tree = eET.parse(xml_path)
@@ -117,22 +117,20 @@ class PyOpenBrIMElmt(object):
             print('<{}> {}'.format(c.tag, c.attrib))
         print('---totally {} sub elements---'.format(count))
 
-    # change node
-    def update(self, **kv_map):
+    def update(self, **attrib_dict):
         """update the attributes"""
-        for key in kv_map:
+        for key in attrib_dict:
             if key in self.elmt.attrib:
-                self.elmt.set(key, kv_map.get(key))
+                self.elmt.set(key, attrib_dict.get(key))
 
-    def copy_from(self, node, **attributes):
+    def copy_from(self, node, **attrib_dict):
         """copy all attributes of a node, and then change some attribute if needed"""
         temp = PyOpenBrIMElmt.to_ob_elmt(node)
         for key in temp:
             self.elmt.set(key, temp.attrib[key])
-        for key in attributes:
-            self.elmt.set(key, attributes[key])
+        for key in attrib_dict:
+            self.elmt.set(key, attrib_dict[key])
 
-    # search by xpath
     def findall_by_xpath(self, xpath, if_print='N'):
         """find all sub node matched the xpath
         (xpath)[https://docs.python.org/3/library/xml.etree.elementtree.html?highlight=xpath#xpath-support]"""
@@ -156,16 +154,17 @@ class PyOpenBrIMElmt(object):
         """remove all sub elements from this node"""
         # do not use self.elmt.clear() because it remove all sub and attributes
         to_del = self.elmt.findall('./')
+        print('These elements will be deleted')
         for c in to_del:
             print('<{}> {}'.format(c.tag, c.attrib))
             self.elmt.remove(c)
 
-    def del_sub(self, tag='OP', **kv_map):
+    def del_sub(self, tag='OP', **attrib_dict):
         """remove node with particular tag and attributes"""
         node_to_del = []
         confirm = ''
         for child in self.elmt:
-            if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **kv_map):
+            if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **attrib_dict):
                 node_to_del.append(child)
         # list all node to be deleted
         if node_to_del:
@@ -191,7 +190,7 @@ class PyOpenBrIMElmt(object):
         return verified
 
     def verify_attributes(self, **attrib_dict):
-        """verify the attributes with the input"""
+        """verify the attributes with the inputted attributes dict"""
         verified = PyOpenBrIMElmt.match_attribute(self.elmt, **attrib_dict)
         if verified:
             print('"{}" attributes match'.format(self.name))
@@ -200,9 +199,10 @@ class PyOpenBrIMElmt(object):
         return verified
 
     @staticmethod
-    def match_attribute(node, **kv_map):
-        for key in kv_map.keys():
-            if PyOpenBrIMElmt.to_ob_elmt(node).attrib.get(key) != kv_map[key]:
+    def match_attribute(node, **attrib_dict):
+        """if the node.attribute match every item in the inputted attributes dict"""
+        for key in attrib_dict.keys():
+            if PyOpenBrIMElmt.to_ob_elmt(node).attrib.get(key) != attrib_dict[key]:
                 return False
         return True
 
@@ -218,10 +218,9 @@ class PyOpenBrIMElmt(object):
             print('tag should be "O", "P" or "OP".')
         return False
 
-    # format PyOpenBrIM instance, et.element to [list of et.element]
     @staticmethod
     def to_elmt_list(nodes):
-        """transfer PyOpenBrIM object or element to a list of et.element"""
+        """format PyOpenBrIM object or element to a [list of et.element]"""
         if isinstance(nodes, list):
             node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, nodes))
         elif isinstance(nodes, tuple):
@@ -245,13 +244,12 @@ class ObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
 
     def __init__(self, object_type, name='', **obj_attrib):
-        """create a new OBJECT in OpenBrIM ParamML
-        <O T=? >
-        type is mandatory: Point, Line, Group,...
-        N=? name is recommended to be provided.
-        attributes are required.
+        """create a new OBJECT in OpenBrIM ParamML.\n
+        Mandatory is Type <O T= ? > such as Point, Line, Group, ...\n
+        N = ? as name is recommended to be provided.\n
+        attributes are in format of dict.
         """
-        # sub classes,such as clall Point, Line, will override this method
+        # sub classes will override this method by object_type = 'Point"...
         super(ObjElmt, self).__init__(name)
         self.elmt.tag = 'O'
         self.elmt.attrib['T'] = object_type
@@ -311,6 +309,8 @@ class Point(ObjElmt):
         self.check_num()
 
     def check_num(self):
+        """typically the coordinates should be numbers.
+        But parameters are allowed, and in that case the values are strings"""
         if not isinstance(self.x, (int, float)):
             print('WARNING: X Coordinate is NOT a number.')
         if not isinstance(self.y, (int, float)):
@@ -320,20 +320,49 @@ class Point(ObjElmt):
 
 
 class Line(ObjElmt):
-    pass
 
+    def __init__(self, point1=None, point2=None, section=None, line_name=''):
+        super(Line, self).__init__('Line', name=line_name)
+        if point1:
+            self.add_point(point1)
+        if point2:
+            self.add_point(point2)
+        if section:
+            self.set_section(section)
+
+    def check_line(self):
+        """should have Two Points and One Section"""
+        points = self.elmt.findall("./[@T='Point']")
+        sects = self.elmt.findall("./[@T='Section']")
+        if len(points) != 2:
+            return False
+        if len(sects) != 1:
+            return False
+        return True
+
+    def line_update(self, point1, point2, section):
+        self.add_point(point1)
+        self.add_point(point2)
+        self.set_section(section)
+
+    def add_point(self, point_obj):
+        self.elmt.append(PyOpenBrIMElmt.to_ob_elmt(point_obj))
+
+    def set_section(self, section_obj):
+        self.elmt.append(PyOpenBrIMElmt.to_ob_elmt(section_obj))
 
 class Surface(ObjElmt):
     pass
 
-
 class FELine(ObjElmt):
     pass
-
 
 class FESurface(ObjElmt):
     pass
 
+class ResultsTree(object):
+    """show results in tree-like format"""
+    pass
 
 class ResultsTable(object):
     """this class is used to show search results in format of table"""
