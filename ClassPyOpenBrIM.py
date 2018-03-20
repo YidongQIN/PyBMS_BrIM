@@ -364,19 +364,17 @@ class ShowTree(object):
     def __init__(self, result):
         self.elmts=PyOpenBrIMElmt.to_elmt_list(result)
         for one_branch in self.elmts:
-            ShowTree.branch(one_branch)
-
+            ShowTree.branch(one_branch,0)
 
     @staticmethod
-    def branch(node, level=1):
+    def branch(node, level):
         for tab in range(level):
             print('\t',end='')
-        attrib_shown=''
-        if node.attrib.get('T'):
-            attrib_shown = 'T={}'.format(node.attrib['T'])
-        if node.attrib.get('N'):
-            attrib_shown = attrib_shown+' N={}'.format(node.attrib['N'])
-        print('|--<{}> {}'.format(node.tag, attrib_shown))
+        other_info=''
+        for key in ['T','N']:
+            if node.attrib.get(key):
+                other_info = other_info+' {}={}'.format(key, node.attrib[key])
+        print('|--<{}> {}'.format(node.tag, other_info))
         for sub in node:
             ShowTree.branch(sub,level+1)
 
