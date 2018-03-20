@@ -23,7 +23,6 @@ class PyOpenBrIMElmt(object):
         self.if_root = False
 
     # 3 way to create a new project: XML file, XML string or from template
-    # read XML from .xml file or String and get root
     def parse_xmlfile(self, xml_path):
         """ read in a xml file"""
         if re.match('.*\.xml', xml_path):
@@ -60,11 +59,11 @@ class PyOpenBrIMElmt(object):
 
     # save the OpenBrIM model with the name in project attribute
     def save_project(self, path=''):
-        """save this element as a Project in a xml file.
-        Must have an Project name as the file name.
-        Must be a project object as <O T=Project >.
-        default path is the same folder with .py.
-        default file name is the element name.
+        """save this element as a Project in a xml file. \n
+        Must be a project object as <O T=Project >. \n
+        Must have an Project name as the file name. \n
+        default path is the same folder with .py. \n
+        default file name is the element name. \n
         may input a new file path to """
         if self.elmt.tag != 'O' or self.elmt.attrib.get('T') != 'Project':
             print('! WARNING: "{}" is not a Project object as <O T=Project>'.format(self.name))
@@ -84,38 +83,33 @@ class PyOpenBrIMElmt(object):
         print('Project is saved @ "{}".'.format(out_path))
 
     def add_sub(self, *child):
-        # children=list(child)
         """add one or a list of child elements as sub node"""
-        # assert isinstance(child, list)
+        # children=list(child)
         for a in PyOpenBrIMElmt.to_elmt_list(child):
             self.elmt.append(a)
 
     def attach_to(self, parent):
-        """attach this element to a parent element"""
+        """attach this element to parent element(s)"""
         for p in PyOpenBrIMElmt.to_elmt_list(parent):
             p.append(self.elmt)
 
     def show_info(self, if_self='Y', if_sub='N'):
-        """show element's tag and attributes
-        show self or sub elements"""
+        """show tags and attributes of itself or sub elements"""
         if if_self.upper() == 'Y':
             print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
             if if_sub.upper() == 'Y':
                 pass
         if if_sub.upper() == 'Y':
-            print('Sub-elements of "{}" below:'.format(self.name))
-            for c in self.elmt:
-                print('<{}> {}'.format(c.tag, c.attrib))
-            print('---End of sub elements list---')
+            self.show_sub()
 
     def show_sub(self):
         """show all sub elements' tags and attributes"""
         count = 0
-        print('---sub elements list below: ---')
+        print('- - Sub elements of "{}" list below:'.format(self.name))
         for c in self.elmt:
             count = count + 1
-            print('<{}> {}'.format(c.tag, c.attrib))
-        print('---totally {} sub elements---'.format(count))
+            print('\t<{}> {}'.format(c.tag, c.attrib))
+        print('- - totally {} sub elements---'.format(count))
 
     def update(self, **attrib_dict):
         """update the attributes"""
@@ -351,24 +345,47 @@ class Line(ObjElmt):
     def set_section(self, section_obj):
         self.elmt.append(PyOpenBrIMElmt.to_ob_elmt(section_obj))
 
+
 class Surface(ObjElmt):
     pass
+
 
 class FELine(ObjElmt):
     pass
 
+
 class FESurface(ObjElmt):
     pass
 
-class ResultsTree(object):
-    """show results in tree-like format"""
-    pass
 
-class ResultsTable(object):
+class ShowTree(object):
+    """show results in tree-like format"""
+
+    def __init__(self, result):
+        self.elmts=PyOpenBrIMElmt.to_elmt_list(result)
+        for one_branch in self.elmts:
+            ShowTree.branch(one_branch)
+
+
+    @staticmethod
+    def branch(node, level=1):
+        for tab in range(level):
+            print('\t',end='')
+        attrib_shown=''
+        if node.attrib.get('T'):
+            attrib_shown = 'T={}'.format(node.attrib['T'])
+        if node.attrib.get('N'):
+            attrib_shown = attrib_shown+' N={}'.format(node.attrib['N'])
+        print('|--<{}> {}'.format(node.tag, attrib_shown))
+        for sub in node:
+            ShowTree.branch(sub,level+1)
+
+
+class ShowTable(object):
     """this class is used to show search results in format of table"""
 
     def __init__(self, result):
-        self.rowdata = PyOpenBrIMElmt.to_elmt_list(result)
+        self.elmts = PyOpenBrIMElmt.to_elmt_list(result)
         self.result_obj = eET.Element("", {})
         self.result_par = eET.Element("", {})
         self.classify_nodes()
@@ -376,7 +393,7 @@ class ResultsTable(object):
 
     # separate OBJECT and PARAMetER
     def classify_nodes(self):
-        for node in self.rowdata:
+        for node in self.elmts:
             if node.tag is 'P':
                 self.result_par.append(node)
             if node.tag is 'O':

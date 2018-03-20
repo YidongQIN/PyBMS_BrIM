@@ -1,12 +1,12 @@
 <O Alignment="None" N="new" T="Project" TransAlignRule="Right">
 	<O N="Units" T="Group">
 		<O N="SW" T="AnalysisCase" WeightFactor="-1"/>
-		<P D="Density" N="d" Role="Input" V="0.0000002248"/>
+		<P D="Density" N="d" Role="Input"  V="0.0000002248"/>
 	</O>
 	<P D="Concrete Compressive Strength" N="Fc28" Role="Input" V="4"/>
 	<O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen"/>
 	<O N="Section_BottomChord" T="Section">
-		<P N="Ax" V="7.58" />
+		<P N="Ax" T="Parameter" V="7.58" />
 		<O N="Shape_BottomChord_Out" T="Shape">
 			<O T="Point" X="-BottomChord_width/2" Y="-BottomChord_depth/2" />
 			<O T="Point" X="-BottomChord_width/2" Y="BottomChord_depth/2" />

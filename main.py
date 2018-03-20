@@ -2,26 +2,24 @@
 from ClassPyOpenBrIM import *
 
 newproj = PyOpenBrIMElmt('new proj')
-newproj.read_xmlfile('xml file/test.xml')
-
+newproj.parse_xmlfile('xml file/test.xml')
 # print('---add sub nodes test---')
 new_node = ObjElmt('Line', 'new node1', D='~ TEST ~ ', UC='test')
 new_node2 = ObjElmt('Not Line', 'new_node2', D='~ ~ TEST ~ ~')
 new_par = PrmElmt('test parameter', '666', '$$$$$$$$$$$', par_type='p_tag')
 new_node2.add_sub(new_par)
 newproj.add_sub(new_node2, new_node)
-
-
-# newproj.show_sub()
-newproj.save_project('before del.xml')
+# newproj.show_info('Y','Y')
+newproj.save_project()
+ShowTree(newproj)
+# print('---delete test---')
+# newproj.save_project('before del.xml')
 # newproj.del_all_sub()
-newproj.del_sub(T='Line')
+# newproj.del_sub(T='Line')
 # newproj.show_sub()
-newproj.save_project('after del.xml')
-
+# newproj.save_project('after del.xml')
 # newproj.del_sub('P',D='Density')
 # newproj.save_project()
-# print('---\n---delete test---')
 # newproj.show_info('','Y')
 # print('--- change attribute test ---')
 # newproj.show_sub()
