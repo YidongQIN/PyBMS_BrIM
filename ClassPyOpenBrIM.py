@@ -452,6 +452,7 @@ class ShowTree(object):
         for tab in range(level):
             print('\t', end='')
         other_info = ''
+        #@TODO O P different attrib to show
         for key in ['T', 'N']:
             if node.attrib.get(key):
                 other_info = other_info + '{}={}\t'.format(key, node.attrib[key])
