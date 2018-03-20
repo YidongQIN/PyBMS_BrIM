@@ -111,6 +111,9 @@ class PyOpenBrIMElmt(object):
             print('\t<{}> {}'.format(c.tag, c.attrib))
         print('- - totally {} sub elements---'.format(count))
 
+    def get_attrib(self, key):
+        return self.elmt.attrib[key]
+
     def update(self, **attrib_dict):
         """update the attributes"""
         for key in attrib_dict:
@@ -194,17 +197,20 @@ class PyOpenBrIMElmt(object):
 
     @staticmethod
     def match_attribute(node, **attrib_dict):
+        assert isinstance(node, eET.Element)
         """if the node.attribute match every item in the inputted attributes dict"""
         for key in attrib_dict.keys():
-            if PyOpenBrIMElmt.to_ob_elmt(node).attrib.get(key) != attrib_dict[key]:
+            if node.attrib.get(key) != attrib_dict[key]:
                 return False
         return True
 
     @staticmethod
     def match_tag(node, tag):
         """tag = 'O', 'P' or 'OP'"""
+        assert isinstance(node, eET.Element)
         if tag == 'OP':
-            return True
+            if node.tag in ['O', 'P']:
+                return True
         elif tag == 'O' or tag == 'P':
             if node.tag == tag:
                 return True
@@ -258,7 +264,7 @@ class PrmElmt(PyOpenBrIMElmt):
         """create a new PARAMETER in OpenBrIM ParamML. \n
         Mandatory: name, value.\n
         D-> des is description of the parameter.\n
-        par_type is the Type of parameter, such as Material, but not important in fact. """
+        par_type is the Type of parameter, such as Material. """
         super(PrmElmt, self).__init__(name)
         self.elmt.tag = 'P'
         attrib = dict(V=value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
@@ -284,7 +290,10 @@ class Unit(ObjElmt):
 
 
 class Group(ObjElmt):
-    pass
+
+    def __init__(self, group_name, *elmts_list):
+        super(Group, self).__init__('Group', name=group_name)
+        self.add_sub(elmts_list)
 
 
 class Point(ObjElmt):
@@ -314,20 +323,23 @@ class Point(ObjElmt):
 
 
 class Line(ObjElmt):
+    """T=Line, Two points and one section needed"""
 
     def __init__(self, point1=None, point2=None, section=None, line_name=''):
         super(Line, self).__init__('Line', name=line_name)
+        # start=time.clock()
         if point1:
             self.add_point(point1)
         if point2:
             self.add_point(point2)
         if section:
             self.set_section(section)
+        # print(time.clock()-start)
 
     def check_line(self):
         """should have Two Points and One Section"""
-        points = self.elmt.findall("./[@T='Point']")
-        sects = self.elmt.findall("./[@T='Section']")
+        points = self.elmt.findall("./O[@T='Point']")
+        sects = self.elmt.findall("./O[@T='Section']")
         if len(points) != 2:
             return False
         if len(sects) != 1:
@@ -340,14 +352,83 @@ class Line(ObjElmt):
         self.set_section(section)
 
     def add_point(self, point_obj):
-        self.elmt.append(PyOpenBrIMElmt.to_ob_elmt(point_obj))
+        assert isinstance(point_obj, Point), print('An object of class Point is needed')
+        self.elmt.append(point_obj.elmt)
 
     def set_section(self, section_obj):
-        self.elmt.append(PyOpenBrIMElmt.to_ob_elmt(section_obj))
+        """section has attribute of material"""
+        assert isinstance(section_obj, Section), print('An object of class Section is needed')
+        self.elmt.append(section_obj.elmt)
 
 
 class Surface(ObjElmt):
-    pass
+    def __init__(self, point1=None, point2=None, point3=None, point4=None, thick_par=None, material_obj=None,
+                 surface_name=''):
+        super(Surface, self).__init__('Surface', name=surface_name)
+        self.name = surface_name
+        if point1:
+            self.add_point(point1)
+        if point2:
+            self.add_point(point2)
+        if point3:
+            self.add_point(point3)
+        if point4:
+            self.add_point(point4)
+        if material_obj:
+            self.add_mat_par(material_obj)
+        if thick_par:
+            self.add_thick_par(thick_par)
+        self.check_surface()
+
+    def check_surface(self):
+        """should have 4 Points, 1 Thickness and 1 Material"""
+        if len(self.elmt.findall("./O[@T='Point']")) != 4:
+            print('!ERROR: Not 4 Points in the Surface OBJECT: {}'.format(self.name))
+            return False
+        if len(self.elmt.findall("./P[@N='Thickness']")) != 1:
+            print('!ERROR: Not 1 thick parameter in the Surface object {}'.format(self.name))
+            return False
+        if len(self.elmt.findall("./P[@T='Material']")) != 1:
+            print('!ERROR: Not 1 material parameter in the Surface object {}'.format(self.name))
+            return False
+        return True
+
+    def add_point(self, point_obj):
+        if isinstance(point_obj, Point):
+            self.elmt.append(point_obj.elmt)
+        else:
+            print('An object of class Point is needed')
+
+    def add_thick_par(self, thick_par):
+        if isinstance(thick_par, PrmElmt) and PyOpenBrIMElmt.match_attribute(thick_par.elmt, N='Thickness'):
+            self.add_sub(thick_par)
+        elif str(thick_par).isdigit():
+            self.add_sub(PrmElmt("Thickness", str(thick_par)))
+        else:
+            print("a PARAMETER @N=Thickness is required.")
+
+    def add_mat_par(self, mat_obj):
+        """material is an OBJECT.\n
+        But in Surface it should be a parameter that refer to the Material Object"""
+        if isinstance(mat_obj, ObjElmt) and PyOpenBrIMElmt.match_attribute(mat_obj.elmt, T='Material'):
+            self.add_sub(PrmElmt('SurfaceMaterial_{}'.format(self.name), mat_obj.elmt.attrib['N'], par_type='Material'))
+        else:
+            print("a OBJECT @T=Material is required.")
+
+    def change_thick(self, thickness, des='', role='Input', par_type='Surface_Thickness', ut='', uc=''):
+        """thickness parameter of Surface.\n Only thickness is mandatory"""
+        self.del_sub('P', N="Thickness")
+        self.add_sub(PrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
+        # self.elmt.append(eET.Element('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
+
+    def change_material(self, material, des='', role='Input', name='SurfaceMaterial', ut='', uc=''):
+        """material parameter of Surface.\n Only material is mandatory"""
+        self.del_sub('P', T="Material")
+        self.add_sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
+        # self.elmt.append(eET.Element('P', dict(T='Material', V=material, D=des, N=name, Role=role, UT=ut, UC=uc)))
+
+    def set_parameter(self, name, value, des=''):
+        self.add_sub(PrmElmt(name, value, des))
 
 
 class FELine(ObjElmt):
@@ -362,21 +443,21 @@ class ShowTree(object):
     """show results in tree-like format"""
 
     def __init__(self, result):
-        self.elmts=PyOpenBrIMElmt.to_elmt_list(result)
+        self.elmts = PyOpenBrIMElmt.to_elmt_list(result)
         for one_branch in self.elmts:
-            ShowTree.branch(one_branch,0)
+            ShowTree.branch(one_branch, 0)
 
     @staticmethod
     def branch(node, level):
         for tab in range(level):
-            print('\t',end='')
-        other_info=''
-        for key in ['T','N']:
+            print('\t', end='')
+        other_info = ''
+        for key in ['T', 'N']:
             if node.attrib.get(key):
-                other_info = other_info+' {}={}'.format(key, node.attrib[key])
+                other_info = other_info + '{}={}\t'.format(key, node.attrib[key])
         print('|--<{}> {}'.format(node.tag, other_info))
         for sub in node:
-            ShowTree.branch(sub,level+1)
+            ShowTree.branch(sub, level + 1)
 
 
 class ShowTable(object):
