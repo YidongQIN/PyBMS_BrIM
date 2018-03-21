@@ -51,12 +51,18 @@ In the next, apply it to re-create the xml for MARC bridge in order to test and 
 use PyOpenBrIM v2 (that is ClassPyOpenBrIM) to generate the xml file for MARC bridge and see what can be further developed.
 
 New class are required.
+
 * class Damage(ObjElmt)
+    
     use a element to represent the damage in bridge.
+    
     But how many kinds of damage?
+    
     How can the damage be considered in the structure evaluation?
+    
 * class Monitor(ObjElmt)
-* class Repair
+
+* class Repair(ObjElmt)
 
 
 ## UN-DONE
@@ -65,11 +71,11 @@ New class are required.
 2. uniform the variable name of different classes and methods.
     For example, 'attributes', 'attribute_dict' and 'attrib_dict'.
 3. Method to draw the section.
-4.
 
 ## TIPS
 
-sometimes, parameters are used to refer to another object. the best example is the material of section. <O T='Section'> has a sub element <P T='Material' V='Material Name'>
+sometimes, parameters are used to refer to another object. 
+the best example is the material of section. <O T='Section'> has a sub element <P T='Material' V='Material Name'>
 
 In OpenBrIM, the tag is either 'O' or 'P', so the element.tag is not very useful.
 
