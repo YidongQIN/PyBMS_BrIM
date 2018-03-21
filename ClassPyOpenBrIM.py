@@ -93,7 +93,7 @@ class PyOpenBrIMElmt(object):
         for p in PyOpenBrIMElmt.to_elmt_list(parent):
             p.append(self.elmt)
 
-    def show_info(self, if_self='Y', if_sub='N'):
+    def node_struc(self, if_self='Y', if_sub='N'):
         """show tags and attributes of itself or sub elements"""
         if if_self.upper() == 'Y':
             print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
@@ -275,32 +275,62 @@ class PrmElmt(PyOpenBrIMElmt):
 
 class Material(ObjElmt):
     # < O    N = "A615Gr60"    T = "Material"    Type = "steel"    # D = "Rebar" >
-    def __init__(self, mat_name, des='', type='',**attributes):
+    def __init__(self, mat_name, des='', mat_type='', **attributes):
         """Materiral name is mandatory.\n
         Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
         there may be no other attributes.
         """
         super(Material, self).__init__('Material', mat_name, **attributes)
-        self.name=mat_name
-        self.elmt.attrib['D']=des
-        self.elmt.attrib['Type']=type
+        self.name = mat_name
+        self.elmt.attrib['D'] = des
+        self.elmt.attrib['Type'] = mat_type
 
-    def set_par(self):
-        #@TODO
-        pass
+    def set_pars(self, **name_value):
+        """parameters generally defined of the material, \n
+        such as d->Density, E-> modulus of elasticity, \n
+        Nu->Poisson's Ratio, a->Coefficient of Thermal Expansion, \n
+        Fc28/Fy/Fu -> Strength.
+        """
+        for key, value in name_value.items():
+            self.add_a_par(key, value)
 
+    def add_a_par(self, n, v, des=''):
+        d = dict(d="Density",
+                 E="modulus of Elasticity",
+                 a="Coefficient of Thermal Expansion",
+                 Nu="Poisson's Ratio",
+                 Fc28="Concrete Compressive Strength",
+                 Fy="Steel Yield Strength",
+                 Fu="Steel Ultimate Strength").get(n)
+        if des != '':
+            d = des
+        self.elmt.append(eET.Element('P', N=n, V=str(v), D=d))
+
+    def show_mat(self):
+        print('{} is {} ({}):'.format(self.name, self.elmt.attrib['Type'], self.elmt.attrib['D']))
+        for each_par in self.elmt:
+            print('\t<{0}>{3}: {1}={2} '.format(each_par.tag,
+                                                each_par.attrib['N'],
+                                                each_par.attrib['V'],
+                                                each_par.attrib['D']))
 
 
 class Section(ObjElmt):
-    pass
+
+    def __init__(self, name):
+        super(Section, self).__init__('Section', name)
 
 
 class Shape(ObjElmt):
-    pass
+
+    def __init__(self, name):
+        super(Shape, self).__init__('Shape', name)
 
 
 class Unit(ObjElmt):
-    pass
+
+    def __init__(self, name):
+        super(Unit, self).__init__('Unit', name)
 
 
 class Group(ObjElmt):
@@ -437,7 +467,8 @@ class Surface(ObjElmt):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
         self.del_sub('P', N="Thickness")
         self.add_sub(PrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
-        # self.elmt.append(eET.Element('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
+        # self.elmt.append(eET.Element
+        # ('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
 
     def change_material(self, material, des='', role='Input', name='SurfaceMaterial', ut='', uc=''):
         """material parameter of Surface.\n Only material is mandatory"""
@@ -450,11 +481,15 @@ class Surface(ObjElmt):
 
 
 class FELine(ObjElmt):
-    pass
+
+    def __init__(self, name):
+        super(FELine, self).__init__('FELine', name)
 
 
 class FESurface(ObjElmt):
-    pass
+
+    def __init__(self, name):
+        super(FESurface, self).__init__('FESurface', name)
 
 
 class ShowTree(object):
