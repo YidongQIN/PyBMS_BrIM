@@ -274,7 +274,21 @@ class PrmElmt(PyOpenBrIMElmt):
 
 
 class Material(ObjElmt):
-    pass
+    # < O    N = "A615Gr60"    T = "Material"    Type = "steel"    # D = "Rebar" >
+    def __init__(self, mat_name, des='', type='',**attributes):
+        """Materiral name is mandatory.\n
+        Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
+        there may be no other attributes.
+        """
+        super(Material, self).__init__('Material', mat_name, **attributes)
+        self.name=mat_name
+        self.elmt.attrib['D']=des
+        self.elmt.attrib['Type']=type
+
+    def set_par(self):
+        #@TODO
+        pass
+
 
 
 class Section(ObjElmt):
@@ -294,6 +308,10 @@ class Group(ObjElmt):
     def __init__(self, group_name, *elmts_list):
         super(Group, self).__init__('Group', name=group_name)
         self.add_sub(elmts_list)
+
+    def regroup(self, *nodes):
+        self.del_all_sub()
+        self.add_sub(nodes)
 
 
 class Point(ObjElmt):
@@ -452,8 +470,7 @@ class ShowTree(object):
         for tab in range(level):
             print('\t', end='')
         other_info = ''
-        #@TODO O P different attrib to show
-        for key in ['T', 'N']:
+        for key in ['T', 'N', 'V']:
             if node.attrib.get(key):
                 other_info = other_info + '{}={}\t'.format(key, node.attrib[key])
         print('|--<{}> {}'.format(node.tag, other_info))
