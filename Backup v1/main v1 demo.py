@@ -1,6 +1,6 @@
 import PyOpenBrIM as ob
 
-tree = ob.read_xml('0 MARC.xml')
+
 root = tree.getroot()
 
 
