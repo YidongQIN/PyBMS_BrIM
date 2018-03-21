@@ -4,10 +4,21 @@ from ClassPyOpenBrIM import *
 newproj = PyOpenBrIMElmt('new proj')
 newproj.parse_xmlfile('xml file/test.xml')
 # ShowTree(newproj)
+unit1=Unit('first unit')
+ShowTable(unit1)
 mat1=Material('C4000Psi','Deck Concrete','Concrete')
 mat1.set_pars(d='0.000002248',E=3604,a=0.000055,Fc28=4)
-mat1.show_mat()
+# mat1.show_mat()
+point=[]
+for i in range(4):
+    point.append(Point(i,0,0))
 
+shape1=Shape('s1',*point)
+shape2=Shape('s2',*point)
+shape2.show_sub()
+shape2.is_cutout()
+sec1=Section('sect',mat1,shape1,shape2)
+ShowTree(sec1)
 # point1=Point(0,0,0,'P1')
 # point2=Point(10,0,0,'P2')
 # point3=Point(20,0,0,'P2')

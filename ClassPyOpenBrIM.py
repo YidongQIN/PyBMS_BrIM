@@ -105,11 +105,11 @@ class PyOpenBrIMElmt(object):
     def show_sub(self):
         """show all sub elements' tags and attributes"""
         count = 0
-        print('- - Sub elements of "{}" list below:'.format(self.name))
+        print('\n- Sub elements of "{}":'.format(self.name))
         for c in self.elmt:
             count = count + 1
-            print('\t<{}> {}'.format(c.tag, c.attrib))
-        print('- - totally {} sub elements---'.format(count))
+            print('  <{}> {}'.format(c.tag, c.attrib))
+        print('- Totally {} sub elements.\n'.format(count))
 
     def get_attrib(self, key):
         return self.elmt.attrib[key]
@@ -276,7 +276,7 @@ class PrmElmt(PyOpenBrIMElmt):
 class Material(ObjElmt):
     # < O    N = "A615Gr60"    T = "Material"    Type = "steel"    # D = "Rebar" >
     def __init__(self, mat_name, des='', mat_type='', **attributes):
-        """Materiral name is mandatory.\n
+        """Material name is mandatory.\n
         Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
         there may be no other attributes.
         """
@@ -316,21 +316,42 @@ class Material(ObjElmt):
 
 
 class Section(ObjElmt):
+    """section mandatory attribute is name.\n
+    use a parameter to refer to a Material element."""
 
-    def __init__(self, name):
+    def __init__(self, name, material, *shape_list):
         super(Section, self).__init__('Section', name)
+        if isinstance(material, Material):
+            self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name))
+        self.add_sub(*shape_list)
 
 
 class Shape(ObjElmt):
 
-    def __init__(self, name):
+    def __init__(self, name, *point_list):
         super(Shape, self).__init__('Shape', name)
+        self.add_sub(*point_list)
+
+    def is_cutout(self, y_n='Y'):
+        if y_n.upper() == 'Y':
+            self.add_sub(PrmElmt("IsCutout", "1", role="Input"))
 
 
 class Unit(ObjElmt):
 
-    def __init__(self, name):
-        super(Unit, self).__init__('Unit', name)
+    def __init__(self, name, angle_unit="Degree", force_unit="Kip", length_unit="Inch", temperature_unit="Fahrenheit"):
+        """units system of the project.\n
+        name=Internal, Geometry, Property.\n
+        angle_unit=Radian, Degree.\n
+        force_unit=Kip\n
+        length_unit=Inch, Meter\n
+        temperature_unit=Fahrenheit\n
+        """
+        super(Unit, self).__init__('Unit', name,
+                                   angle = angle_unit,
+                                   force = force_unit,
+                                   length = length_unit,
+                                   temperature = temperature_unit)
 
 
 class Group(ObjElmt):
@@ -349,7 +370,7 @@ class Point(ObjElmt):
     Mandatory attribute: X, Y, Z"""
 
     def __init__(self, x, y, z, point_name=''):
-        # coordinates may be parameters not numbers!
+        """coordinates x,y,z, may be parameters or real numbers."""
         super(Point, self).__init__('Point', name=point_name)
         self.elmt.attrib['X'] = str(x)
         self.elmt.attrib['Y'] = str(y)
