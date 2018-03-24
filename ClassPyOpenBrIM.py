@@ -85,7 +85,7 @@ class PyOpenBrIMElmt(object):
     def add_sub(self, *child):
         """add one or a list of child elements as sub node"""
         # children=list(child)
-        for a in PyOpenBrIMElmt.to_elmt_list(child):
+        for a in PyOpenBrIMElmt.to_elmt_list(*child):
             self.elmt.append(a)
 
     def attach_to(self, parent):
@@ -219,7 +219,7 @@ class PyOpenBrIMElmt(object):
         return False
 
     @staticmethod
-    def to_elmt_list(nodes):
+    def to_elmt_list(*nodes):
         """format PyOpenBrIM object or element to a [list of et.element]"""
         if isinstance(nodes, list):
             node_list = list(map(PyOpenBrIMElmt.to_ob_elmt, nodes))
@@ -256,6 +256,12 @@ class ObjElmt(PyOpenBrIMElmt):
         for k in obj_attrib.keys():
             self.elmt.attrib[k] = obj_attrib[k]
 
+    def sub_prm(self, par_name, par_value, des='', role='Input', par_type=''):
+        """sometimes, a just one OBJECT need the PARAMETER \n
+        its better to define it when the OBJECT created.\n
+        Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
+        self.add_sub(PrmElmt(par_name,par_value,des,role,par_type))
+
 
 class PrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
@@ -267,6 +273,7 @@ class PrmElmt(PyOpenBrIMElmt):
         par_type is the Type of parameter, such as Material. """
         super(PrmElmt, self).__init__(name)
         self.elmt.tag = 'P'
+        self.value = value
         attrib = dict(V=value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
         for k, v in attrib.items():
             if v:
@@ -285,16 +292,16 @@ class Material(ObjElmt):
         self.elmt.attrib['D'] = des
         self.elmt.attrib['Type'] = mat_type
 
-    def set_pars(self, **name_value):
+    def mat_property(self, **name_value):
         """parameters generally defined of the material, \n
         such as d->Density, E-> modulus of elasticity, \n
         Nu->Poisson's Ratio, a->Coefficient of Thermal Expansion, \n
         Fc28/Fy/Fu -> Strength.
         """
         for key, value in name_value.items():
-            self.add_a_par(key, value)
+            self.add_mat_par(key, value)
 
-    def add_a_par(self, n, v, des=''):
+    def add_mat_par(self, n, v, des=''):
         d = dict(d="Density",
                  E="modulus of Elasticity",
                  a="Coefficient of Thermal Expansion",
@@ -319,18 +326,28 @@ class Section(ObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
 
-    def __init__(self, name, material, *shape_list):
+    def __init__(self, name, material, *shape_list, **characteristics_dict):
         super(Section, self).__init__('Section', name)
         if isinstance(material, Material):
-            self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name))
+            # @TODO
+            self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name, par_type='Material'))
         self.add_sub(*shape_list)
+        self.sect_chrct(**characteristics_dict)
+
+    def sect_chrct(self, **characteristics):
+        """parameters generally mechanical characters, \n
+        such as Ax, Iy, Iz, \n """
+        for ch, value in characteristics.items():
+            self.elmt.append(eET.Element('P', N=ch, V=str(value)))
 
 
 class Shape(ObjElmt):
 
-    def __init__(self, name, *point_list):
+    def __init__(self, name, *obj_list):
         super(Shape, self).__init__('Shape', name)
-        self.add_sub(*point_list)
+        self.add_sub(*obj_list)
+        # for point in point_list:
+        #     self.add_sub(point)
 
     def is_cutout(self, y_n='Y'):
         if y_n.upper() == 'Y':
@@ -348,17 +365,17 @@ class Unit(ObjElmt):
         temperature_unit=Fahrenheit\n
         """
         super(Unit, self).__init__('Unit', name,
-                                   angle = angle_unit,
-                                   force = force_unit,
-                                   length = length_unit,
-                                   temperature = temperature_unit)
+                                   angle=angle_unit,
+                                   force=force_unit,
+                                   length=length_unit,
+                                   temperature=temperature_unit)
 
 
 class Group(ObjElmt):
 
     def __init__(self, group_name, *elmts_list):
         super(Group, self).__init__('Group', name=group_name)
-        self.add_sub(elmts_list)
+        self.add_sub(*elmts_list)
 
     def regroup(self, *nodes):
         self.del_all_sub()
@@ -369,16 +386,17 @@ class Point(ObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
 
-    def __init__(self, x, y, z, point_name=''):
+    def __init__(self, x, y, z=None, point_name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
         super(Point, self).__init__('Point', name=point_name)
-        self.elmt.attrib['X'] = str(x)
-        self.elmt.attrib['Y'] = str(y)
-        self.elmt.attrib['Z'] = str(z)
         self.x = x
+        self.elmt.attrib['X'] = str(x)
         self.y = y
+        self.elmt.attrib['Y'] = str(y)
         self.z = z
-        self.check_num()
+        if z:
+            self.elmt.attrib['Z'] = str(z)
+        # self.check_num()
 
     def check_num(self):
         """typically the coordinates should be numbers.
@@ -387,8 +405,9 @@ class Point(ObjElmt):
             print('WARNING: X Coordinate is NOT a number.')
         if not isinstance(self.y, (int, float)):
             print('WARNING: Y Coordinate is NOT a number.')
-        if not isinstance(self.z, (int, float)):
-            print('WARNING: Z Coordinate is NOT a number.')
+        if self.z:
+            if not isinstance(self.z, (int, float)):
+                print('WARNING: Z Coordinate is NOT a number.')
 
 
 class Line(ObjElmt):

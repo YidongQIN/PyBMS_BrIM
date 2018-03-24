@@ -7,7 +7,7 @@ newproj.parse_xmlfile('xml file/test.xml')
 unit1=Unit('first unit')
 ShowTable(unit1)
 mat1=Material('C4000Psi','Deck Concrete','Concrete')
-mat1.set_pars(d='0.000002248',E=3604,a=0.000055,Fc28=4)
+mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
 # mat1.show_mat()
 point=[]
 for i in range(4):
