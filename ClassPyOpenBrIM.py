@@ -260,7 +260,7 @@ class ObjElmt(PyOpenBrIMElmt):
         """sometimes, a just one OBJECT need the PARAMETER \n
         its better to define it when the OBJECT created.\n
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
-        self.add_sub(PrmElmt(par_name,par_value,des,role,par_type))
+        self.add_sub(PrmElmt(par_name, par_value, des, role, par_type))
 
 
 class PrmElmt(PyOpenBrIMElmt):
@@ -272,12 +272,24 @@ class PrmElmt(PyOpenBrIMElmt):
         D-> des is description of the parameter.\n
         par_type is the Type of parameter, such as Material. """
         super(PrmElmt, self).__init__(name)
-        self.elmt.tag = 'P'
         self.value = value
-        attrib = dict(V=value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
+        self.elmt.tag = 'P'
+        attrib = dict(V=str(value), D=des, UT=ut, UC=uc, Role=role, T=par_type)
         for k, v in attrib.items():
             if v:
                 self.elmt.attrib[k] = v
+        self.value_to_number()
+
+    def value_to_number(self):
+        """if value is number but inputted as string, transform it to int or float"""
+        if isinstance(self.value, str):
+            try:
+                self.value = float(self.value)
+            except:
+                pass
+        if isinstance(self.value, float):
+            if self.value == int(self.value):
+                self.value = int(self.value)
 
 
 class Material(ObjElmt):
@@ -329,7 +341,6 @@ class Section(ObjElmt):
     def __init__(self, name, material, *shape_list, **characteristics_dict):
         super(Section, self).__init__('Section', name)
         if isinstance(material, Material):
-            # @TODO
             self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name, par_type='Material'))
         self.add_sub(*shape_list)
         self.sect_chrct(**characteristics_dict)

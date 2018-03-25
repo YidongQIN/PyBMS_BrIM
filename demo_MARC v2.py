@@ -16,26 +16,26 @@ if __name__ == '__main__':
 
     # 1. Material
     c4000 = Material('C4000Psi', mat_type="concrete", des="Concrete")
-    c4000.mat_property(d="0.0000002248", E="3604.9965", a="0.0000055", Fc28="4")
+    c4000.mat_property(d='0.0000002248', E="3604.9965", a="0.0000055", Fc28="4")
     rebar = Material('A615Gr60', mat_type="steel", des="Rebar")
     rebar.mat_property(d='0.0000002248', E='3604.9965', Nu="0.3", a="0.0000065", Fy="60", Fu="90")
     girder_steel = Material('A992Fy50', mat_type="steel", des="steel of girder")
     girder_steel.mat_property(d="0.0000007345", E="29000", Nu="0.3", a="0.0000065", Fy="50", Fu="65")
     group_mat = Group('Material Group', c4000, rebar, girder_steel)
-
+    ShowTree(group_mat)
     # 2. Sections
     # 2.1 Sections Parameters
-    BottomChord_width = PrmElmt("BottomChord_width", "6", ut="Length", role="Input")
-    BottomChord_depth = PrmElmt("BottomChord_depth", "6", ut="Length", role="Input")
-    BottomChord_thickness = PrmElmt("BottomChord_thickness", "0.375", role="Input")
-    TopChord_width = PrmElmt("TopChord_width", "6", ut="Length", role="Input")
-    TopChord_depth = PrmElmt("TopChord_depth", "6", ut="Length", role="Input")
-    TopChord_thickness = PrmElmt("TopChord_thickness", "0.3125", role="Input")
+    BottomChord_width = PrmElmt("BottomChord_width", 6, ut="Length", role="Input")
+    BottomChord_depth = PrmElmt("BottomChord_depth", 6, ut="Length", role="Input")
+    BottomChord_thickness = PrmElmt("BottomChord_thickness", 0.375, role="Input")
+    TopChord_width = PrmElmt("TopChord_width", 6, ut="Length", role="Input")
+    TopChord_depth = PrmElmt("TopChord_depth", 6, ut="Length", role="Input")
+    TopChord_thickness = PrmElmt("TopChord_thickness", 0.3125, role="Input")
     deck_thick = PrmElmt("deck_thick", "5", ut="Length", role="Input")
-    VertiBeam_width = PrmElmt("VertiBeam_width", "6", ut="Length", role="Input")
-    VertiBeam_depth = PrmElmt("VertiBeam_depth", "6", ut="Length", role="Input")
-    VertiBeam_thickness = PrmElmt("VertiBeam_thickness", "0.25", ut="Length", role="Input")
-    WebRadius = PrmElmt("WebRadius", "1", ut="Length", role="Input")
+    VertiBeam_width = PrmElmt("VertiBeam_width", 6, ut="Length", role="Input")
+    VertiBeam_depth = PrmElmt("VertiBeam_depth", 6, ut="Length", role="Input")
+    VertiBeam_thickness = PrmElmt("VertiBeam_thickness", 0.25, ut="Length", role="Input")
+    WebRadius = PrmElmt("WebRadius", 1, ut="Length", role="Input")
     group_sec_par = Group('Parameters Group of Sections', BottomChord_width, BottomChord_depth, BottomChord_thickness,
                           TopChord_width, TopChord_depth, TopChord_thickness, deck_thick, VertiBeam_width,
                           VertiBeam_depth,
@@ -96,14 +96,32 @@ if __name__ == '__main__':
 
     group_sections.attach_to(marc)
     # 3. Structural Parameter
+    span_num = PrmElmt("span_num", 11, role="Input")
+    x_spacing = PrmElmt("x_spacing", 108.0, ut="Length", role="Input")
+    y_spacing = PrmElmt("y_spacing", 84, ut="Length", role="Input")
+    z_height = PrmElmt("z_height", 108, ut="Length", role="Input")
+    group_strct = Group('Structural Parameters Group', span_num, x_spacing, y_spacing, z_height)
+    group_strct.attach_to(marc)
 
     # 4. Points
+    pointBL = []
+    pointBR = []
+    pointTL = []
+    pointTR = []
+
+    for i in range(span_num.value):
+        pointBL.append(Point('PointBL_%d' % i,  "{}" .format(i * x_spacing.value), "0"))
+        pointBL.append(Point('PointBL_%d' % i, "%d" % (i * x_spacing.value), "%d" % (y_spacing.value), "0"))
+        pointBR.append(Point('PointBR_%d' % i, "%d" % (i * x_spacing.value), "0", "0"))
+        pointTL.append(
+            Point('PointTL_%d' % i, "%d" % (i * x_spacing.value), "%d" % (y_spacing.value), "%d" % (z_height.value)))
+        pointTR.append(Point('PointTR_%d' % i, "%d" % (i * x_spacing.value), "0", "%d" % (z_height.value)))
 
     # 5. Lines
 
     # 6. Surfaces
 
     # 7. Save and Show
-    print('============\nTree of the MARC bridge Elements')
-    ShowTree(marc)
+    # print('= = = Tree of the MARC bridge Elements = = =')
+    # ShowTree(marc)
     marc.save_project()

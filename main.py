@@ -1,6 +1,12 @@
 # import ClassPyOpenBrIM
 from ClassPyOpenBrIM import *
 
+xx = PrmElmt("x_spacing", '108.3')
+print(type(xx.value))
+print(xx.value)
+# TopChord_width = PrmElmt("TopChord_width", "6", ut="Length", role="Input")
+
+'''
 newproj = PyOpenBrIMElmt('new proj')
 newproj.parse_xmlfile('xml file/test.xml')
 # ShowTree(newproj)
@@ -31,7 +37,7 @@ ShowTree(sec1)
 # par1.attach_to(newproj)
 # newproj.save_project()
 # ShowTree(newproj)
-'''''
+
 # print('---add sub nodes test---')
 new_node = ObjElmt('Line', 'new node1', D='~ TEST ~ ', UC='test')
 new_node2 = ObjElmt('Not Line', 'new_node2', D='~ ~ TEST ~ ~')
