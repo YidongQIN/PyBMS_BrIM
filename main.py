@@ -1,11 +1,14 @@
 # import ClassPyOpenBrIM
 from ClassPyOpenBrIM import *
 
-xx = PrmElmt("x_spacing", '108.3')
-print(type(xx.value))
-print(xx.value)
 # TopChord_width = PrmElmt("TopChord_width", "6", ut="Length", role="Input")
 
+par1 =PrmElmt('','123.01')
+par1.show_info()
+print(type(par1.value))
+point1= Point(1,2,0,'base')
+node1 = FENode(point1)
+node1.show_info()
 '''
 newproj = PyOpenBrIMElmt('new proj')
 newproj.parse_xmlfile('xml file/test.xml')
@@ -73,4 +76,9 @@ ShowTree(newproj)
 # print(results)
 # print(newproj.verify_attributes(T='Project'))
 # ResultsTable(results)
+
+xx = PrmElmt("x_spacing", '108.3')
+print(type(xx.value))
+print(xx.value)
+
 '''''
