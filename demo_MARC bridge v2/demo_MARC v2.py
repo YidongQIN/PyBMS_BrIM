@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__ = 'Yidong QIN'
-
 """
 use ClassPyOpenBrIM to generate the xml file of MARC Bridge.
+modified Mar26, 2018
 """
+
+__author__ = 'Yidong QIN'
 
 from ClassPyOpenBrIM import *
 
 if __name__ == '__main__':
+
     marc = PyOpenBrIMElmt('MARC_OOP')
     marc.new_project()
     # 1. Material
@@ -152,7 +154,9 @@ if __name__ == '__main__':
     # 6. Surfaces
     decks = []
     for i in range(span_num.value):
-        decks.append(Surface(pointBL[i], pointBR[i], pointBR[i + 1], pointBL[i + 1], deck_thick, c4000, 'concrete deck'))
+        decks.append(
+            Surface(pointBL[i], pointBR[i], pointBR[i + 1], pointBL[i + 1],
+                    deck_thick, c4000, 'concrete deck'))
     Group('Decks', *decks).attach_to(marc)
     # 7. Save and Show
     ShowTree(marc)
