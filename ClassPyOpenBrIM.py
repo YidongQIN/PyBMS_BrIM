@@ -93,7 +93,7 @@ class PyOpenBrIMElmt(object):
         for p in PyOpenBrIMElmt.to_elmt_list(parent):
             p.append(self.elmt)
 
-    def node_struc(self, if_self='Y', if_sub='N'):
+    def show_info(self, if_self='Y', if_sub='N'):
         """show tags and attributes of itself or sub elements"""
         if if_self.upper() == 'Y':
             print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
@@ -256,11 +256,20 @@ class ObjElmt(PyOpenBrIMElmt):
         for k in obj_attrib.keys():
             self.elmt.attrib[k] = obj_attrib[k]
 
-    def sub_prm(self, par_name, par_value, des='', role='Input', par_type=''):
+    def param(self, par_name, par_value, des='', role='Input', par_type=''):
         """sometimes, a just one OBJECT need the PARAMETER \n
         its better to define it when the OBJECT created.\n
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
         self.add_sub(PrmElmt(par_name, par_value, des, role, par_type))
+
+    def param_simple(self, name, value, des=''):
+        self.add_sub(PrmElmt(name, value, des))
+
+    def extend(self, extend_from):
+        if isinstance(extend_from, ObjElmt):
+            self.elmt.attrib['T']=extend_from.elmt.attrib['T']
+            self.elmt.attrib['Extends']=extend_from.elmt.attrib['N']
+
 
 
 class PrmElmt(PyOpenBrIMElmt):
@@ -338,17 +347,17 @@ class Section(ObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
 
-    def __init__(self, name, material, *shape_list, **characteristics_dict):
+    def __init__(self, name, material, *shape_list, **property_dict):
         super(Section, self).__init__('Section', name)
         if isinstance(material, Material):
             self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name, par_type='Material'))
         self.add_sub(*shape_list)
-        self.sect_chrct(**characteristics_dict)
+        self.sect_property(**property_dict)
 
-    def sect_chrct(self, **characteristics):
+    def sect_property(self, **properties):
         """parameters generally mechanical characters, \n
         such as Ax, Iy, Iz, \n """
-        for ch, value in characteristics.items():
+        for ch, value in properties.items():
             self.elmt.append(eET.Element('P', N=ch, V=str(value)))
 
 
@@ -382,6 +391,14 @@ class Unit(ObjElmt):
                                    temperature=temperature_unit)
 
 
+class Extends(ObjElmt):
+
+    def __init__(self, extends_from):
+        extend_type = extends_from.elmt.attrib['T']
+        super(Extends, self).__init__(extend_type)
+        self.elmt.attrib['Extends'] = extends_from.elmt.attrib['N']
+
+
 class Group(ObjElmt):
 
     def __init__(self, group_name, *elmts_list):
@@ -393,11 +410,12 @@ class Group(ObjElmt):
         self.add_sub(nodes)
 
 
+
 class Point(ObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
 
-    def __init__(self, x, y, z=None, point_name=''):
+    def __init__(self, x, y, z = '', point_name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
         super(Point, self).__init__('Point', name=point_name)
         self.x = x
@@ -405,7 +423,7 @@ class Point(ObjElmt):
         self.y = y
         self.elmt.attrib['Y'] = str(y)
         self.z = z
-        if z:
+        if z != '':
             self.elmt.attrib['Z'] = str(z)
         # self.check_num()
 
@@ -456,8 +474,10 @@ class Line(ObjElmt):
 
     def set_section(self, section_obj):
         """section has attribute of material"""
-        assert isinstance(section_obj, Section), print('An object of class Section is needed')
+        assert isinstance(section_obj, (Extends,Section)), print('An object of class Section is needed')
         self.elmt.append(section_obj.elmt)
+
+
 
 
 class Surface(ObjElmt):
@@ -474,9 +494,9 @@ class Surface(ObjElmt):
         if point4:
             self.add_point(point4)
         if material_obj:
-            self.add_mat_par(material_obj)
+            self.par_of_mat_obj(material_obj)
         if thick_par:
-            self.add_thick_par(thick_par)
+            self.thick_par(thick_par)
         self.check_surface()
 
     def check_surface(self):
@@ -498,19 +518,20 @@ class Surface(ObjElmt):
         else:
             print('An object of class Point is needed')
 
-    def add_thick_par(self, thick_par):
-        if isinstance(thick_par, PrmElmt) and PyOpenBrIMElmt.match_attribute(thick_par.elmt, N='Thickness'):
-            self.add_sub(thick_par)
+    def thick_par(self, thick_par):
+        # if isinstance(thick_par, PrmElmt) and PyOpenBrIMElmt.match_attribute(thick_par.elmt, N='Thickness'):
+        if isinstance(thick_par, PrmElmt):
+            self.add_sub(PrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
         elif str(thick_par).isdigit():
             self.add_sub(PrmElmt("Thickness", str(thick_par)))
         else:
             print("a PARAMETER @N=Thickness is required.")
 
-    def add_mat_par(self, mat_obj):
+    def par_of_mat_obj(self, mat_obj):
         """material is an OBJECT.\n
         But in Surface it should be a parameter that refer to the Material Object"""
         if isinstance(mat_obj, ObjElmt) and PyOpenBrIMElmt.match_attribute(mat_obj.elmt, T='Material'):
-            self.add_sub(PrmElmt('SurfaceMaterial_{}'.format(self.name), mat_obj.elmt.attrib['N'], par_type='Material'))
+            self.add_sub(PrmElmt('Material_Surface_{}'.format(self.name), mat_obj.elmt.attrib['N'], par_type='Material', role=''))
         else:
             print("a OBJECT @T=Material is required.")
 
@@ -527,8 +548,7 @@ class Surface(ObjElmt):
         self.add_sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
         # self.elmt.append(eET.Element('P', dict(T='Material', V=material, D=des, N=name, Role=role, UT=ut, UC=uc)))
 
-    def set_parameter(self, name, value, des=''):
-        self.add_sub(PrmElmt(name, value, des))
+
 
 
 class FELine(ObjElmt):
@@ -554,9 +574,9 @@ class ShowTree(object):
     @staticmethod
     def branch(node, level):
         for tab in range(level):
-            print('\t', end='')
+            print('.   ', end='')
         other_info = ''
-        for key in ['T', 'N', 'V']:
+        for key in ['T', 'N', 'V', 'Extends']:
             if node.attrib.get(key):
                 other_info = other_info + '{}={}\t'.format(key, node.attrib[key])
         print('|--<{}> {}'.format(node.tag, other_info))
