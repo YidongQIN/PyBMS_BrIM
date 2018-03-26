@@ -529,9 +529,10 @@ class Surface(ObjElmt):
 
     def par_of_mat_obj(self, mat_obj):
         """material is an OBJECT.\n
-        But in Surface it should be a parameter that refer to the Material Object"""
+        But in Surface it should be a parameter that refer to the Material Object\n
+        not mandatory"""
         if isinstance(mat_obj, ObjElmt) and PyOpenBrIMElmt.match_attribute(mat_obj.elmt, T='Material'):
-            self.add_sub(PrmElmt('Material_Surface_{}'.format(self.name), mat_obj.elmt.attrib['N'], par_type='Material', role=''))
+            self.add_sub(PrmElmt('Material', mat_obj.elmt.attrib['N'], par_type='Material', role='', des='Material_Surface_{}'.format(self.name)))
         else:
             print("a OBJECT @T=Material is required.")
 

@@ -20,6 +20,7 @@ if __name__ == '__main__':
     girder_steel = Material('A992Fy50', mat_type="steel", des="steel of girder")
     girder_steel.mat_property(d="0.0000007345", E="29000", Nu="0.3", a="0.0000065", Fy="50", Fu="65")
     group_mat = Group('Material Group', c4000, rebar, girder_steel)
+    group_mat.attach_to(marc)
     # 2. Sections
     # 2.1 Sections Parameters
     BottomChord_width = PrmElmt("BottomChord_width", 6, ut="Length", role="Input")
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     bottomChords = Group('Bottom Chords', *bottomChordList)
     # 5.2 top chords, TR,TL
     topChordList = []
-    for i in range(1, span_num.value - 1):
+    for i in range(1, span_num.value):
         topChordList.append(Line(pointTL[i], pointTL[i + 1], Extends(sec_top)))
         topChordList.append(Line(pointTR[i], pointTR[i + 1], Extends(sec_top)))
     topChords = Group('Top Chords', *topChordList)
@@ -142,6 +143,7 @@ if __name__ == '__main__':
         else:
             z_beams.append(Line(pointBL[i + 1], pointBR[i], Extends(sec_bc)))
     group_zbeam = Group('Z beams', *z_beams)
+    group_zbeam.attach_to(marc)
     # 5.6 the 1st segment
     first_seg = [Line(pointBL[0], pointBR[0], Extends(sec_bc)),
                  Line(pointBL[0], pointTL[1], Extends(sec_bc)),
