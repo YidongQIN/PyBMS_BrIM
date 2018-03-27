@@ -206,7 +206,7 @@ class ObjElmt(PyOpenBrIMElmt):
         # sub classes will override this method by object_type = 'Point"...
         super(ObjElmt, self).__init__('O', obj_name, T=object_type, **obj_attrib)
 
-    def param(self, par_name, par_value, des='', role='Input', par_type=''):
+    def param(self, par_name, par_value, des='', role='', par_type=''):
         """sometimes, a just one OBJECT need the PARAMETER \n
         its better to define it when the OBJECT created.\n
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
@@ -230,7 +230,6 @@ class PrmElmt(PyOpenBrIMElmt):
         D-> des is description of the parameter.\n
         par_type is the Type of parameter, such as Material. """
         if par_name:
-            # @TODO delete empty
             super(PrmElmt, self).__init__('P', par_name, V=str(value), D=des, UT=ut, UC=uc, Role=role, T=par_type)
             try:
                 self.value = float(value)
@@ -537,14 +536,14 @@ class Surface(ObjElmt):
         else:
             print("a OBJECT @T=Material is required.")
 
-    def change_thick(self, thickness, des='', role='Input', par_type='Surface_Thickness', ut='', uc=''):
+    def change_thick(self, thickness, des='', role='', par_type='Surface_Thickness', ut='', uc=''):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
         self.del_sub('P', N="Thickness")
         self.add_sub(PrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
         # self.elmt.append(eET.Element
         # ('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
 
-    def change_material(self, material, des='', role='Input', name='SurfaceMaterial', ut='', uc=''):
+    def change_material(self, material, des='', role='', name='SurfaceMaterial', ut='', uc=''):
         """material parameter of Surface.\n Only material is mandatory"""
         self.del_sub('P', T="Material")
         self.add_sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
