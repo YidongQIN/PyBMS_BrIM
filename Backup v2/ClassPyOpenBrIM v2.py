@@ -424,7 +424,7 @@ class Point(ObjElmt):
         self.elmt.attrib['Y'] = str(y)
         self.z = z
         if z != '':
-            self.elmt.attrib['Z'] = str(z)
+            self.elmt.attrib['Z'] = srt(z)
         # self.check_num()
 
     def check_num(self):

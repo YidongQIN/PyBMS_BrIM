@@ -17,7 +17,10 @@ class PyOpenBrIMElmt(object):
     """basic class for ParamML file of OpenBrIM"""
 
     def __init__(self, tag_o_p, name, **attrib_dict):
-        attributes = dict(N=name)
+        if name:
+            attributes = dict(N=name)
+        else:
+            attributes = {}
         for k, v in attrib_dict.items():
             if v:
                 attributes[k] = v
@@ -152,25 +155,29 @@ class PyOpenBrIMElmt(object):
     @staticmethod
     def match_attribute(elmt, **attrib_dict):
         """if the elmt.attribute match every item in the inputted attributes dict"""
-        assert isinstance(elmt, eET.Element)
-        for key in attrib_dict.keys():
-            if elmt.attrib.get(key) != attrib_dict[key]:
-                return False
-        return True
+        if isinstance(elmt, eET.Element):
+            for key in attrib_dict.keys():
+                if elmt.attrib.get(key) != attrib_dict[key]:
+                    return False
+            return True
+        else:
+            print('!Type Error: Not an element to match attribute')
 
     @staticmethod
     def match_tag(elmt, tag):
         """tag = 'O', 'P' or 'OP'"""
-        assert isinstance(elmt, eET.Element)
-        if tag == 'OP':
-            if elmt.tag in ['O', 'P']:
-                return True
-        elif tag == 'O' or tag == 'P':
-            if elmt.tag == tag:
-                return True
+        if isinstance(elmt, eET.Element):
+            if tag == 'OP':
+                if elmt.tag in ['O', 'P']:
+                    return True
+            elif tag == 'O' or tag == 'P':
+                if elmt.tag == tag:
+                    return True
+            else:
+                print('tag should be "O", "P" or "OP".')
+            return False
         else:
-            print('tag should be "O", "P" or "OP".')
-        return False
+            print('!Type Error: Not an element to match tag')
 
     @staticmethod
     def to_elmt_list(*elmts):
@@ -205,6 +212,7 @@ class ObjElmt(PyOpenBrIMElmt):
         """
         # sub classes will override this method by object_type = 'Point"...
         super(ObjElmt, self).__init__('O', obj_name, T=object_type, **obj_attrib)
+        self.type = object_type
 
     def param(self, par_name, par_value, des='', role='', par_type=''):
         """sometimes, a just one OBJECT need the PARAMETER \n
@@ -212,13 +220,19 @@ class ObjElmt(PyOpenBrIMElmt):
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
         self.add_sub(PrmElmt(par_name, par_value, des, role, par_type))
 
-    def param_simple(self, name, value, des=''):
-        self.add_sub(PrmElmt(name, value, des))
+    def param_simple(self, name, value, prm_type):
+        self.add_sub(PrmElmt(name, value, par_type=prm_type))
 
     def extend(self, extend_from):
         if isinstance(extend_from, ObjElmt):
             self.elmt.attrib['T'] = extend_from.elmt.attrib['T']
             self.elmt.attrib['Extends'] = extend_from.elmt.attrib['N']
+
+    def prm_refer(self, elmt, refer_name):
+        if isinstance(elmt, PyOpenBrIMElmt):
+            self.add_sub(PrmElmt(refer_name, elmt.name,
+                                 par_type=elmt.get_attrib('T')))
+        # < P N = "Node1"  T = "Node"  V = "Nodes[span_num-1].BtmL" / >
 
 
 class PrmElmt(PyOpenBrIMElmt):
@@ -245,8 +259,7 @@ class PrmElmt(PyOpenBrIMElmt):
 class Project(ObjElmt):
     def __init__(self, proj_name, template='SI'):
         """create new project with a template"""
-        super(Project, self).__init__(proj_name)
-        self.name = proj_name
+        super(Project, self).__init__('Project', proj_name)
         if template == 'SI':
             origin_string = """
 <O N="" T="Project" Alignment="None" TransAlignRule="Right">
@@ -272,9 +285,8 @@ class Project(ObjElmt):
 </O>
            """
         else:
-            origin_string = '<O N="" T="Project">\n\n</O>'
+            origin_string = '<O N="" T="Project">\n</O>'
         self.read_xmlstr(origin_string)
-        # default new OpenBrIM project named as self.name
         self.elmt.attrib['N'] = proj_name
 
     # save the OpenBrIM model with the name in project attribute
@@ -309,10 +321,7 @@ class Material(ObjElmt):
         Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
         there may be no other attributes.
         """
-        super(Material, self).__init__('Material', mat_name, **attrib_dict)
-        self.name = mat_name
-        self.elmt.attrib['D'] = des
-        self.elmt.attrib['Type'] = mat_type
+        super(Material, self).__init__('Material', mat_name, D=des, Type=mat_type, **attrib_dict)
 
     def mat_property(self, **name_value):
         """parameters generally defined of the material, \n
@@ -348,8 +357,8 @@ class Section(ObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
 
-    def __init__(self, obj_name, material, *shape_list, **property_dict):
-        super(Section, self).__init__('Section', obj_name)
+    def __init__(self, sect_name, material, *shape_list, **property_dict):
+        super(Section, self).__init__('Section', sect_name)
         if isinstance(material, Material):
             self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name, par_type='Material'))
         self.add_sub(*shape_list)
@@ -364,8 +373,8 @@ class Section(ObjElmt):
 
 class Shape(ObjElmt):
 
-    def __init__(self, obj_name, *obj_list):
-        super(Shape, self).__init__('Shape', obj_name)
+    def __init__(self, shape_name, *obj_list):
+        super(Shape, self).__init__('Shape', shape_name)
         self.add_sub(*obj_list)
         # for point in point_list:
         #     self.add_sub(point)
@@ -377,7 +386,7 @@ class Shape(ObjElmt):
 
 class Unit(ObjElmt):
 
-    def __init__(self, obj_name, angle_unit="Degree", force_unit="Kip", length_unit="Inch",
+    def __init__(self, unit_name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
                  temperature_unit="Fahrenheit"):
         """units system of the project.\n
         name=Internal, Geometry, Property.\n
@@ -386,7 +395,7 @@ class Unit(ObjElmt):
         length_unit=Inch, Meter\n
         temperature_unit=Fahrenheit\n
         """
-        super(Unit, self).__init__('Unit', obj_name,
+        super(Unit, self).__init__('Unit', unit_name,
                                    angle=angle_unit,
                                    force=force_unit,
                                    length=length_unit,
@@ -396,9 +405,7 @@ class Unit(ObjElmt):
 class Extends(ObjElmt):
 
     def __init__(self, extends_from):
-        extend_type = extends_from.elmt.attrib['T']
-        super(Extends, self).__init__(extend_type)
-        self.elmt.attrib['Extends'] = extends_from.elmt.attrib['N']
+        super(Extends, self).__init__(extends_from.elmt.attrib['T'], Extends=extends_from.elmt.attrib['N'])
 
 
 class Group(ObjElmt):
@@ -418,14 +425,11 @@ class Point(ObjElmt):
 
     def __init__(self, x, y, z='', point_name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
-        super(Point, self).__init__('Point', obj_name=point_name)
+        super(Point, self).__init__('Point', obj_name=point_name,
+                                    X=str(x), Y=str(y), Z=str(z))
         self.x = x
-        self.elmt.attrib['X'] = str(x)
         self.y = y
-        self.elmt.attrib['Y'] = str(y)
         self.z = z
-        if z != '':
-            self.elmt.attrib['Z'] = str(z)
         # self.check_num()
 
     def check_num(self):
@@ -443,16 +447,11 @@ class Point(ObjElmt):
 class Line(ObjElmt):
     """T=Line, Two points and one section needed"""
 
-    def __init__(self, point1=None, point2=None, section=None, line_name=''):
-        super(Line, self).__init__('Line', obj_name=line_name)
-        # start=time.clock()
-        if point1:
-            self.add_point(point1)
-        if point2:
-            self.add_point(point2)
-        if section:
-            self.set_section(section)
-        # print(time.clock()-start)
+    def __init__(self, point1, point2, section=None, line_name=''):
+        super(Line, self).__init__('Line', line_name)
+        self.add_point(point1)
+        self.add_point(point2)
+        self.set_section(section)
 
     def check_line(self):
         """should have Two Points and One Section"""
@@ -470,37 +469,39 @@ class Line(ObjElmt):
         self.set_section(section)
 
     def add_point(self, point_obj):
-        assert isinstance(point_obj, Point), print('An object of class Point is needed')
-        self.elmt.append(point_obj.elmt)
+        if isinstance(point_obj, Point):
+            self.elmt.append(point_obj.elmt)
+        else:
+            print('Type Error: Point Object is required.')
 
     def set_section(self, section_obj):
         """section has attribute of material"""
-        assert isinstance(section_obj, (Extends, Section)), print('An object of class Section is needed')
-        self.elmt.append(section_obj.elmt)
+        if isinstance(section_obj, (Extends, Section)):
+            self.elmt.append(section_obj.elmt)
+        else:
+            print('No Section.')
 
 
 class Surface(ObjElmt):
-    def __init__(self, point1=None, point2=None, point3=None, point4=None, thick_par=None, material_obj=None,
-                 surface_name=''):
-        super(Surface, self).__init__('Surface', obj_name=surface_name)
-        self.name = surface_name
-        if point1:
-            self.add_point(point1)
-        if point2:
-            self.add_point(point2)
-        if point3:
-            self.add_point(point3)
-        if point4:
-            self.add_point(point4)
+    def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, surface_name=''):
+        super(Surface, self).__init__('Surface', surface_name)
+        self.add_point(point1)
+        self.p1 = (point1.x, point1.y, point1.z)
+        self.add_point(point2)
+        self.p2 = (point2.x, point2.y, point2.z)
+        self.add_point(point3)
+        self.p3 = (point3.x, point3.y, point3.z)
+        self.add_point(point4)
+        self.p4 = (point4.x, point4.y, point4.z)
         if material_obj:
-            self.par_of_mat_obj(material_obj)
+            self.refer_mat_obj(material_obj)
         if thick_par:
             self.thick_par(thick_par)
         self.check_surface()
 
     def check_surface(self):
-        """should have 4 Points, 1 Thickness and 1 Material"""
-        if len(self.elmt.findall("./O[@T='Point']")) != 4:
+        """should have >= 3 Points, 1 Thickness and 1 Material"""
+        if len(self.elmt.findall("./O[@T='Point']")) < 3:
             print('!ERROR: Not 4 Points in the Surface OBJECT: {}'.format(self.name))
             return False
         if len(self.elmt.findall("./P[@N='Thickness']")) != 1:
@@ -515,26 +516,28 @@ class Surface(ObjElmt):
         if isinstance(point_obj, Point):
             self.elmt.append(point_obj.elmt)
         else:
-            print('An object of class Point is needed')
+            print('An object of Point is needed')
 
     def thick_par(self, thick_par):
         # if isinstance(thick_par, PrmElmt) and PyOpenBrIMElmt.match_attribute(thick_par.elmt, N='Thickness'):
         if isinstance(thick_par, PrmElmt):
             self.add_sub(PrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
-        elif str(thick_par).isdigit():
+        elif isinstance(thick_par, (float, int)):
             self.add_sub(PrmElmt("Thickness", str(thick_par)))
         else:
             print("a PARAMETER @N=Thickness is required.")
 
-    def par_of_mat_obj(self, mat_obj):
+    def refer_mat_obj(self, mat_obj):
         """material is an OBJECT.\n
         But in Surface it should be a parameter that refer to the Material Object\n
         not mandatory"""
-        if isinstance(mat_obj, ObjElmt) and PyOpenBrIMElmt.match_attribute(mat_obj.elmt, T='Material'):
-            self.add_sub(PrmElmt('Material', mat_obj.elmt.attrib['N'], par_type='Material', role='',
+        if isinstance(mat_obj, Material):
+            self.add_sub(PrmElmt('Material', mat_obj.elmt.attrib['N'],
+                                 par_type='Material',
+                                 role='',
                                  des='Material_Surface_{}'.format(self.name)))
         else:
-            print("a OBJECT @T=Material is required.")
+            print("a OBJECT of Material is required.")
 
     def change_thick(self, thickness, des='', role='', par_type='Surface_Thickness', ut='', uc=''):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
@@ -549,22 +552,32 @@ class Surface(ObjElmt):
         self.add_sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
         # self.elmt.append(eET.Element('P', dict(T='Material', V=material, D=des, N=name, Role=role, UT=ut, UC=uc)))
 
+    def calc_area(self):
+        pass
+
 
 class FENode(ObjElmt):
 
-    def __init__(self, point_obj=None, node_name=''):
-        super(FENode, self).__init__('Node', node_name)
-        if isinstance(point_obj, Point):
-            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
-            self.x = point_obj.x
-            self.y = point_obj.y
-            self.z = point_obj.z
+    def __init__(self, x, y, z, node_name=''):
+        super(FENode, self).__init__('Node', node_name, X=x, Y=y, Z=z)
+        self.x = x
+        self.y = y
+        self.z = z
         self.tx = 0
         self.ty = 0
         self.tz = 0
         self.rx = 0
         self.ry = 0
         self.rz = 0
+
+    def same_as_point(self, point_obj):
+        if isinstance(point_obj, Point):
+            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
+            self.x = point_obj.x
+            self.y = point_obj.y
+            self.z = point_obj.z
+        else:
+            print('{} is not a Point Object'.format(point_obj))
 
     def coordinate(self, x, y, z):
         self.x = x
@@ -591,8 +604,14 @@ class FENode(ObjElmt):
 
 class FELine(ObjElmt):
 
-    def __init__(self, obj_name=''):
-        super(FELine, self).__init__('FELine', obj_name)
+    def __init__(self, node1, node2, section, beta_angle=0, feline_name=''):
+        super(FELine, self).__init__('FELine', feline_name)
+        if isinstance(node1, FENode) and isinstance(node2, FENode) and isinstance(section, Section):
+            self.prm_refer(node1, 'Node1')
+            self.prm_refer(node2, 'Node2')
+            self.prm_refer(section, 'Section')
+        if beta_angle:
+            self.param_simple('BetaAngle', beta_angle, '')
 
 
 class FESurface(ObjElmt):

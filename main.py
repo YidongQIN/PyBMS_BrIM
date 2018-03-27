@@ -2,13 +2,14 @@
 from ClassPyOpenBrIM import *
 
 # TopChord_width = PrmElmt("TopChord_width", "6", ut="Length", role="Input")
-
-par1 =PrmElmt('','123.01')
-par1.show_info()
-print(type(par1.value))
-point1= Point(1,2,0,'base')
-node1 = FENode(point1)
-node1.show_info()
+node1 = FENode(1,2,2,'nananan')
+fel=FELine(1,node1,'sec')
+#
+# par1 =PrmElmt('','123.01')
+# par1.show_info()
+# print(type(par1.value))
+# point1= Point(1,2,0,'base')
+# node1.show_info()
 '''
 newproj = PyOpenBrIMElmt('new proj')
 newproj.parse_xmlfile('xml file/test.xml')
