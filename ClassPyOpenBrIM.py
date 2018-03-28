@@ -69,7 +69,11 @@ class PyOpenBrIMElmt(object):
         print('- Totally {} sub elements.\n'.format(count))
 
     def get_attrib(self, key):
-        return self.elmt.attrib[key]
+        a = self.elmt.attrib.get(key)
+        if a:
+            return a
+        else:
+            return ''
 
     def update(self, **attrib_dict):
         """update the attributes"""
@@ -255,7 +259,6 @@ class ObjElmt(PyOpenBrIMElmt):
         if isinstance(elmt, PyOpenBrIMElmt):
             self.add_sub(PrmElmt(refer_name, elmt.name,
                                  par_type=elmt.get_attrib('T'), role=''))
-        # < P N = "Node1"  T = "Node"  V = "Nodes[span_num-1].BtmL" / >
 
 
 class PrmElmt(PyOpenBrIMElmt):
@@ -619,10 +622,12 @@ class FENode(ObjElmt):
 
     def as_point(self, point_obj):
         if isinstance(point_obj, Point):
-            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z', 'N')
+            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
             self.x = point_obj.x
             self.y = point_obj.y
             self.z = point_obj.z
+            self.name=point_obj.name
+            return self
         else:
             print('{} is not a Point Object'.format(point_obj))
 
@@ -664,7 +669,7 @@ class FESurface(ObjElmt):
         self.n2 = (node2.x, node2.y, node2.z)
         self.prm_refer(node3, 'Node3')
         self.n3 = (node3.x, node3.y, node3.z)
-        self.prm_refer(node4, 'Node5')
+        self.prm_refer(node4, 'Node4')
         self.n4 = (node4.x, node4.y, node4.z)
         self.prm_refer(thick_par, 'Thickness')
         self.prm_refer(material_obj, 'Material')
