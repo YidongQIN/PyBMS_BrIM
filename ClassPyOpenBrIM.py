@@ -626,7 +626,7 @@ class FENode(ObjElmt):
             self.x = point_obj.x
             self.y = point_obj.y
             self.z = point_obj.z
-            self.name=point_obj.name
+            # self.name=point_obj.name
             return self
         else:
             print('{} is not a Point Object'.format(point_obj))
