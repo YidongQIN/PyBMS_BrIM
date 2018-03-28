@@ -1,15 +1,37 @@
 # import ClassPyOpenBrIM
 from ClassPyOpenBrIM import *
 
-# TopChord_width = PrmElmt("TopChord_width", "6", ut="Length", role="Input")
+mat1=Material('C4000Psi','Deck Concrete','Concrete')
+mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
+th = PrmElmt('thick',123,par_type='Thick')
+
+point=[]
+for i in range(4):
+    point.append(Point(i,0,0))
+shape1=Shape('s1',*point)
+shape2=Shape('s2',*point)
+shape2.is_cutout()
+sec1=Section('sect',mat1,shape1,shape2)
+
+point1=Point(0,0,0,'P1')
+point2=Point(10,0,0,'P2')
+point3=Point(20,0,0,'P2')
+point4=Point(30,0,0,'P2')
+n3 = FENode(0,100,0)
+n3.as_point(point3)
+n3.show_info()
+
 node1 = FENode(1,2,2,'nananan')
-fel=FELine(1,node1,'sec')
-#
-# par1 =PrmElmt('','123.01')
-# par1.show_info()
-# print(type(par1.value))
-# point1= Point(1,2,0,'base')
-# node1.show_info()
+n2 =FENode(0,0,0,'adf')
+
+line1=Line(point1, point2,sec1)
+feline = FELine(node1,n2,sec1)
+
+feline.show_sub()
+feline.as_line(line1)
+feline.show_sub()
+
+
 '''
 newproj = PyOpenBrIMElmt('new proj')
 newproj.parse_xmlfile('xml file/test.xml')
@@ -19,15 +41,9 @@ ShowTable(unit1)
 mat1=Material('C4000Psi','Deck Concrete','Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
 # mat1.show_mat()
-point=[]
-for i in range(4):
-    point.append(Point(i,0,0))
 
-shape1=Shape('s1',*point)
-shape2=Shape('s2',*point)
-shape2.show_sub()
-shape2.is_cutout()
-sec1=Section('sect',mat1,shape1,shape2)
+
+
 ShowTree(sec1)
 # point1=Point(0,0,0,'P1')
 # point2=Point(10,0,0,'P2')
@@ -54,10 +70,10 @@ ShowTree(newproj)
 # print('---delete test---')
 # newproj.save_project('before del.xml')
 # newproj.del_all_sub()
-# newproj.del_sub(T='Line')
+# newproj.check_del_sub(T='Line')
 # newproj.show_sub()
 # newproj.save_project('after del.xml')
-# newproj.del_sub('P',D='Density')
+# newproj.check_del_sub('P',D='Density')
 # newproj.save_project()
 # newproj.show_info('','Y')
 # print('--- change attribute test ---')
@@ -67,7 +83,7 @@ ShowTree(newproj)
 # print(point1.elmt.attrib)
 # newproj.add_sub(point1)
 # point1.show_self()
-# newproj.del_sub('P',N='Fc28')
+# newproj.check_del_sub('P',N='Fc28')
 # newproj.show_sub()
 # newproj.save_project()
 # print('---search test---')

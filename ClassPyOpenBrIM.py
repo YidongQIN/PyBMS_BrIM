@@ -22,7 +22,7 @@ class PyOpenBrIMElmt(object):
         else:
             attributes = {}
         for k, v in attrib_dict.items():
-            if v:
+            if v != '':
                 attributes[k] = v
         self.elmt = eET.Element(tag_o_p, **attributes)
         self.name = name
@@ -62,7 +62,7 @@ class PyOpenBrIMElmt(object):
     def show_sub(self):
         """show all sub elements' tags and attributes"""
         count = 0
-        print('\n- Sub elements of "{}":'.format(self.name))
+        print('- Sub elements of "{}":'.format(self.name))
         for c in self.elmt:
             count = count + 1
             print('  <{}> {}'.format(c.tag, c.attrib))
@@ -85,7 +85,7 @@ class PyOpenBrIMElmt(object):
                 self.elmt.set(key, temp.attrib[key])
 
     def findall_by_xpath(self, xpath, if_print='N'):
-        """find all sub elmt that matched the
+        """return a list of all sub elmt that matched the
         (xpath)[https://docs.python.org/3/library/xml.etree.elementtree.
         html?highlight=xpath#xpath-support]"""
         tree = eET.ElementTree(self.elmt)
@@ -95,8 +95,23 @@ class PyOpenBrIMElmt(object):
                 print('<{}> {}'.format(a.tag, a.attrib))
         return results
 
+    def find_by_xpath(self, xpath, if_print='N'):
+        # tree = eET.ElementTree(self.elmt)
+        results = self.elmt.findall(xpath)
+        if if_print.upper() == 'Y':
+            for a in results:
+                print('<{}> {}'.format(a.tag, a.attrib))
+        return results
+
+    def findsub_by_attributes(self, **attributes):
+        results = []
+        for any_elmt in self.elmt:
+            if PyOpenBrIMElmt.match_attribute(any_elmt, **attributes):
+                results.append(any_elmt)
+        return results
+
     def findall_by_attribute(self, **attributes):
-        """find all sub elmts by the attributes"""
+        """find in elmt.iter() by the attributes"""
         # results is a list[] of elements
         results = []
         for any_elmt in self.elmt.iter():
@@ -114,6 +129,14 @@ class PyOpenBrIMElmt(object):
         # self.elmt.clear() remove subs, but also all attributes of itself
 
     def del_sub(self, tag='O or P', **attrib_dict):
+        elmt_to_del = []
+        for child in self.elmt:
+            if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **attrib_dict):
+                elmt_to_del.append(child)
+        for one in elmt_to_del:
+            self.elmt.remove(one)
+
+    def check_del_sub(self, tag='O or P', **attrib_dict):
         """remove elmt with particular tag and attributes"""
         elmt_to_del = []
         confirm = ''
@@ -231,7 +254,7 @@ class ObjElmt(PyOpenBrIMElmt):
     def prm_refer(self, elmt, refer_name):
         if isinstance(elmt, PyOpenBrIMElmt):
             self.add_sub(PrmElmt(refer_name, elmt.name,
-                                 par_type=elmt.get_attrib('T')))
+                                 par_type=elmt.get_attrib('T'), role=''))
         # < P N = "Node1"  T = "Node"  V = "Nodes[span_num-1].BtmL" / >
 
 
@@ -249,7 +272,7 @@ class PrmElmt(PyOpenBrIMElmt):
                 self.value = float(value)
                 if self.value == int(self.value):
                     self.value = int(self.value)
-            except ValueError:
+            except (ValueError, TypeError):
                 self.value = str(value)
             # self.value is different from the element's attribute 'V'=value.
         else:
@@ -450,7 +473,9 @@ class Line(ObjElmt):
     def __init__(self, point1, point2, section=None, line_name=''):
         super(Line, self).__init__('Line', line_name)
         self.add_point(point1)
+        self.p1 = (point1.x, point1.y)
         self.add_point(point2)
+        self.p2 = (point2.x, point2.y)
         self.set_section(section)
 
     def check_line(self):
@@ -541,14 +566,14 @@ class Surface(ObjElmt):
 
     def change_thick(self, thickness, des='', role='', par_type='Surface_Thickness', ut='', uc=''):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
-        self.del_sub('P', N="Thickness")
+        self.check_del_sub('P', N="Thickness")
         self.add_sub(PrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
         # self.elmt.append(eET.Element
         # ('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
 
     def change_material(self, material, des='', role='', name='SurfaceMaterial', ut='', uc=''):
         """material parameter of Surface.\n Only material is mandatory"""
-        self.del_sub('P', T="Material")
+        self.check_del_sub('P', T="Material")
         self.add_sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
         # self.elmt.append(eET.Element('P', dict(T='Material', V=material, D=des, N=name, Role=role, UT=ut, UC=uc)))
 
@@ -569,15 +594,6 @@ class FENode(ObjElmt):
         self.rx = 0
         self.ry = 0
         self.rz = 0
-
-    def same_as_point(self, point_obj):
-        if isinstance(point_obj, Point):
-            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
-            self.x = point_obj.x
-            self.y = point_obj.y
-            self.z = point_obj.z
-        else:
-            print('{} is not a Point Object'.format(point_obj))
 
     def coordinate(self, x, y, z):
         self.x = x
@@ -601,6 +617,15 @@ class FENode(ObjElmt):
         self.rz = rz
         self.elmt.attrib['Rz'] = str(rz)
 
+    def as_point(self, point_obj):
+        if isinstance(point_obj, Point):
+            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z', 'N')
+            self.x = point_obj.x
+            self.y = point_obj.y
+            self.z = point_obj.z
+        else:
+            print('{} is not a Point Object'.format(point_obj))
+
 
 class FELine(ObjElmt):
 
@@ -608,16 +633,44 @@ class FELine(ObjElmt):
         super(FELine, self).__init__('FELine', feline_name)
         if isinstance(node1, FENode) and isinstance(node2, FENode) and isinstance(section, Section):
             self.prm_refer(node1, 'Node1')
+            self.n1 = node1
             self.prm_refer(node2, 'Node2')
+            self.n2 = node2
             self.prm_refer(section, 'Section')
         if beta_angle:
             self.param_simple('BetaAngle', beta_angle, '')
 
+    def as_line(self, line_obj: Line):
+        pass
+    # @TODO FELine need parameter refered to a Node, not a Node object.
+
+    def set_node_start(self,node):
+        self.del_sub('P', N='Node1')
+        self.prm_refer(node, 'Node1')
+        self.n1=node
+
+    def set_node_end(self, node):
+        self.del_sub('P', N='Node2')
+        self.prm_refer(node, 'Node2')
+        self.n2 = node
 
 class FESurface(ObjElmt):
 
-    def __init__(self, obj_name=''):
-        super(FESurface, self).__init__('FESurface', obj_name)
+    def __init__(self, node1, node2, node3, node4, thick_par, material_obj, fes_name=''):
+        super(FESurface, self).__init__('FESurface', fes_name)
+        self.prm_refer(node1, 'Node1')
+        self.n1 = (node1.x, node1.y, node1.z)
+        self.prm_refer(node2, 'Node2')
+        self.n2 = (node2.x, node2.y, node2.z)
+        self.prm_refer(node3, 'Node3')
+        self.n3 = (node3.x, node3.y, node3.z)
+        self.prm_refer(node4, 'Node5')
+        self.n4 = (node4.x, node4.y, node4.z)
+        self.prm_refer(thick_par, 'Thickness')
+        self.prm_refer(material_obj, 'Material')
+
+    def as_surface(self, surface_obj):
+        pass
 
 
 class ShowTree(object):
