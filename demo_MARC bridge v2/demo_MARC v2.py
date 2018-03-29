@@ -12,8 +12,7 @@ from ClassPyOpenBrIM import *
 
 if __name__ == '__main__':
 
-    marc = PyOpenBrIMElmt('MARC_OOP')
-    marc.new_project()
+    marc = Project('MARC_OOP')
     # 1. Material
     c4000 = Material('C4000Psi', mat_type="concrete", des="Concrete")
     c4000.mat_property(d='0.0000002248', E="3604.9965", a="0.0000055", Fc28="4")
@@ -25,7 +24,7 @@ if __name__ == '__main__':
     group_mat.attach_to(marc)
     # 2. Sections
     # 2.1 Sections Parameters
-    BottomChord_width = PrmElmt("BottomChord_width", 6, ut="Length", role="Input")
+    BottomChord_width = PrmElmt('BottomChord_width', 0, ut="Length", role="Input")
     BottomChord_depth = PrmElmt("BottomChord_depth", 6, ut="Length", role="Input")
     BottomChord_thickness = PrmElmt("BottomChord_thickness", 0.375, role="Input")
     TopChord_width = PrmElmt("TopChord_width", 6, ut="Length", role="Input")
@@ -127,7 +126,7 @@ if __name__ == '__main__':
     verChords = []
     for i in range(1, span_num.value + 1):
         for (a, b) in [(pointBL, pointBR), (pointTR, pointBR), (pointTR, pointTL), (pointBL, pointTL)]:
-            verChords.append(Line(a[i], b[i], Extends(sp_ver_int)))
+            verChords.append(Line(a[i], b[i], Extends(sec_ver)))
     group_vertical = Group('Vertical Chords', *verChords)
     group_vertical.attach_to(marc)
     # 5.4 oblique
@@ -158,6 +157,66 @@ if __name__ == '__main__':
             Surface(pointBL[i], pointBR[i], pointBR[i + 1], pointBL[i + 1],
                     deck_thick, c4000, 'concrete deck'))
     Group('Decks', *decks).attach_to(marc)
-    # 7. Save and Show
+    # 7. FEM
+    # 7.1 Node
+    nodeBL = []
+    nodeBR = []
+    nodeTL = []
+    nodeTR = []
+    for i in range(span_num.value + 1):
+        nodeBL.append(FENode(0, 0, 0, 'NodeBL_{}'.format(i)).as_point(pointBL[i]))
+        nodeBR.append(FENode(0, 0, 0, 'NodeBR_{}'.format(i)).as_point(pointBR[i]))
+        nodeTL.append(FENode(0, 0, 0, 'NodeTL_{}'.format(i)).as_point(pointTL[i]))
+        nodeTR.append(FENode(0, 0, 0, 'NodeTR_{}'.format(i)).as_point(pointTR[i]))
+    # 7.2 FELine
+    bottomFELineList = []
+    for i in range(span_num.value):
+        bottomFELineList.append(FELine(nodeBL[i], nodeBL[i + 1], sec_bc))
+        bottomFELineList.append(FELine(nodeBR[i], nodeBR[i + 1], sec_bc))
+    Group('Bottom FELines', *bottomFELineList).attach_to(marc)
+    # 7.2.2 top FELines, TR,TL
+    topFELineList = []
+    for i in range(1, span_num.value):
+        topFELineList.append(FELine(nodeTL[i], nodeTL[i + 1], sec_top))
+        topFELineList.append(FELine(nodeTR[i], nodeTR[i + 1], sec_top))
+    Group('Top FELines', *topFELineList).attach_to(marc)
+    # 7.2.3 vertical
+    verFELines = []
+    for i in range(1, span_num.value + 1):
+        for (a, b) in [(nodeBL, nodeBR), (nodeTR, nodeBR), (nodeTR, nodeTL), (nodeBL, nodeTL)]:
+            verFELines.append(FELine(a[i], b[i], sec_ver))
+    Group('Vertical FELines', *verFELines).attach_to(marc)
+    # 7.2.4 oblique
+    obliqFELines = []
+    for i in range(1, span_num.value):
+        for (a, b) in [(nodeBL, nodeTL), (nodeBR, nodeTR), (nodeTL, nodeTR)]:
+            obliqFELines.append(FELine(a[i], b[i + 1], sec_web))
+            obliqFELines.append(FELine(a[i + 1], b[i], sec_web))
+    Group('Oblique FELines', *obliqFELines).attach_to(marc)
+    # 7.2.5 Z beam in deck
+    z_FEbeams = []
+    for i in range(span_num.value):
+        if (i % 2) == 0:
+            z_FEbeams.append(FELine(nodeBL[i], nodeBR[i + 1], sec_bc))
+        else:
+            z_FEbeams.append(FELine(nodeBL[i + 1], nodeBR[i], sec_bc))
+    group_zbeam = Group('Z FEbeams', *z_FEbeams)
+    group_zbeam.attach_to(marc)
+    # 7.2.6 the 1st segment
+    first_FEseg = [FELine(nodeBL[0], nodeBR[0], sec_bc),
+                   FELine(nodeBL[0], nodeTL[1], sec_bc),
+                   FELine(nodeBR[0], nodeTR[1], sec_bc)]
+    Group('First Segment', *first_FEseg).attach_to(marc)
+    # 7.3 FESurface
+    FEdecks = []
+    for i in range(span_num.value):
+        FEdecks.append(
+            FESurface(nodeBL[i], nodeBR[i], nodeBR[i + 1], nodeBL[i + 1],
+                    deck_thick, c4000, 'concrete deck'))
+    Group('FEDecks', *FEdecks).attach_to(marc)
+    # 8. Save and Show
+    nodeTR.pop(0)
+    nodeTL.pop(0)
+    Group('FENodes', *nodeBL, *nodeBR, *nodeTL, *nodeTR).attach_to(marc)
     ShowTree(marc)
     marc.save_project()

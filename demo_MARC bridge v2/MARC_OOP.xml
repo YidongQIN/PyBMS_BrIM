@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <O Alignment="None" N="MARC_OOP" T="Project" TransAlignRule="Right">
     <O N="Units" T="Group">
-        <O Angle="Radian" Force="Kip" Length="Inch" N="Internal" T="Unit" Temperature="Fahrenheit"/>
-        <O Angle="Degree" Force="Kip" Length="Feet" N="Geometry" T="Unit" Temperature="Fahrenheit"/>
-        <O Angle="Degree" Force="Kip" Length="Inch" N="Property" T="Unit" Temperature="Fahrenheit"/>
+        <O Angle="Radian" Force="Newton" Length="Millimeter" N="Internal" T="Unit" Temperature="Celsius"/>
+        <O Angle="Radian" Force="KiloNewton" Length="Meter" N="Geometry" T="Unit" Temperature="Celsius"/>
+        <O Angle="Radian" Force="Newton" Length="Millimeter" N="Property" T="Unit" Temperature="Celsius"/>
     </O>
     <O N="SW" T="AnalysisCase" WeightFactor="-1"/>
-    <O Gravity="386.09" Modes="1" N="Seismic" T="AnalysisCaseEigen"/>
+    <O Gravity="9806.65" Modes="1" N="Seismic" T="AnalysisCaseEigen"/>
     <O N="Material Group" T="Group">
         <O D="Concrete" N="C4000Psi" T="Material" Type="concrete">
             <P D="Density" N="d" V="0.0000002248"/>
@@ -32,7 +32,7 @@
         </O>
     </O>
     <O N="Parameters Group of Sections" T="Group">
-        <P N="BottomChord_width" Role="Input" UT="Length" V="6"/>
+        <P N="BottomChord_width" Role="Input" UT="Length" V="0"/>
         <P N="BottomChord_depth" Role="Input" UT="Length" V="6"/>
         <P N="BottomChord_thickness" Role="Input" V="0.375"/>
         <P N="TopChord_width" Role="Input" UT="Length" V="6"/>
@@ -48,19 +48,19 @@
         <O N="Section_BottomChord" T="Section">
             <P N="Material_Section_BottomChord" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_BottomChord_Out" T="Shape">
-                <O N="" T="Point" X="-BottomChord_width/2" Y="-BottomChord_depth/2"/>
-                <O N="" T="Point" X="-BottomChord_width/2" Y="BottomChord_depth/2"/>
-                <O N="" T="Point" X="BottomChord_width/2" Y="BottomChord_depth/2"/>
-                <O N="" T="Point" X="BottomChord_width/2" Y="-BottomChord_depth/2"/>
+                <O T="Point" X="-BottomChord_width/2" Y="-BottomChord_depth/2"/>
+                <O T="Point" X="-BottomChord_width/2" Y="BottomChord_depth/2"/>
+                <O T="Point" X="BottomChord_width/2" Y="BottomChord_depth/2"/>
+                <O T="Point" X="BottomChord_width/2" Y="-BottomChord_depth/2"/>
             </O>
             <O N="Shape_BottomChord_Int" T="Shape">
-                <O N="" T="Point" X="-BottomChord_width/2+BottomChord_thickness"
+                <O T="Point" X="-BottomChord_width/2+BottomChord_thickness"
                    Y="-BottomChord_depth/2+BottomChord_thickness"/>
-                <O N="" T="Point" X="-BottomChord_width/2+BottomChord_thickness"
+                <O T="Point" X="-BottomChord_width/2+BottomChord_thickness"
                    Y="BottomChord_depth/2-BottomChord_thickness"/>
-                <O N="" T="Point" X="BottomChord_width/2-BottomChord_thickness"
+                <O T="Point" X="BottomChord_width/2-BottomChord_thickness"
                    Y="BottomChord_depth/2-BottomChord_thickness"/>
-                <O N="" T="Point" X="BottomChord_width/2-BottomChord_thickness"
+                <O T="Point" X="BottomChord_width/2-BottomChord_thickness"
                    Y="-BottomChord_depth/2+BottomChord_thickness"/>
                 <P N="IsCutout" Role="Input" V="1"/>
             </O>
@@ -71,16 +71,16 @@
         <O N="Section_TopChord" T="Section">
             <P N="Material_Section_TopChord" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_TopChord_Out" T="Shape">
-                <O N="" T="Point" X="-TopChord_width/2" Y="-TopChord_depth/2"/>
-                <O N="" T="Point" X="-TopChord_width/2" Y="TopChord_depth/2"/>
-                <O N="" T="Point" X="TopChord_width/2" Y="TopChord_depth/2"/>
-                <O N="" T="Point" X="TopChord_width/2" Y="-TopChord_depth/2"/>
+                <O T="Point" X="-TopChord_width/2" Y="-TopChord_depth/2"/>
+                <O T="Point" X="-TopChord_width/2" Y="TopChord_depth/2"/>
+                <O T="Point" X="TopChord_width/2" Y="TopChord_depth/2"/>
+                <O T="Point" X="TopChord_width/2" Y="-TopChord_depth/2"/>
             </O>
             <O N="Shape_TopChord_Int" T="Shape">
-                <O N="" T="Point" X="-TopChord_width/2+TopChord_thickness" Y="-TopChord_depth/2+TopChord_thickness"/>
-                <O N="" T="Point" X="-TopChord_width/2+TopChord_thickness" Y="TopChord_depth/2-TopChord_thickness"/>
-                <O N="" T="Point" X="TopChord_width/2-TopChord_thickness" Y="TopChord_depth/2-TopChord_thickness"/>
-                <O N="" T="Point" X="TopChord_width/2-TopChord_thickness" Y="-TopChord_depth/2+TopChord_thickness"/>
+                <O T="Point" X="-TopChord_width/2+TopChord_thickness" Y="-TopChord_depth/2+TopChord_thickness"/>
+                <O T="Point" X="-TopChord_width/2+TopChord_thickness" Y="TopChord_depth/2-TopChord_thickness"/>
+                <O T="Point" X="TopChord_width/2-TopChord_thickness" Y="TopChord_depth/2-TopChord_thickness"/>
+                <O T="Point" X="TopChord_width/2-TopChord_thickness" Y="-TopChord_depth/2+TopChord_thickness"/>
                 <P N="IsCutout" Role="Input" V="1"/>
             </O>
             <P N="Ax" V="6.43"/>
@@ -90,17 +90,16 @@
         <O N="Section_VertiBeam" T="Section">
             <P N="Material_Section_VertiBeam" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_VertiBeam_Out" T="Shape">
-                <O N="" T="Point" X="-VertiBeam_width/2" Y="-VertiBeam_depth/2"/>
-                <O N="" T="Point" X="-VertiBeam_width/2" Y="VertiBeam_depth/2"/>
-                <O N="" T="Point" X="VertiBeam_width/2" Y="VertiBeam_depth/2"/>
-                <O N="" T="Point" X="VertiBeam_width/2" Y="-VertiBeam_depth/2"/>
+                <O T="Point" X="-VertiBeam_width/2" Y="-VertiBeam_depth/2"/>
+                <O T="Point" X="-VertiBeam_width/2" Y="VertiBeam_depth/2"/>
+                <O T="Point" X="VertiBeam_width/2" Y="VertiBeam_depth/2"/>
+                <O T="Point" X="VertiBeam_width/2" Y="-VertiBeam_depth/2"/>
             </O>
             <O N="Shape_VertiBeam_Int" T="Shape">
-                <O N="" T="Point" X="-VertiBeam_width/2+VertiBeam_thickness"
-                   Y="-VertiBeam_depth/2+VertiBeam_thickness"/>
-                <O N="" T="Point" X="-VertiBeam_width/2+VertiBeam_thickness" Y="VertiBeam_depth/2-VertiBeam_thickness"/>
-                <O N="" T="Point" X="VertiBeam_width/2-VertiBeam_thickness" Y="VertiBeam_depth/2-VertiBeam_thickness"/>
-                <O N="" T="Point" X="VertiBeam_width/2-VertiBeam_thickness" Y="-VertiBeam_depth/2+VertiBeam_thickness"/>
+                <O T="Point" X="-VertiBeam_width/2+VertiBeam_thickness" Y="-VertiBeam_depth/2+VertiBeam_thickness"/>
+                <O T="Point" X="-VertiBeam_width/2+VertiBeam_thickness" Y="VertiBeam_depth/2-VertiBeam_thickness"/>
+                <O T="Point" X="VertiBeam_width/2-VertiBeam_thickness" Y="VertiBeam_depth/2-VertiBeam_thickness"/>
+                <O T="Point" X="VertiBeam_width/2-VertiBeam_thickness" Y="-VertiBeam_depth/2+VertiBeam_thickness"/>
                 <P N="IsCutout" Role="Input" V="1"/>
             </O>
             <P N="Ax" V="5.24"/>
@@ -110,8 +109,8 @@
         <O N="Section_Web" T="Section">
             <P N="Material_Section_Web" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_WebCircle" T="Shape">
-                <O N="" T="Circle">
-                    <P N="Radius" Role="Input" V="WebRadius"/>
+                <O T="Circle">
+                    <P N="Radius" V="WebRadius"/>
                 </O>
             </O>
         </O>
@@ -123,815 +122,815 @@
         <P N="z_height" Role="Input" UT="Length" V="108"/>
     </O>
     <O N="Bottom Chords" T="Group">
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_0" T="Point" X="0" Y="84" Z="0"/>
             <O N="PointBL_1" T="Point" X="108" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_0" T="Point" X="0" Y="0" Z="0"/>
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_1" T="Point" X="108" Y="84" Z="0"/>
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
             <O N="PointBR_2" T="Point" X="216" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointBL_3" T="Point" X="324" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_2" T="Point" X="216" Y="0" Z="0"/>
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_3" T="Point" X="324" Y="84" Z="0"/>
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
             <O N="PointBR_4" T="Point" X="432" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointBL_5" T="Point" X="540" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_4" T="Point" X="432" Y="0" Z="0"/>
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_5" T="Point" X="540" Y="84" Z="0"/>
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
             <O N="PointBR_6" T="Point" X="648" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointBL_7" T="Point" X="756" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_6" T="Point" X="648" Y="0" Z="0"/>
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_7" T="Point" X="756" Y="84" Z="0"/>
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
             <O N="PointBR_8" T="Point" X="864" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointBL_9" T="Point" X="972" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_8" T="Point" X="864" Y="0" Z="0"/>
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_9" T="Point" X="972" Y="84" Z="0"/>
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
             <O N="PointBR_10" T="Point" X="1080" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointBL_11" T="Point" X="1188" Y="84" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_10" T="Point" X="1080" Y="0" Z="0"/>
             <O N="PointBR_11" T="Point" X="1188" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
     </O>
     <O N="Top Chords" T="Group">
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_1" T="Point" X="108" Y="84" Z="108"/>
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_1" T="Point" X="108" Y="0" Z="108"/>
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
             <O N="PointTL_11" T="Point" X="1188" Y="84" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
             <O N="PointTR_11" T="Point" X="1188" Y="0" Z="108"/>
-            <O Extends="Section_TopChord" N="" T="Section"/>
+            <O Extends="Section_TopChord" T="Section"/>
         </O>
     </O>
     <O N="Vertical Chords" T="Group">
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_1" T="Point" X="108" Y="84" Z="0"/>
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_1" T="Point" X="108" Y="0" Z="108"/>
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_1" T="Point" X="108" Y="0" Z="108"/>
             <O N="PointTL_1" T="Point" X="108" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_1" T="Point" X="108" Y="84" Z="0"/>
             <O N="PointTL_1" T="Point" X="108" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointBR_2" T="Point" X="216" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
             <O N="PointBR_2" T="Point" X="216" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_3" T="Point" X="324" Y="84" Z="0"/>
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_3" T="Point" X="324" Y="84" Z="0"/>
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointBR_4" T="Point" X="432" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
             <O N="PointBR_4" T="Point" X="432" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_5" T="Point" X="540" Y="84" Z="0"/>
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_5" T="Point" X="540" Y="84" Z="0"/>
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointBR_6" T="Point" X="648" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
             <O N="PointBR_6" T="Point" X="648" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_7" T="Point" X="756" Y="84" Z="0"/>
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_7" T="Point" X="756" Y="84" Z="0"/>
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointBR_8" T="Point" X="864" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
             <O N="PointBR_8" T="Point" X="864" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_9" T="Point" X="972" Y="84" Z="0"/>
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_9" T="Point" X="972" Y="84" Z="0"/>
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointBR_10" T="Point" X="1080" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
             <O N="PointBR_10" T="Point" X="1080" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_11" T="Point" X="1188" Y="84" Z="0"/>
             <O N="PointBR_11" T="Point" X="1188" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_11" T="Point" X="1188" Y="0" Z="108"/>
             <O N="PointBR_11" T="Point" X="1188" Y="0" Z="0"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTR_11" T="Point" X="1188" Y="0" Z="108"/>
             <O N="PointTL_11" T="Point" X="1188" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_11" T="Point" X="1188" Y="84" Z="0"/>
             <O N="PointTL_11" T="Point" X="1188" Y="84" Z="108"/>
-            <O Extends="Shape_VertiBeam_Int" N="" T="Shape"/>
+            <O Extends="Section_VertiBeam" T="Section"/>
         </O>
     </O>
     <O N="Oblique Chords" T="Group">
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_1" T="Point" X="108" Y="84" Z="0"/>
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointTL_1" T="Point" X="108" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_2" T="Point" X="216" Y="0" Z="0"/>
             <O N="PointTR_1" T="Point" X="108" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_1" T="Point" X="108" Y="84" Z="108"/>
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
             <O N="PointTR_1" T="Point" X="108" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_3" T="Point" X="324" Y="84" Z="0"/>
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_2" T="Point" X="216" Y="0" Z="0"/>
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_2" T="Point" X="216" Y="84" Z="108"/>
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
             <O N="PointTR_2" T="Point" X="216" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_3" T="Point" X="324" Y="84" Z="0"/>
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_4" T="Point" X="432" Y="0" Z="0"/>
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_3" T="Point" X="324" Y="84" Z="108"/>
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
             <O N="PointTR_3" T="Point" X="324" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_5" T="Point" X="540" Y="84" Z="0"/>
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_4" T="Point" X="432" Y="0" Z="0"/>
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_4" T="Point" X="432" Y="84" Z="108"/>
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
             <O N="PointTR_4" T="Point" X="432" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_5" T="Point" X="540" Y="84" Z="0"/>
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_6" T="Point" X="648" Y="0" Z="0"/>
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_5" T="Point" X="540" Y="84" Z="108"/>
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
             <O N="PointTR_5" T="Point" X="540" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_7" T="Point" X="756" Y="84" Z="0"/>
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_6" T="Point" X="648" Y="0" Z="0"/>
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_6" T="Point" X="648" Y="84" Z="108"/>
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
             <O N="PointTR_6" T="Point" X="648" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_7" T="Point" X="756" Y="84" Z="0"/>
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_8" T="Point" X="864" Y="0" Z="0"/>
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_7" T="Point" X="756" Y="84" Z="108"/>
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
             <O N="PointTR_7" T="Point" X="756" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_9" T="Point" X="972" Y="84" Z="0"/>
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_8" T="Point" X="864" Y="0" Z="0"/>
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_8" T="Point" X="864" Y="84" Z="108"/>
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
             <O N="PointTR_8" T="Point" X="864" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_9" T="Point" X="972" Y="84" Z="0"/>
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_10" T="Point" X="1080" Y="0" Z="0"/>
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_9" T="Point" X="972" Y="84" Z="108"/>
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
             <O N="PointTR_9" T="Point" X="972" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointTL_11" T="Point" X="1188" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_11" T="Point" X="1188" Y="84" Z="0"/>
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_10" T="Point" X="1080" Y="0" Z="0"/>
             <O N="PointTR_11" T="Point" X="1188" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_11" T="Point" X="1188" Y="0" Z="0"/>
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_10" T="Point" X="1080" Y="84" Z="108"/>
             <O N="PointTR_11" T="Point" X="1188" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointTL_11" T="Point" X="1188" Y="84" Z="108"/>
             <O N="PointTR_10" T="Point" X="1080" Y="0" Z="108"/>
-            <O Extends="Section_Web" N="" T="Section"/>
+            <O Extends="Section_Web" T="Section"/>
         </O>
     </O>
     <O N="Z beams" T="Group">
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_0" T="Point" X="0" Y="84" Z="0"/>
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointBR_1" T="Point" X="108" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_2" T="Point" X="216" Y="84" Z="0"/>
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointBR_3" T="Point" X="324" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_4" T="Point" X="432" Y="84" Z="0"/>
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointBR_5" T="Point" X="540" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_6" T="Point" X="648" Y="84" Z="0"/>
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointBR_7" T="Point" X="756" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_8" T="Point" X="864" Y="84" Z="0"/>
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointBR_9" T="Point" X="972" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_10" T="Point" X="1080" Y="84" Z="0"/>
             <O N="PointBR_11" T="Point" X="1188" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
     </O>
     <O N="First Segment" T="Group">
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_0" T="Point" X="0" Y="84" Z="0"/>
             <O N="PointBR_0" T="Point" X="0" Y="0" Z="0"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBL_0" T="Point" X="0" Y="84" Z="0"/>
             <O N="PointTL_1" T="Point" X="108" Y="84" Z="108"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
-        <O N="" T="Line">
+        <O T="Line">
             <O N="PointBR_0" T="Point" X="0" Y="0" Z="0"/>
             <O N="PointTR_1" T="Point" X="108" Y="0" Z="108"/>
-            <O Extends="Section_BottomChord" N="" T="Section"/>
+            <O Extends="Section_BottomChord" T="Section"/>
         </O>
     </O>
     <O N="Decks" T="Group">
@@ -1023,5 +1022,955 @@
             <P D="Material_Surface_concrete deck" N="Material" T="Material" V="C4000Psi"/>
             <P N="Thickness" V="deck_thick"/>
         </O>
+    </O>
+    <O N="Bottom FELines" T="Group">
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_0"/>
+            <P N="Node2" T="Node" V="NodeBL_1"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_0"/>
+            <P N="Node2" T="Node" V="NodeBR_1"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_1"/>
+            <P N="Node2" T="Node" V="NodeBL_2"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_1"/>
+            <P N="Node2" T="Node" V="NodeBR_2"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeBL_3"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_2"/>
+            <P N="Node2" T="Node" V="NodeBR_3"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_3"/>
+            <P N="Node2" T="Node" V="NodeBL_4"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_3"/>
+            <P N="Node2" T="Node" V="NodeBR_4"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeBL_5"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_4"/>
+            <P N="Node2" T="Node" V="NodeBR_5"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_5"/>
+            <P N="Node2" T="Node" V="NodeBL_6"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_5"/>
+            <P N="Node2" T="Node" V="NodeBR_6"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeBL_7"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_6"/>
+            <P N="Node2" T="Node" V="NodeBR_7"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_7"/>
+            <P N="Node2" T="Node" V="NodeBL_8"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_7"/>
+            <P N="Node2" T="Node" V="NodeBR_8"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeBL_9"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_8"/>
+            <P N="Node2" T="Node" V="NodeBR_9"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_9"/>
+            <P N="Node2" T="Node" V="NodeBL_10"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_9"/>
+            <P N="Node2" T="Node" V="NodeBR_10"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeBL_11"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_10"/>
+            <P N="Node2" T="Node" V="NodeBR_11"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+    </O>
+    <O N="Top FELines" T="Group">
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_1"/>
+            <P N="Node2" T="Node" V="NodeTL_2"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_1"/>
+            <P N="Node2" T="Node" V="NodeTR_2"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_2"/>
+            <P N="Node2" T="Node" V="NodeTL_3"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_2"/>
+            <P N="Node2" T="Node" V="NodeTR_3"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_3"/>
+            <P N="Node2" T="Node" V="NodeTL_4"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_3"/>
+            <P N="Node2" T="Node" V="NodeTR_4"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_4"/>
+            <P N="Node2" T="Node" V="NodeTL_5"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_4"/>
+            <P N="Node2" T="Node" V="NodeTR_5"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_5"/>
+            <P N="Node2" T="Node" V="NodeTL_6"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_5"/>
+            <P N="Node2" T="Node" V="NodeTR_6"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_6"/>
+            <P N="Node2" T="Node" V="NodeTL_7"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_6"/>
+            <P N="Node2" T="Node" V="NodeTR_7"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_7"/>
+            <P N="Node2" T="Node" V="NodeTL_8"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_7"/>
+            <P N="Node2" T="Node" V="NodeTR_8"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_8"/>
+            <P N="Node2" T="Node" V="NodeTL_9"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_8"/>
+            <P N="Node2" T="Node" V="NodeTR_9"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_9"/>
+            <P N="Node2" T="Node" V="NodeTL_10"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_9"/>
+            <P N="Node2" T="Node" V="NodeTR_10"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_10"/>
+            <P N="Node2" T="Node" V="NodeTL_11"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_10"/>
+            <P N="Node2" T="Node" V="NodeTR_11"/>
+            <P N="Section" T="Section" V="Section_TopChord"/>
+        </O>
+    </O>
+    <O N="Vertical FELines" T="Group">
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_1"/>
+            <P N="Node2" T="Node" V="NodeBR_1"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_1"/>
+            <P N="Node2" T="Node" V="NodeBR_1"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_1"/>
+            <P N="Node2" T="Node" V="NodeTL_1"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_1"/>
+            <P N="Node2" T="Node" V="NodeTL_1"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeBR_2"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_2"/>
+            <P N="Node2" T="Node" V="NodeBR_2"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_2"/>
+            <P N="Node2" T="Node" V="NodeTL_2"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeTL_2"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_3"/>
+            <P N="Node2" T="Node" V="NodeBR_3"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_3"/>
+            <P N="Node2" T="Node" V="NodeBR_3"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_3"/>
+            <P N="Node2" T="Node" V="NodeTL_3"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_3"/>
+            <P N="Node2" T="Node" V="NodeTL_3"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeBR_4"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_4"/>
+            <P N="Node2" T="Node" V="NodeBR_4"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_4"/>
+            <P N="Node2" T="Node" V="NodeTL_4"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeTL_4"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_5"/>
+            <P N="Node2" T="Node" V="NodeBR_5"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_5"/>
+            <P N="Node2" T="Node" V="NodeBR_5"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_5"/>
+            <P N="Node2" T="Node" V="NodeTL_5"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_5"/>
+            <P N="Node2" T="Node" V="NodeTL_5"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeBR_6"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_6"/>
+            <P N="Node2" T="Node" V="NodeBR_6"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_6"/>
+            <P N="Node2" T="Node" V="NodeTL_6"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeTL_6"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_7"/>
+            <P N="Node2" T="Node" V="NodeBR_7"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_7"/>
+            <P N="Node2" T="Node" V="NodeBR_7"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_7"/>
+            <P N="Node2" T="Node" V="NodeTL_7"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_7"/>
+            <P N="Node2" T="Node" V="NodeTL_7"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeBR_8"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_8"/>
+            <P N="Node2" T="Node" V="NodeBR_8"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_8"/>
+            <P N="Node2" T="Node" V="NodeTL_8"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeTL_8"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_9"/>
+            <P N="Node2" T="Node" V="NodeBR_9"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_9"/>
+            <P N="Node2" T="Node" V="NodeBR_9"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_9"/>
+            <P N="Node2" T="Node" V="NodeTL_9"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_9"/>
+            <P N="Node2" T="Node" V="NodeTL_9"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeBR_10"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_10"/>
+            <P N="Node2" T="Node" V="NodeBR_10"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_10"/>
+            <P N="Node2" T="Node" V="NodeTL_10"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeTL_10"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_11"/>
+            <P N="Node2" T="Node" V="NodeBR_11"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_11"/>
+            <P N="Node2" T="Node" V="NodeBR_11"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTR_11"/>
+            <P N="Node2" T="Node" V="NodeTL_11"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_11"/>
+            <P N="Node2" T="Node" V="NodeTL_11"/>
+            <P N="Section" T="Section" V="Section_VertiBeam"/>
+        </O>
+    </O>
+    <O N="Oblique FELines" T="Group">
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_1"/>
+            <P N="Node2" T="Node" V="NodeTL_2"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeTL_1"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_1"/>
+            <P N="Node2" T="Node" V="NodeTR_2"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_2"/>
+            <P N="Node2" T="Node" V="NodeTR_1"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_1"/>
+            <P N="Node2" T="Node" V="NodeTR_2"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_2"/>
+            <P N="Node2" T="Node" V="NodeTR_1"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeTL_3"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_3"/>
+            <P N="Node2" T="Node" V="NodeTL_2"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_2"/>
+            <P N="Node2" T="Node" V="NodeTR_3"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_3"/>
+            <P N="Node2" T="Node" V="NodeTR_2"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_2"/>
+            <P N="Node2" T="Node" V="NodeTR_3"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_3"/>
+            <P N="Node2" T="Node" V="NodeTR_2"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_3"/>
+            <P N="Node2" T="Node" V="NodeTL_4"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeTL_3"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_3"/>
+            <P N="Node2" T="Node" V="NodeTR_4"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_4"/>
+            <P N="Node2" T="Node" V="NodeTR_3"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_3"/>
+            <P N="Node2" T="Node" V="NodeTR_4"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_4"/>
+            <P N="Node2" T="Node" V="NodeTR_3"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeTL_5"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_5"/>
+            <P N="Node2" T="Node" V="NodeTL_4"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_4"/>
+            <P N="Node2" T="Node" V="NodeTR_5"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_5"/>
+            <P N="Node2" T="Node" V="NodeTR_4"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_4"/>
+            <P N="Node2" T="Node" V="NodeTR_5"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_5"/>
+            <P N="Node2" T="Node" V="NodeTR_4"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_5"/>
+            <P N="Node2" T="Node" V="NodeTL_6"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeTL_5"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_5"/>
+            <P N="Node2" T="Node" V="NodeTR_6"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_6"/>
+            <P N="Node2" T="Node" V="NodeTR_5"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_5"/>
+            <P N="Node2" T="Node" V="NodeTR_6"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_6"/>
+            <P N="Node2" T="Node" V="NodeTR_5"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeTL_7"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_7"/>
+            <P N="Node2" T="Node" V="NodeTL_6"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_6"/>
+            <P N="Node2" T="Node" V="NodeTR_7"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_7"/>
+            <P N="Node2" T="Node" V="NodeTR_6"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_6"/>
+            <P N="Node2" T="Node" V="NodeTR_7"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_7"/>
+            <P N="Node2" T="Node" V="NodeTR_6"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_7"/>
+            <P N="Node2" T="Node" V="NodeTL_8"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeTL_7"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_7"/>
+            <P N="Node2" T="Node" V="NodeTR_8"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_8"/>
+            <P N="Node2" T="Node" V="NodeTR_7"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_7"/>
+            <P N="Node2" T="Node" V="NodeTR_8"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_8"/>
+            <P N="Node2" T="Node" V="NodeTR_7"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeTL_9"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_9"/>
+            <P N="Node2" T="Node" V="NodeTL_8"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_8"/>
+            <P N="Node2" T="Node" V="NodeTR_9"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_9"/>
+            <P N="Node2" T="Node" V="NodeTR_8"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_8"/>
+            <P N="Node2" T="Node" V="NodeTR_9"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_9"/>
+            <P N="Node2" T="Node" V="NodeTR_8"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_9"/>
+            <P N="Node2" T="Node" V="NodeTL_10"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeTL_9"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_9"/>
+            <P N="Node2" T="Node" V="NodeTR_10"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_10"/>
+            <P N="Node2" T="Node" V="NodeTR_9"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_9"/>
+            <P N="Node2" T="Node" V="NodeTR_10"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_10"/>
+            <P N="Node2" T="Node" V="NodeTR_9"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeTL_11"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_11"/>
+            <P N="Node2" T="Node" V="NodeTL_10"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_10"/>
+            <P N="Node2" T="Node" V="NodeTR_11"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_11"/>
+            <P N="Node2" T="Node" V="NodeTR_10"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_10"/>
+            <P N="Node2" T="Node" V="NodeTR_11"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeTL_11"/>
+            <P N="Node2" T="Node" V="NodeTR_10"/>
+            <P N="Section" T="Section" V="Section_Web"/>
+        </O>
+    </O>
+    <O N="Z FEbeams" T="Group">
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_0"/>
+            <P N="Node2" T="Node" V="NodeBR_1"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeBR_1"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeBR_3"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeBR_3"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeBR_5"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeBR_5"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeBR_7"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeBR_7"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeBR_9"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeBR_9"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeBR_11"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+    </O>
+    <O N="First Segment" T="Group">
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_0"/>
+            <P N="Node2" T="Node" V="NodeBR_0"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBL_0"/>
+            <P N="Node2" T="Node" V="NodeTL_1"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+        <O T="FELine">
+            <P N="Node1" T="Node" V="NodeBR_0"/>
+            <P N="Node2" T="Node" V="NodeTR_1"/>
+            <P N="Section" T="Section" V="Section_BottomChord"/>
+        </O>
+    </O>
+    <O N="FEDecks" T="Group">
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_0"/>
+            <P N="Node2" T="Node" V="NodeBR_0"/>
+            <P N="Node3" T="Node" V="NodeBR_1"/>
+            <P N="Node4" T="Node" V="NodeBL_1"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_1"/>
+            <P N="Node2" T="Node" V="NodeBR_1"/>
+            <P N="Node3" T="Node" V="NodeBR_2"/>
+            <P N="Node4" T="Node" V="NodeBL_2"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_2"/>
+            <P N="Node2" T="Node" V="NodeBR_2"/>
+            <P N="Node3" T="Node" V="NodeBR_3"/>
+            <P N="Node4" T="Node" V="NodeBL_3"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_3"/>
+            <P N="Node2" T="Node" V="NodeBR_3"/>
+            <P N="Node3" T="Node" V="NodeBR_4"/>
+            <P N="Node4" T="Node" V="NodeBL_4"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_4"/>
+            <P N="Node2" T="Node" V="NodeBR_4"/>
+            <P N="Node3" T="Node" V="NodeBR_5"/>
+            <P N="Node4" T="Node" V="NodeBL_5"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_5"/>
+            <P N="Node2" T="Node" V="NodeBR_5"/>
+            <P N="Node3" T="Node" V="NodeBR_6"/>
+            <P N="Node4" T="Node" V="NodeBL_6"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_6"/>
+            <P N="Node2" T="Node" V="NodeBR_6"/>
+            <P N="Node3" T="Node" V="NodeBR_7"/>
+            <P N="Node4" T="Node" V="NodeBL_7"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_7"/>
+            <P N="Node2" T="Node" V="NodeBR_7"/>
+            <P N="Node3" T="Node" V="NodeBR_8"/>
+            <P N="Node4" T="Node" V="NodeBL_8"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_8"/>
+            <P N="Node2" T="Node" V="NodeBR_8"/>
+            <P N="Node3" T="Node" V="NodeBR_9"/>
+            <P N="Node4" T="Node" V="NodeBL_9"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_9"/>
+            <P N="Node2" T="Node" V="NodeBR_9"/>
+            <P N="Node3" T="Node" V="NodeBR_10"/>
+            <P N="Node4" T="Node" V="NodeBL_10"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+        <O N="concrete deck" T="FESurface">
+            <P N="Node1" T="Node" V="NodeBL_10"/>
+            <P N="Node2" T="Node" V="NodeBR_10"/>
+            <P N="Node3" T="Node" V="NodeBR_11"/>
+            <P N="Node4" T="Node" V="NodeBL_11"/>
+            <P N="Thickness" V="deck_thick"/>
+            <P N="Material" T="Material" V="C4000Psi"/>
+        </O>
+    </O>
+    <O N="FENodes" T="Group">
+        <O N="NodeBL_0" T="Node" X="0" Y="84" Z="0"/>
+        <O N="NodeBL_1" T="Node" X="108" Y="84" Z="0"/>
+        <O N="NodeBL_2" T="Node" X="216" Y="84" Z="0"/>
+        <O N="NodeBL_3" T="Node" X="324" Y="84" Z="0"/>
+        <O N="NodeBL_4" T="Node" X="432" Y="84" Z="0"/>
+        <O N="NodeBL_5" T="Node" X="540" Y="84" Z="0"/>
+        <O N="NodeBL_6" T="Node" X="648" Y="84" Z="0"/>
+        <O N="NodeBL_7" T="Node" X="756" Y="84" Z="0"/>
+        <O N="NodeBL_8" T="Node" X="864" Y="84" Z="0"/>
+        <O N="NodeBL_9" T="Node" X="972" Y="84" Z="0"/>
+        <O N="NodeBL_10" T="Node" X="1080" Y="84" Z="0"/>
+        <O N="NodeBL_11" T="Node" X="1188" Y="84" Z="0"/>
+        <O N="NodeBR_0" T="Node" X="0" Y="0" Z="0"/>
+        <O N="NodeBR_1" T="Node" X="108" Y="0" Z="0"/>
+        <O N="NodeBR_2" T="Node" X="216" Y="0" Z="0"/>
+        <O N="NodeBR_3" T="Node" X="324" Y="0" Z="0"/>
+        <O N="NodeBR_4" T="Node" X="432" Y="0" Z="0"/>
+        <O N="NodeBR_5" T="Node" X="540" Y="0" Z="0"/>
+        <O N="NodeBR_6" T="Node" X="648" Y="0" Z="0"/>
+        <O N="NodeBR_7" T="Node" X="756" Y="0" Z="0"/>
+        <O N="NodeBR_8" T="Node" X="864" Y="0" Z="0"/>
+        <O N="NodeBR_9" T="Node" X="972" Y="0" Z="0"/>
+        <O N="NodeBR_10" T="Node" X="1080" Y="0" Z="0"/>
+        <O N="NodeBR_11" T="Node" X="1188" Y="0" Z="0"/>
+        <O N="NodeTL_1" T="Node" X="108" Y="84" Z="108"/>
+        <O N="NodeTL_2" T="Node" X="216" Y="84" Z="108"/>
+        <O N="NodeTL_3" T="Node" X="324" Y="84" Z="108"/>
+        <O N="NodeTL_4" T="Node" X="432" Y="84" Z="108"/>
+        <O N="NodeTL_5" T="Node" X="540" Y="84" Z="108"/>
+        <O N="NodeTL_6" T="Node" X="648" Y="84" Z="108"/>
+        <O N="NodeTL_7" T="Node" X="756" Y="84" Z="108"/>
+        <O N="NodeTL_8" T="Node" X="864" Y="84" Z="108"/>
+        <O N="NodeTL_9" T="Node" X="972" Y="84" Z="108"/>
+        <O N="NodeTL_10" T="Node" X="1080" Y="84" Z="108"/>
+        <O N="NodeTL_11" T="Node" X="1188" Y="84" Z="108"/>
+        <O N="NodeTR_1" T="Node" X="108" Y="0" Z="108"/>
+        <O N="NodeTR_2" T="Node" X="216" Y="0" Z="108"/>
+        <O N="NodeTR_3" T="Node" X="324" Y="0" Z="108"/>
+        <O N="NodeTR_4" T="Node" X="432" Y="0" Z="108"/>
+        <O N="NodeTR_5" T="Node" X="540" Y="0" Z="108"/>
+        <O N="NodeTR_6" T="Node" X="648" Y="0" Z="108"/>
+        <O N="NodeTR_7" T="Node" X="756" Y="0" Z="108"/>
+        <O N="NodeTR_8" T="Node" X="864" Y="0" Z="108"/>
+        <O N="NodeTR_9" T="Node" X="972" Y="0" Z="108"/>
+        <O N="NodeTR_10" T="Node" X="1080" Y="0" Z="108"/>
+        <O N="NodeTR_11" T="Node" X="1188" Y="0" Z="108"/>
     </O>
 </O>
