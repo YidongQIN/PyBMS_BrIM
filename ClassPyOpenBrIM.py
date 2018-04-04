@@ -647,17 +647,19 @@ class FELine(ObjElmt):
 
     def as_line(self, line_obj: Line):
         pass
+
     # @TODO FELine need parameter refered to a Node, not a Node object.
 
-    def set_node_start(self,node):
+    def set_node_start(self, node):
         self.del_sub('P', N='Node1')
         self.prm_refer(node, 'Node1')
-        self.n1=node
+        self.n1 = node
 
     def set_node_end(self, node):
         self.del_sub('P', N='Node2')
         self.prm_refer(node, 'Node2')
         self.n2 = node
+
 
 class FESurface(ObjElmt):
 
