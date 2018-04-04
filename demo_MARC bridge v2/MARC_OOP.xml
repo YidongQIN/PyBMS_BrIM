@@ -46,7 +46,7 @@
     </O>
     <O N="Sections Group" T="Group">
         <O N="Section_BottomChord" T="Section">
-            <P N="Material_Section_BottomChord" Role="Input" T="Material" V="A992Fy50"/>
+            <P D="Material_Section_BottomChord" N="Material" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_BottomChord_Out" T="Shape">
                 <O T="Point" X="-BottomChord_width/2" Y="-BottomChord_depth/2"/>
                 <O T="Point" X="-BottomChord_width/2" Y="BottomChord_depth/2"/>
@@ -69,7 +69,7 @@
             <P N="Iz" V="39.5"/>
         </O>
         <O N="Section_TopChord" T="Section">
-            <P N="Material_Section_TopChord" Role="Input" T="Material" V="A992Fy50"/>
+            <P D="Material_Section_TopChord" N="Material" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_TopChord_Out" T="Shape">
                 <O T="Point" X="-TopChord_width/2" Y="-TopChord_depth/2"/>
                 <O T="Point" X="-TopChord_width/2" Y="TopChord_depth/2"/>
@@ -88,7 +88,7 @@
             <P N="Iz" V="34.3"/>
         </O>
         <O N="Section_VertiBeam" T="Section">
-            <P N="Material_Section_VertiBeam" Role="Input" T="Material" V="A992Fy50"/>
+            <P D="Material_Section_VertiBeam" N="Material" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_VertiBeam_Out" T="Shape">
                 <O T="Point" X="-VertiBeam_width/2" Y="-VertiBeam_depth/2"/>
                 <O T="Point" X="-VertiBeam_width/2" Y="VertiBeam_depth/2"/>
@@ -107,7 +107,7 @@
             <P N="Iz" V="28.6"/>
         </O>
         <O N="Section_Web" T="Section">
-            <P N="Material_Section_Web" Role="Input" T="Material" V="A992Fy50"/>
+            <P D="Material_Section_Web" N="Material" Role="Input" T="Material" V="A992Fy50"/>
             <O N="Shape_WebCircle" T="Shape">
                 <O T="Circle">
                     <P N="Radius" V="WebRadius"/>
@@ -1023,6 +1023,52 @@
             <P N="Thickness" V="deck_thick"/>
         </O>
     </O>
+    <O N="NodeBL_0" Rx="0" Ry="0" Rz="0" T="Node" Tx="-1" Ty="0" Tz="-1" X="0" Y="84" Z="0"/>
+    <O N="NodeBL_1" T="Node" X="108" Y="84" Z="0"/>
+    <O N="NodeBL_2" T="Node" X="216" Y="84" Z="0"/>
+    <O N="NodeBL_3" T="Node" X="324" Y="84" Z="0"/>
+    <O N="NodeBL_4" T="Node" X="432" Y="84" Z="0"/>
+    <O N="NodeBL_5" T="Node" X="540" Y="84" Z="0"/>
+    <O N="NodeBL_6" T="Node" X="648" Y="84" Z="0"/>
+    <O N="NodeBL_7" T="Node" X="756" Y="84" Z="0"/>
+    <O N="NodeBL_8" T="Node" X="864" Y="84" Z="0"/>
+    <O N="NodeBL_9" T="Node" X="972" Y="84" Z="0"/>
+    <O N="NodeBL_10" T="Node" X="1080" Y="84" Z="0"/>
+    <O N="NodeBL_11" Rx="0" Ry="0" Rz="0" T="Node" Tx="0" Ty="0" Tz="-1" X="1188" Y="84" Z="0"/>
+    <O N="NodeBR_0" Rx="0" Ry="0" Rz="0" T="Node" Tx="-1" Ty="-1" Tz="-1" X="0" Y="0" Z="0"/>
+    <O N="NodeBR_1" T="Node" X="108" Y="0" Z="0"/>
+    <O N="NodeBR_2" T="Node" X="216" Y="0" Z="0"/>
+    <O N="NodeBR_3" T="Node" X="324" Y="0" Z="0"/>
+    <O N="NodeBR_4" T="Node" X="432" Y="0" Z="0"/>
+    <O N="NodeBR_5" T="Node" X="540" Y="0" Z="0"/>
+    <O N="NodeBR_6" T="Node" X="648" Y="0" Z="0"/>
+    <O N="NodeBR_7" T="Node" X="756" Y="0" Z="0"/>
+    <O N="NodeBR_8" T="Node" X="864" Y="0" Z="0"/>
+    <O N="NodeBR_9" T="Node" X="972" Y="0" Z="0"/>
+    <O N="NodeBR_10" T="Node" X="1080" Y="0" Z="0"/>
+    <O N="NodeBR_11" Rx="0" Ry="0" Rz="0" T="Node" Tx="0" Ty="-1" Tz="-1" X="1188" Y="0" Z="0"/>
+    <O N="NodeTL_1" T="Node" X="108" Y="84" Z="108"/>
+    <O N="NodeTL_2" T="Node" X="216" Y="84" Z="108"/>
+    <O N="NodeTL_3" T="Node" X="324" Y="84" Z="108"/>
+    <O N="NodeTL_4" T="Node" X="432" Y="84" Z="108"/>
+    <O N="NodeTL_5" T="Node" X="540" Y="84" Z="108"/>
+    <O N="NodeTL_6" T="Node" X="648" Y="84" Z="108"/>
+    <O N="NodeTL_7" T="Node" X="756" Y="84" Z="108"/>
+    <O N="NodeTL_8" T="Node" X="864" Y="84" Z="108"/>
+    <O N="NodeTL_9" T="Node" X="972" Y="84" Z="108"/>
+    <O N="NodeTL_10" T="Node" X="1080" Y="84" Z="108"/>
+    <O N="NodeTL_11" T="Node" X="1188" Y="84" Z="108"/>
+    <O N="NodeTR_1" T="Node" X="108" Y="0" Z="108"/>
+    <O N="NodeTR_2" T="Node" X="216" Y="0" Z="108"/>
+    <O N="NodeTR_3" T="Node" X="324" Y="0" Z="108"/>
+    <O N="NodeTR_4" T="Node" X="432" Y="0" Z="108"/>
+    <O N="NodeTR_5" T="Node" X="540" Y="0" Z="108"/>
+    <O N="NodeTR_6" T="Node" X="648" Y="0" Z="108"/>
+    <O N="NodeTR_7" T="Node" X="756" Y="0" Z="108"/>
+    <O N="NodeTR_8" T="Node" X="864" Y="0" Z="108"/>
+    <O N="NodeTR_9" T="Node" X="972" Y="0" Z="108"/>
+    <O N="NodeTR_10" T="Node" X="1080" Y="0" Z="108"/>
+    <O N="NodeTR_11" T="Node" X="1188" Y="0" Z="108"/>
     <O N="Bottom FELines" T="Group">
         <O T="FELine">
             <P N="Node1" T="Node" V="NodeBL_0"/>
@@ -1926,7 +1972,7 @@
         </O>
     </O>
     <O N="FENodes" T="Group">
-        <O N="NodeBL_0" T="Node" X="0" Y="84" Z="0"/>
+        <O N="NodeBL_0" Rx="0" Ry="0" Rz="0" T="Node" Tx="-1" Ty="0" Tz="-1" X="0" Y="84" Z="0"/>
         <O N="NodeBL_1" T="Node" X="108" Y="84" Z="0"/>
         <O N="NodeBL_2" T="Node" X="216" Y="84" Z="0"/>
         <O N="NodeBL_3" T="Node" X="324" Y="84" Z="0"/>
@@ -1937,8 +1983,8 @@
         <O N="NodeBL_8" T="Node" X="864" Y="84" Z="0"/>
         <O N="NodeBL_9" T="Node" X="972" Y="84" Z="0"/>
         <O N="NodeBL_10" T="Node" X="1080" Y="84" Z="0"/>
-        <O N="NodeBL_11" T="Node" X="1188" Y="84" Z="0"/>
-        <O N="NodeBR_0" T="Node" X="0" Y="0" Z="0"/>
+        <O N="NodeBL_11" Rx="0" Ry="0" Rz="0" T="Node" Tx="0" Ty="0" Tz="-1" X="1188" Y="84" Z="0"/>
+        <O N="NodeBR_0" Rx="0" Ry="0" Rz="0" T="Node" Tx="-1" Ty="-1" Tz="-1" X="0" Y="0" Z="0"/>
         <O N="NodeBR_1" T="Node" X="108" Y="0" Z="0"/>
         <O N="NodeBR_2" T="Node" X="216" Y="0" Z="0"/>
         <O N="NodeBR_3" T="Node" X="324" Y="0" Z="0"/>
@@ -1949,7 +1995,7 @@
         <O N="NodeBR_8" T="Node" X="864" Y="0" Z="0"/>
         <O N="NodeBR_9" T="Node" X="972" Y="0" Z="0"/>
         <O N="NodeBR_10" T="Node" X="1080" Y="0" Z="0"/>
-        <O N="NodeBR_11" T="Node" X="1188" Y="0" Z="0"/>
+        <O N="NodeBR_11" Rx="0" Ry="0" Rz="0" T="Node" Tx="0" Ty="-1" Tz="-1" X="1188" Y="0" Z="0"/>
         <O N="NodeTL_1" T="Node" X="108" Y="84" Z="108"/>
         <O N="NodeTL_2" T="Node" X="216" Y="84" Z="108"/>
         <O N="NodeTL_3" T="Node" X="324" Y="84" Z="108"/>

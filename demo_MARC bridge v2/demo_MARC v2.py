@@ -168,6 +168,12 @@ if __name__ == '__main__':
         nodeBR.append(FENode(0, 0, 0, 'NodeBR_{}'.format(i)).as_point(pointBR[i]))
         nodeTL.append(FENode(0, 0, 0, 'NodeTL_{}'.format(i)).as_point(pointTL[i]))
         nodeTR.append(FENode(0, 0, 0, 'NodeTR_{}'.format(i)).as_point(pointTR[i]))
+    # 7.1.2
+    nodeBR[0].fixity(-1,-1,-1)
+    nodeBL[0].fixity(-1,0,-1)
+    nodeBR[-1].fixity(0,-1,-1)
+    nodeBL[-1].fixity(0,0,-1)
+    marc.add_sub(*nodeBL,*nodeBR,*nodeTL[1:],*nodeTR[1:])
     # 7.2 FELine
     bottomFELineList = []
     for i in range(span_num.value):
