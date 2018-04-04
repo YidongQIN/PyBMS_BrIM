@@ -386,7 +386,7 @@ class Section(ObjElmt):
     def __init__(self, sect_name, material, *shape_list, **property_dict):
         super(Section, self).__init__('Section', sect_name)
         if isinstance(material, Material):
-            self.add_sub(PrmElmt('Material_{}'.format(self.name), material.name, par_type='Material'))
+            self.add_sub(PrmElmt('Material', material.name, par_type='Material',des='Material_{}'.format(self.name)))
         self.add_sub(*shape_list)
         self.sect_property(**property_dict)
 
