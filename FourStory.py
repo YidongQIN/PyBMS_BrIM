@@ -14,9 +14,9 @@ if __name__ == '__main__':
 
     # 2. Sections
     # 2.0 sec_par
-    s_num = PrmElmt('Storey_Number', 4) # 4 storey means 5 plates
+    s_num = PrmElmt('Storey_Number', 4)  # 4 storey means 5 plates
     height = PrmElmt('Height', 300.0, des='Vertical space between two storeys')
-    height_top = PrmElmt('Height_top',270.0, 'Height of the top story')
+    height_top = PrmElmt('Height_top', 270.0, 'Height of the top story')
     t_plate = PrmElmt('Thick_plate', 13, 'Thickness of each plate')
     l_plate = PrmElmt('Length_plate', 405.0, 'Length of each plate')
     w_plate = PrmElmt('Width_plate', 303.0, 'Width of each plate')
@@ -38,29 +38,35 @@ if __name__ == '__main__':
     in_2 = PrmElmt('Interval_2', 26.8, 'interval from the first column to the second column')
     in_3 = PrmElmt('Interval_3', 77.0, 'interval from the first column to the second column')
     # the track? maybe not
-    d_track = PrmElmt('TrackDiameter',18.0)
-    h1_track=PrmElmt('h1_track',23.0)
-    h2_track=PrmElmt('h2_track',6.0)
-    b_track=PrmElmt('Width_track',49.0)
+    d_track = PrmElmt('TrackDiameter', 18.0)
+    h1_track = PrmElmt('h1_track', 23.0)
+    h2_track = PrmElmt('h2_track', 6.0)
+    b_track = PrmElmt('Width_track', 49.0)
+
     # 2.1 plate
-    rect=Shape('Rectangle',
-               Point('-Length_plate/2','-Width_plate/2'),
-               Point('Length_plate/2','-Width_plate/2'),
-               Point('Length_plate/2','Width_plate/2'),
-               Point(l_plate.value/2,'Width_plate/2'))
+    rect = Shape('Rectangle',
+                 Point(-l_plate.value / 2, -w_plate.value / 2),
+                 Point(l_plate.value / 2, -w_plate.value / 2),
+                 Point(l_plate.value / 2, w_plate.value / 2),
+                 Point(-l_plate.value / 2, w_plate.value / 2))
     # rect.attach_to(fourstorey)
-    holes=[]
-    x_space = (l_plate.value-2*x_interval.value)/(x_num.value-1)
-    y_space = (w_plate.value-2*y_interval.value)/(y_num.value-1)
+    holes = []
+    x_space = (l_plate.value - 2 * x_interval.value) / (x_num.value - 1)
+    y_space = (w_plate.value - 2 * y_interval.value) / (y_num.value - 1)
     for i in range(x_num.value):
-        for j in  range(y_num.value):
-            hole = Circle('hole_{}_{}'.format(i,j),radius=d_hole.value/2,
-                          x=x_interval.value+i*x_space,
-                          y=y_interval.value+i*y_space)
-            hole.add_sub(PrmElmt('IsCutout',1))
+        for j in range(y_num.value):
+            hole = Circle('hole_{}_{}'.format(i, j), radius=d_hole.value / 2,
+                          x= - (x_num.value-1) * x_space / 2 + i * x_space,
+                          y= - (y_num.value-1) * y_space / 2 + j * y_space)
+            hole.add_sub(PrmElmt('IsCutout', 1))
             holes.append(hole)
-    plate_sec=Section('Plate',steel,rect, *holes)
+    plate_sec = Section('Plate', steel, rect, *holes)
     plate_sec.attach_to(fourstorey)
+
+    # test
+    l = Line(Point(0, 0, 0), Point(10, 0, 0), section=plate_sec)
+    l.attach_to(fourstorey)
+    # ---------
     # 2.2 column
     # 2.3 nut
     # 2.4 track
