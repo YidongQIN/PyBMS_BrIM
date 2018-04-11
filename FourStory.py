@@ -48,15 +48,19 @@ if __name__ == '__main__':
                Point('Length_plate/2','-Width_plate/2'),
                Point('Length_plate/2','Width_plate/2'),
                Point(l_plate.value/2,'Width_plate/2'))
-    rect.attach_to(fourstorey)
+    # rect.attach_to(fourstorey)
     holes=[]
-    x_space = l_plate.value
+    x_space = (l_plate.value-2*x_interval.value)/(x_num.value-1)
+    y_space = (w_plate.value-2*y_interval.value)/(y_num.value-1)
     for i in range(x_num.value):
         for j in  range(y_num.value):
-            hole = Circle('hold_{},{}'.format(i,j),radius='D_hole/2', x=0)
-    # hole=Shape()
-    #
-    # plate_sec=Section('Plate',steel,rect, holes)
+            hole = Circle('hole_{}_{}'.format(i,j),radius=d_hole.value/2,
+                          x=x_interval.value+i*x_space,
+                          y=y_interval.value+i*y_space)
+            hole.add_sub(PrmElmt('IsCutout',1))
+            holes.append(hole)
+    plate_sec=Section('Plate',steel,rect, *holes)
+    plate_sec.attach_to(fourstorey)
     # 2.2 column
     # 2.3 nut
     # 2.4 track

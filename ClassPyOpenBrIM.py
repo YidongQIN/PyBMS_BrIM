@@ -278,6 +278,7 @@ class PrmElmt(PyOpenBrIMElmt):
             except (ValueError, TypeError):
                 self.value = str(value)
             # self.value is different from the element's attribute 'V'=value.
+            self.v= self.value # just for short
         else:
             print('Parameter must have name and value')
 
