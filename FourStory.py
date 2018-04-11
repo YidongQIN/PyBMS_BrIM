@@ -49,7 +49,6 @@ if __name__ == '__main__':
                Point('Length_plate/2','Width_plate/2'),
                Point(l_plate.value/2,'Width_plate/2'))
     rect.attach_to(fourstorey)
-    #@TODO _neg_ ??
     holes=[]
     x_space = l_plate.value
     for i in range(x_num.value):
