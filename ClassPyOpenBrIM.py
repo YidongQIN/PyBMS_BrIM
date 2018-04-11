@@ -409,6 +409,13 @@ class Shape(ObjElmt):
         if y_n.upper() == 'Y':
             self.add_sub(PrmElmt("IsCutout", "1", role="Input"))
 
+class Circle(ObjElmt):
+    
+    def __init__(self, cir_name, radius, x=0, y=0,):
+        super(Circle, self).__init__('Circle',cir_name, X=str(x),Y=str(y))
+        self.radius = radius
+        self.add_sub(PrmElmt('Radius',radius))
+
 
 class Unit(ObjElmt):
 
