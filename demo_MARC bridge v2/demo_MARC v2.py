@@ -121,7 +121,7 @@ if __name__ == '__main__':
         topChordList.append(Line(pointTL[i], pointTL[i + 1], Extends(sec_top)))
         topChordList.append(Line(pointTR[i], pointTR[i + 1], Extends(sec_top)))
     topChords = Group('Top Chords', *topChordList)
-    marc.add_sub(bottomChords, topChords)
+    marc.sub(bottomChords, topChords)
     # 5.3 vertical
     verChords = []
     for i in range(1, span_num.value + 1):
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     nodeBL[0].fixity(-1,0,-1)
     nodeBR[-1].fixity(0,-1,-1)
     nodeBL[-1].fixity(0,0,-1)
-    marc.add_sub(*nodeBL,*nodeBR,*nodeTL[1:],*nodeTR[1:])
+    marc.sub(*nodeBL, *nodeBR, *nodeTL[1:], *nodeTR[1:])
     # 7.2 FELine
     bottomFELineList = []
     for i in range(span_num.value):

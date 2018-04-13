@@ -39,12 +39,6 @@ class PyOpenBrIMElmt(object):
         """read xml string"""
         self.elmt = eET.fromstring(xmlstr)
 
-    def add_sub(self, *child):
-        """add one or a list of child elements as sub elmt"""
-        # children=list(child)
-        for a in PyOpenBrIMElmt.to_elmt_list(*child):
-            self.elmt.append(a)
-
     def attach_to(self, parent):
         """attach this element to parent element(s)"""
         for p in PyOpenBrIMElmt.to_elmt_list(parent):
@@ -74,9 +68,6 @@ class PyOpenBrIMElmt(object):
             return a
         else:
             return ''
-
-    def add_par(self, par_name, par_value):
-        self.add_sub(PrmElmt(par_name, par_value))
 
     def add_attr(self, **attrib_dict):
         for key in attrib_dict:
@@ -251,14 +242,20 @@ class ObjElmt(PyOpenBrIMElmt):
         super(ObjElmt, self).__init__('O', obj_name, T=object_type, **obj_attrib)
         self.type = object_type
 
+    def sub(self, *child):
+        """add one or a list of child elements as sub elmt"""
+        # children=list(child)
+        for a in PyOpenBrIMElmt.to_elmt_list(*child):
+            self.elmt.append(a)
+
+    def sub_par(self, par_name, par_value):
+        self.sub(PrmElmt(par_name, par_value))
+
     def param(self, par_name, par_value, des='', role='', par_type=''):
         """sometimes, a just one OBJECT need the PARAMETER \n
         its better to define it when the OBJECT created.\n
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
-        self.add_sub(PrmElmt(par_name, par_value, des, role, par_type))
-
-    def param_simple(self, name, value, prm_type):
-        self.add_sub(PrmElmt(name, value, par_type=prm_type))
+        self.sub(PrmElmt(par_name, par_value, des, role, par_type))
 
     def extend(self, extend_from):
         if isinstance(extend_from, ObjElmt):
@@ -267,14 +264,14 @@ class ObjElmt(PyOpenBrIMElmt):
 
     def prm_refer(self, elmt, refer_name):
         if isinstance(elmt, PyOpenBrIMElmt):
-            self.add_sub(PrmElmt(refer_name, elmt.name,
-                                 par_type=elmt.get_attrib('T'), role=''))
+            self.sub(PrmElmt(refer_name, elmt.name,
+                             par_type=elmt.get_attrib('T'), role=''))
 
 
 class PrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
 
-    def __init__(self, par_name, value, des='', role='Input', par_type='', ut='', uc=''):
+    def __init__(self, par_name, value, des='', role='', par_type='', ut='', uc=''):
         """create a new PARAMETER in OpenBrIM ParamML. \n
         Mandatory: name, value.\n
         D-> des is description of the parameter.\n
@@ -287,7 +284,6 @@ class PrmElmt(PyOpenBrIMElmt):
                     self.value = int(self.value)
             except (ValueError, TypeError):
                 self.value = str(value)
-            # self.value is different from the element's attribute 'V'=value.
             self.v = self.value  # just for short
         else:
             print('Parameter must have name and value')
@@ -397,8 +393,8 @@ class Section(ObjElmt):
     def __init__(self, sect_name, material, *shape_list, **property_dict):
         super(Section, self).__init__('Section', sect_name)
         if isinstance(material, Material):
-            self.add_sub(PrmElmt('Material', material.name, par_type='Material', des='Material_{}'.format(self.name)))
-        self.add_sub(*shape_list)
+            self.sub(PrmElmt('Material', material.name, par_type='Material', des='Material_{}'.format(self.name)))
+        self.sub(*shape_list)
         self.sect_property(**property_dict)
 
     def sect_property(self, **properties):
@@ -412,13 +408,13 @@ class Shape(ObjElmt):
 
     def __init__(self, shape_name, *obj_list):
         super(Shape, self).__init__('Shape', shape_name)
-        self.add_sub(*obj_list)
+        self.sub(*obj_list)
         # for point in point_list:
-        #     self.add_sub(point)
+        #     self.sub(point)
 
     def is_cutout(self, y_n='Y'):
         if y_n.upper() == 'Y':
-            self.add_sub(PrmElmt("IsCutout", "1", role="Input"))
+            self.sub(PrmElmt("IsCutout", "1", role="Input"))
 
 
 class Circle(ObjElmt):
@@ -426,7 +422,7 @@ class Circle(ObjElmt):
     def __init__(self, cir_name, radius, x=0, y=0, ):
         super(Circle, self).__init__('Circle', cir_name, X=str(x), Y=str(y))
         self.radius = radius
-        self.add_sub(PrmElmt('Radius', radius))
+        self.sub(PrmElmt('Radius', radius))
 
 
 class Unit(ObjElmt):
@@ -460,11 +456,11 @@ class Group(ObjElmt):
 
     def __init__(self, group_name, *elmts_list):
         super(Group, self).__init__('Group', obj_name=group_name)
-        self.add_sub(*elmts_list)
+        self.sub(*elmts_list)
 
     def regroup(self, *elmts):
         self.del_all_sub()
-        self.add_sub(elmts)
+        self.sub(elmts)
 
 
 class Point(ObjElmt):
@@ -571,9 +567,9 @@ class Surface(ObjElmt):
     def thick_par(self, thick_par):
         # if isinstance(thick_par, PrmElmt) and PyOpenBrIMElmt.match_attribute(thick_par.elmt, N='Thickness'):
         if isinstance(thick_par, PrmElmt):
-            self.add_sub(PrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
+            self.sub(PrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
         elif isinstance(thick_par, (float, int)):
-            self.add_sub(PrmElmt("Thickness", str(thick_par)))
+            self.sub(PrmElmt("Thickness", str(thick_par)))
         else:
             print("a PARAMETER @N=Thickness is required.")
 
@@ -582,24 +578,24 @@ class Surface(ObjElmt):
         But in Surface it should be a parameter that refer to the Material Object\n
         not mandatory"""
         if isinstance(mat_obj, Material):
-            self.add_sub(PrmElmt('Material', mat_obj.elmt.attrib['N'],
-                                 par_type='Material',
-                                 role='',
-                                 des='Material_Surface_{}'.format(self.name)))
+            self.sub(PrmElmt('Material', mat_obj.elmt.attrib['N'],
+                             par_type='Material',
+                             role='',
+                             des='Material_Surface_{}'.format(self.name)))
         else:
             print("a OBJECT of Material is required.")
 
     def change_thick(self, thickness, des='', role='', par_type='Surface_Thickness', ut='', uc=''):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
         self.check_del_sub('P', N="Thickness")
-        self.add_sub(PrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
+        self.sub(PrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
         # self.elmt.append(eET.Element
         # ('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
 
     def change_material(self, material, des='', role='', name='SurfaceMaterial', ut='', uc=''):
         """material parameter of Surface.\n Only material is mandatory"""
         self.check_del_sub('P', T="Material")
-        self.add_sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
+        self.sub(PrmElmt(name, material, des, role, 'Material', ut, uc))
         # self.elmt.append(eET.Element('P', dict(T='Material', V=material, D=des, N=name, Role=role, UT=ut, UC=uc)))
 
     def calc_area(self):

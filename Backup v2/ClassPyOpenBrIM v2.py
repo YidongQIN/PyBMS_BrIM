@@ -367,7 +367,7 @@ class Shape(ObjElmt):
         super(Shape, self).__init__('Shape', name)
         self.add_sub(*obj_list)
         # for point in point_list:
-        #     self.add_sub(point)
+        #     self.sub(point)
 
     def is_cutout(self, y_n='Y'):
         if y_n.upper() == 'Y':

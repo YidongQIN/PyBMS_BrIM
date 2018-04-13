@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from functools import reduce
 
 from ClassPyOpenBrIM import *
 
@@ -40,6 +39,7 @@ d_track = PrmElmt('TrackDiameter', 18.0)
 h1_track = PrmElmt('h1_track', 23.0)
 h2_track = PrmElmt('h2_track', 6.0)
 b_track = PrmElmt('Width_track', 49.0)
+
 sec_par_group = Group('Section_Parameters', story_num, height, height_top, t_plate, l_plate, w_plate, d_hole,
                       x_interval, y_interval, x_num, y_num, t_colm, w_colm, in_1, in_2, in_3, d_track, h1_track,
                       h2_track, b_track, )
@@ -58,16 +58,16 @@ plate_def = Surface(Point(0, 0),
                     thick_par=t_plate,
                     material_obj=steel,
                     surface_name='PlateDef')
-plate_def.add_sub(PrmElmt('ObjTypeDef', 1))
+plate_def.sub(PrmElmt('ObjTypeDef', 1))
 holes = []
 for i in range(x_num.value):
     for j in range(y_num.value):
         hole = Circle('hole_{}_{}'.format(i, j), radius=d_hole.value / 2,
                       x=x_interval.value + i * x_space,
                       y=y_interval.value + j * y_space)
-        hole.add_sub(PrmElmt('IsCutout', 1))
+        hole.sub(PrmElmt('IsCutout', 1))
         holes.append(hole)
-plate_def.add_sub(*holes)
+plate_def.sub(*holes)
 plate_def.attach_to(fourstorey)
 
 # 2.2 column
@@ -87,24 +87,24 @@ col_sec.attach_to(fourstorey)
 # 5.1 plates
 for i in range(story_num.v + 1):
     level = Extends(plate_def)
-    level.add_attr(Z=i * height.v)
+    level.add_attr(Z=i * height.v, N='Plate{}'.format(i))
     level.attach_to(fourstorey)
 
 # 5.2 columns
 col_def = Line(Point(0, 0, 0), Point(0, 0, total_height), col_sec, 'ColumnDef')
-col_def.add_par('ObjTyepDef',1)
+col_def.sub_par('ObjTypeDef', 1)
 col_def.attach_to(fourstorey)
 
 y_intervals = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
-y_positions=[in_1.v+w_colm.v/2]
-for i in range(1,4):
-    y_i=y_positions[i-1]+y_intervals[i]+w_colm.v
+y_positions = [in_1.v + w_colm.v / 2]
+for i in range(1, 4):
+    y_i = y_positions[i - 1] + y_intervals[i] + w_colm.v
     y_positions.append(y_i)
-print(y_positions)
+#@TODO the ObjTypeDef is bad. use import instead. the origin one cannot be hidden
 for x in [0, l_plate.v]:
     for y in y_positions:
         column = Extends(col_def)
-        column.add_attr(X=str(x), Y=str(y))
+        column.add_attr(N='Column@{},{}'.format(x,y),X=str(x), Y=str(y))
         column.attach_to(fourstorey)
 # ---------------
 ShowTree(fourstorey)
