@@ -48,6 +48,11 @@ sec_par_group.attach_to(fourstorey)
 x_space = (l_plate.value - 2 * x_interval.value) / (x_num.value - 1)
 y_space = (w_plate.value - 2 * y_interval.value) / (y_num.value - 1)
 total_height = story_num.v * height.v
+y_intervals = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
+y_positions = [in_1.v + w_colm.v / 2]
+for i in range(1, 4):
+    y_i = y_positions[i - 1] + y_intervals[i] + w_colm.v
+    y_positions.append(y_i)
 
 # 2.1 plate definition
 # use ObjTypeDef = 1 to set it as just a definition not an actual object
@@ -95,11 +100,7 @@ col_def = Line(Point(0, 0, 0), Point(0, 0, total_height), col_sec, 'ColumnDef')
 col_def.sub_par('ObjTypeDef', 1)
 col_def.attach_to(fourstorey)
 
-y_intervals = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
-y_positions = [in_1.v + w_colm.v / 2]
-for i in range(1, 4):
-    y_i = y_positions[i - 1] + y_intervals[i] + w_colm.v
-    y_positions.append(y_i)
+
 #@TODO the ObjTypeDef is bad. use import instead. the origin one cannot be hidden
 for x in [0, l_plate.v]:
     for y in y_positions:
