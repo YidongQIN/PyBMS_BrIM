@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+from functools import reduce
 
 from ClassPyOpenBrIM import *
 
@@ -12,7 +12,7 @@ Group('Material Group', steel).attach_to(fourstorey)
 
 # 2. Sections
 # 2.0 sec_par
-story_num = PrmElmt('Storey_Number', 10)  # 4 storey means 5 plates
+story_num = PrmElmt('Storey_Number', 4)  # 4 storey means 5 plates
 height = PrmElmt('Height', 300.0, des='Vertical space between two storeys')
 height_top = PrmElmt('Height_top', 270.0, 'Height of the top story')
 t_plate = PrmElmt('Thick_plate', 13, 'Thickness of each plate')
@@ -48,21 +48,23 @@ sec_par_group.attach_to(fourstorey)
 x_space = (l_plate.value - 2 * x_interval.value) / (x_num.value - 1)
 y_space = (w_plate.value - 2 * y_interval.value) / (y_num.value - 1)
 total_height = story_num.v * height.v
+
 # 2.1 plate definition
 # use ObjTypeDef = 1 to set it as just a definition not an actual object
-plate_def = Surface(Point(-l_plate.value / 2, -w_plate.value / 2),
-                    Point(l_plate.value / 2, -w_plate.value / 2),
-                    Point(l_plate.value / 2, w_plate.value / 2),
-                    Point(-l_plate.value / 2, w_plate.value / 2),
+plate_def = Surface(Point(0, 0),
+                    Point(l_plate.value, 0),
+                    Point(l_plate.value, w_plate.value),
+                    Point(0, w_plate.value),
                     thick_par=t_plate,
+                    material_obj=steel,
                     surface_name='PlateDef')
 plate_def.add_sub(PrmElmt('ObjTypeDef', 1))
 holes = []
 for i in range(x_num.value):
     for j in range(y_num.value):
         hole = Circle('hole_{}_{}'.format(i, j), radius=d_hole.value / 2,
-                      x=- (x_num.value - 1) * x_space / 2 + i * x_space,
-                      y=- (y_num.value - 1) * y_space / 2 + j * y_space)
+                      x=x_interval.value + i * x_space,
+                      y=y_interval.value + j * y_space)
         hole.add_sub(PrmElmt('IsCutout', 1))
         holes.append(hole)
 plate_def.add_sub(*holes)
@@ -87,8 +89,23 @@ for i in range(story_num.v + 1):
     level = Extends(plate_def)
     level.add_attr(Z=i * height.v)
     level.attach_to(fourstorey)
-# 5.2 columns
 
+# 5.2 columns
+col_def = Line(Point(0, 0, 0), Point(0, 0, total_height), col_sec, 'ColumnDef')
+col_def.add_par('ObjTyepDef',1)
+col_def.attach_to(fourstorey)
+
+y_intervals = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
+y_positions=[in_1.v+w_colm.v/2]
+for i in range(1,4):
+    y_i=y_positions[i-1]+y_intervals[i]+w_colm.v
+    y_positions.append(y_i)
+print(y_positions)
+for x in [0, l_plate.v]:
+    for y in y_positions:
+        column = Extends(col_def)
+        column.add_attr(X=str(x), Y=str(y))
+        column.attach_to(fourstorey)
 # ---------------
 ShowTree(fourstorey)
 fourstorey.save_project()

@@ -75,10 +75,13 @@ class PyOpenBrIMElmt(object):
         else:
             return ''
 
+    def add_par(self, par_name, par_value):
+        self.add_sub(PrmElmt(par_name, par_value))
+
     def add_attr(self, **attrib_dict):
         for key in attrib_dict:
             value = attrib_dict.get(key)
-            if isinstance(value,(int, float)):
+            if isinstance(value, (int, float)):
                 value = str(value)
             self.elmt.set(key, value)
 
@@ -468,7 +471,7 @@ class Point(ObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
 
-    def __init__(self, x, y, z='', point_name=''):
+    def __init__(self, x, y, z=0, point_name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
         super(Point, self).__init__('Point', obj_name=point_name,
                                     X=str(x), Y=str(y), Z=str(z))
