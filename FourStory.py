@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-
 from ClassPyOpenBrIM import *
-
 
 fourstorey = Project('The 4 Story Model')
 # 1. Materials
@@ -14,7 +12,7 @@ Group('Material Group', steel).attach_to(fourstorey)
 
 # 2. Sections
 # 2.0 sec_par
-story_num = PrmElmt('Storey_Number', 4)  # 4 storey means 5 plates
+story_num = PrmElmt('Storey_Number', 10)  # 4 storey means 5 plates
 height = PrmElmt('Height', 300.0, des='Vertical space between two storeys')
 height_top = PrmElmt('Height_top', 270.0, 'Height of the top story')
 t_plate = PrmElmt('Thick_plate', 13, 'Thickness of each plate')
@@ -42,17 +40,24 @@ d_track = PrmElmt('TrackDiameter', 18.0)
 h1_track = PrmElmt('h1_track', 23.0)
 h2_track = PrmElmt('h2_track', 6.0)
 b_track = PrmElmt('Width_track', 49.0)
-
-# 2.1 plate
-#@TODO surface doesnot use Section. also condiser FESurface
-plate_rect = Shape('Rectangle',
-                   Point(-l_plate.value / 2, -w_plate.value / 2),
-                   Point(l_plate.value / 2, -w_plate.value / 2),
-                   Point(l_plate.value / 2, w_plate.value / 2),
-                   Point(-l_plate.value / 2, w_plate.value / 2))
-holes = []
+sec_par_group = Group('Section_Parameters', story_num, height, height_top, t_plate, l_plate, w_plate, d_hole,
+                      x_interval, y_interval, x_num, y_num, t_colm, w_colm, in_1, in_2, in_3, d_track, h1_track,
+                      h2_track, b_track, )
+sec_par_group.attach_to(fourstorey)
+# not in OpenBrIM
 x_space = (l_plate.value - 2 * x_interval.value) / (x_num.value - 1)
 y_space = (w_plate.value - 2 * y_interval.value) / (y_num.value - 1)
+total_height = story_num.v * height.v
+# 2.1 plate definition
+# use ObjTypeDef = 1 to set it as just a definition not an actual object
+plate_def = Surface(Point(-l_plate.value / 2, -w_plate.value / 2),
+                    Point(l_plate.value / 2, -w_plate.value / 2),
+                    Point(l_plate.value / 2, w_plate.value / 2),
+                    Point(-l_plate.value / 2, w_plate.value / 2),
+                    thick_par=t_plate,
+                    surface_name='PlateDef')
+plate_def.add_sub(PrmElmt('ObjTypeDef', 1))
+holes = []
 for i in range(x_num.value):
     for j in range(y_num.value):
         hole = Circle('hole_{}_{}'.format(i, j), radius=d_hole.value / 2,
@@ -60,13 +65,8 @@ for i in range(x_num.value):
                       y=- (y_num.value - 1) * y_space / 2 + j * y_space)
         hole.add_sub(PrmElmt('IsCutout', 1))
         holes.append(hole)
-plate_sec = Section('Plate', steel, plate_rect, *holes)
-plate_sec.attach_to(fourstorey)
-
-# plate test
-l = Line(Point(0, 0, 0), Point(10, 0, 0), section=plate_sec)
-l.attach_to(fourstorey)
-# ---------
+plate_def.add_sub(*holes)
+plate_def.attach_to(fourstorey)
 
 # 2.2 column
 col_rect = Shape('thin column',
@@ -74,7 +74,7 @@ col_rect = Shape('thin column',
                  Point(w_colm.v / 2, -t_colm.v / 2),
                  Point(w_colm.v / 2, t_colm.v / 2),
                  Point(-w_colm.v / 2, t_colm.v / 2))
-col_sec = Section('Column',steel,col_rect)
+col_sec = Section('Column', steel, col_rect)
 col_sec.attach_to(fourstorey)
 # 2.3 nut
 # 2.4 track
@@ -82,11 +82,13 @@ col_sec.attach_to(fourstorey)
 # 3. FE elements
 # 4. Loading Conditions
 # 5. Geometric model
-#5.1 plates
-for i in range(story_num+1):
-    sur=Surface('')
-#5.2 columns
+# 5.1 plates
+for i in range(story_num.v + 1):
+    level = Extends(plate_def)
+    level.add_attr(Z=i * height.v)
+    level.attach_to(fourstorey)
+# 5.2 columns
 
-#---------------
+# ---------------
 ShowTree(fourstorey)
 fourstorey.save_project()

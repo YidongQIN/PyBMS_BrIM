@@ -75,6 +75,13 @@ class PyOpenBrIMElmt(object):
         else:
             return ''
 
+    def add_attr(self, **attrib_dict):
+        for key in attrib_dict:
+            value = attrib_dict.get(key)
+            if isinstance(value,(int, float)):
+                value = str(value)
+            self.elmt.set(key, value)
+
     def update(self, **attrib_dict):
         """update the attributes"""
         for key in attrib_dict:
@@ -278,7 +285,7 @@ class PrmElmt(PyOpenBrIMElmt):
             except (ValueError, TypeError):
                 self.value = str(value)
             # self.value is different from the element's attribute 'V'=value.
-            self.v= self.value # just for short
+            self.v = self.value  # just for short
         else:
             print('Parameter must have name and value')
 
@@ -387,7 +394,7 @@ class Section(ObjElmt):
     def __init__(self, sect_name, material, *shape_list, **property_dict):
         super(Section, self).__init__('Section', sect_name)
         if isinstance(material, Material):
-            self.add_sub(PrmElmt('Material', material.name, par_type='Material',des='Material_{}'.format(self.name)))
+            self.add_sub(PrmElmt('Material', material.name, par_type='Material', des='Material_{}'.format(self.name)))
         self.add_sub(*shape_list)
         self.sect_property(**property_dict)
 
@@ -410,12 +417,13 @@ class Shape(ObjElmt):
         if y_n.upper() == 'Y':
             self.add_sub(PrmElmt("IsCutout", "1", role="Input"))
 
+
 class Circle(ObjElmt):
-    
-    def __init__(self, cir_name, radius, x=0, y=0,):
-        super(Circle, self).__init__('Circle',cir_name, X=str(x),Y=str(y))
+
+    def __init__(self, cir_name, radius, x=0, y=0, ):
+        super(Circle, self).__init__('Circle', cir_name, X=str(x), Y=str(y))
         self.radius = radius
-        self.add_sub(PrmElmt('Radius',radius))
+        self.add_sub(PrmElmt('Radius', radius))
 
 
 class Unit(ObjElmt):
@@ -439,7 +447,10 @@ class Unit(ObjElmt):
 class Extends(ObjElmt):
 
     def __init__(self, extends_from):
-        super(Extends, self).__init__(extends_from.elmt.attrib['T'], Extends=extends_from.elmt.attrib['N'])
+        if isinstance(extends_from, ObjElmt):
+            super(Extends, self).__init__(extends_from.elmt.attrib['T'], Extends=extends_from.elmt.attrib['N'])
+        else:
+            print('Should be extended from a OBJECT')
 
 
 class Group(ObjElmt):
@@ -655,7 +666,6 @@ class FELine(ObjElmt):
 
     def as_line(self, line_obj: Line):
         pass
-
 
     def set_node_start(self, node):
         self.del_sub('P', N='Node1')
