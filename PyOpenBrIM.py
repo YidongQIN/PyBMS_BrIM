@@ -572,6 +572,8 @@ class Surface(ObjElmt):
             self.sub(PrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
         elif isinstance(thick_par, (float, int)):
             self.sub(PrmElmt("Thickness", str(thick_par)))
+        elif isinstance(thick_par,str):
+            self.sub(PrmElmt("Thickness", thick_par))
         else:
             print("{} requires a PARAMETER @N=Thickness.".format(self.name))
 
@@ -581,6 +583,12 @@ class Surface(ObjElmt):
         not mandatory"""
         if isinstance(mat_obj, Material):
             self.sub(PrmElmt('Material', mat_obj.elmt.attrib['N'],
+                             par_type='Material',
+                             role='',
+                             des='Material_Surface_{}'.format(self.name)))
+        elif isinstance(mat_obj,str):
+            print('Material of Surface {} is a string, please make sure'.format(self.name))
+            self.sub(PrmElmt('Material', mat_obj,
                              par_type='Material',
                              role='',
                              des='Material_Surface_{}'.format(self.name)))
