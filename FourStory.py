@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from ClassPyOpenBrIM import *
+from PyOpenBrIM import *
 
 fourstorey = Project('The 4 Story Model')
 # 1. Materials
@@ -14,14 +14,15 @@ Group('Material Group', steel).attach_to(fourstorey)
 story_num = PrmElmt('Storey_Number', 4)  # 4 storey means 5 plates
 height = PrmElmt('Height', 300.0, des='Vertical space between two storeys')
 height_top = PrmElmt('Height_top', 270.0, 'Height of the top story')
-t_plate = PrmElmt('Thick_plate', 13, 'Thickness of each plate')
-l_plate = PrmElmt('Length_plate', 405.0, 'Length of each plate')
-w_plate = PrmElmt('Width_plate', 303.0, 'Width of each plate')
-d_hole = PrmElmt('D_hole', 6.0, 'Diameter of hols in the plate')
-x_interval = PrmElmt('x_hole', 50.0, 'x distance from the edge to the center of hole')
-y_interval = PrmElmt('x_hole', 24.0, 'y distance from the edge to the center of hole')
-x_num = PrmElmt('ColNumber_holes', 7, 'Column Number of holes')
-y_num = PrmElmt('RowNumber_holes', 11, 'Column Number of holes')
+t_plate = PrmElmt('t', 13, 'Thickness of each plate')
+l_plate = PrmElmt('l', 405.0, 'Length of each plate')
+w_plate = PrmElmt('w', 303.0, 'Width of each plate')
+d_hole = PrmElmt('d', 6.0, 'Diameter of hols in the plate')
+x_clear = PrmElmt('x_clear', 50.0, 'x clearance from the edge to the hole')
+y_clear = PrmElmt('y_clear', 24.0, 'y clearance from the edge to the hole')
+x_num = PrmElmt('ncol', 7, 'Column Number of holes')
+y_num = PrmElmt('nrow', 11, 'Column Number of holes')
+
 t_colm = PrmElmt('Thick_column', 1.0, 'Thickness of each column')
 w_colm = PrmElmt('Width_column', 25.0, 'Width of each column')
 
@@ -40,36 +41,39 @@ h1_track = PrmElmt('h1_track', 23.0)
 h2_track = PrmElmt('h2_track', 6.0)
 b_track = PrmElmt('Width_track', 49.0)
 
+x_space = PrmElmt('x_space','(l - 2 * x_clear) / (ncol - 1)')
+y_space = PrmElmt('y_space','(w - 2 * y_clear) / (nrow - 1)')
+
 sec_par_group = Group('Section_Parameters', story_num, height, height_top, t_plate, l_plate, w_plate, d_hole,
-                      x_interval, y_interval, x_num, y_num, t_colm, w_colm, in_1, in_2, in_3, d_track, h1_track,
-                      h2_track, b_track, )
+                      x_clear, y_clear, x_num, y_num, t_colm, w_colm, in_1, in_2, in_3, d_track, h1_track,
+                      h2_track, b_track, x_space, y_space)
 sec_par_group.attach_to(fourstorey)
 # not in OpenBrIM
-x_space = (l_plate.value - 2 * x_interval.value) / (x_num.value - 1)
-y_space = (w_plate.value - 2 * y_interval.value) / (y_num.value - 1)
+
 total_height = story_num.v * height.v
-y_intervals = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
+y_clears = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
 y_positions = [in_1.v + w_colm.v / 2]
 for i in range(1, 4):
-    y_i = y_positions[i - 1] + y_intervals[i] + w_colm.v
+    y_i = y_positions[i - 1] + y_clears[i] + w_colm.v
     y_positions.append(y_i)
 
 # 2.1 plate definition
 # use ObjTypeDef = 1 to set it as just a definition not an actual object
 plate_def = Surface(Point(0, 0),
-                    Point(l_plate.value, 0),
-                    Point(l_plate.value, w_plate.value),
-                    Point(0, w_plate.value),
-                    thick_par=t_plate,
+                    Point('l', 0),
+                    Point('l', 'w'),
+                    Point(0, 'w'),
+                    thick_par='t',
                     material_obj=steel,
                     surface_name='PlateDef')
-plate_def.sub(PrmElmt('ObjTypeDef', 1))
+# plate_def.sub(PrmElmt('ObjTypeDef', 1))
 holes = []
+
 for i in range(x_num.value):
     for j in range(y_num.value):
         hole = Circle('hole_{}_{}'.format(i, j), radius=d_hole.value / 2,
-                      x=x_interval.value + i * x_space,
-                      y=y_interval.value + j * y_space)
+                      x=x_clear.value + i * x_space.value,
+                      y=y_clear.value + j * y_space.value)
         hole.sub(PrmElmt('IsCutout', 1))
         holes.append(hole)
 plate_def.sub(*holes)

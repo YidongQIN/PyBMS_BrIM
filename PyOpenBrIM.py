@@ -226,7 +226,7 @@ class PyOpenBrIMElmt(object):
         elif isinstance(elmt, PyOpenBrIMElmt):
             return elmt.elmt
         else:
-            print('Unacceptable type of input result.')
+            print('{} Unacceptable type of input to be converted to OpenBrIM elements.'.format(elmt))
 
 
 class ObjElmt(PyOpenBrIMElmt):
@@ -290,10 +290,12 @@ class PrmElmt(PyOpenBrIMElmt):
 
 
 class Project(ObjElmt):
-    def __init__(self, proj_name, template='SI'):
+    def __init__(self, proj_name, template='empty'):
         """create new project with a template"""
         super(Project, self).__init__('Project', proj_name)
-        if template == 'SI':
+        if template == 'template':
+            origin_string = '<O N="" T="Project" D="A template in OpenBrIM Library">\n</O>'
+        elif template == 'SI':
             origin_string = """
 <O N="" T="Project" Alignment="None" TransAlignRule="Right">
     <O N="Units" T="Group">
@@ -571,7 +573,7 @@ class Surface(ObjElmt):
         elif isinstance(thick_par, (float, int)):
             self.sub(PrmElmt("Thickness", str(thick_par)))
         else:
-            print("a PARAMETER @N=Thickness is required.")
+            print("{} requires a PARAMETER @N=Thickness.".format(self.name))
 
     def refer_mat_obj(self, mat_obj):
         """material is an OBJECT.\n
@@ -583,7 +585,7 @@ class Surface(ObjElmt):
                              role='',
                              des='Material_Surface_{}'.format(self.name)))
         else:
-            print("a OBJECT of Material is required.")
+            print("{} requires an OBJECT of Material.".format(self.name))
 
     def change_thick(self, thickness, des='', role='', par_type='Surface_Thickness', ut='', uc=''):
         """thickness parameter of Surface.\n Only thickness is mandatory"""

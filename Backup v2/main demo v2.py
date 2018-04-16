@@ -1,5 +1,5 @@
 # import ClassPyOpenBrIM
-from ClassPyOpenBrIM import *
+from PyOpenBrIM import *
 
 xx = PrmElmt("x_spacing", '108.3')
 print(type(xx.value))

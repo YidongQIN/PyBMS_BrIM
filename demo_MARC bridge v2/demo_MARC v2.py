@@ -8,7 +8,7 @@ modified Mar26, 2018
 
 __author__ = 'Yidong QIN'
 
-from ClassPyOpenBrIM import *
+from PyOpenBrIM import *
 
 if __name__ == '__main__':
 

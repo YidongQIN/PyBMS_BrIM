@@ -1,6 +1,11 @@
 # import ClassPyOpenBrIM
-from ClassPyOpenBrIM import *
+from PyOpenBrIM import *
+from PyOBobjects import *
 
+# test = bolted_plate
+
+
+'''
 mat1=Material('C4000Psi','Deck Concrete','Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
 th = PrmElmt('thick',123,par_type='Thick')
@@ -32,7 +37,7 @@ feline.as_line(line1)
 feline.show_sub()
 
 
-'''
+
 newproj = PyOpenBrIMElmt('new proj')
 newproj.parse_xmlfile('xml file/test.xml')
 # ShowTree(newproj)
