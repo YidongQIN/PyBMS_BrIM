@@ -29,6 +29,7 @@ class BoltedPlate(ObjElmt):
         self.material = material
         self.x_sp = (length - 2 * xclearance) / (column - 1)
         self.y_sp = (length - 2 * yclearance) / (row - 1)
+        self.as_prmodel()
 
     def as_elmt(self):
         """a Surface Elmt, use real number not parameters"""
@@ -37,7 +38,7 @@ class BoltedPlate(ObjElmt):
                             Point(self.length, self.width),
                             Point(0, self.width),
                             thick_par=self.thick,
-                            material_obj=str(self.material),
+                            material_obj=self.material,
                             surface_name=self.name)
         holes = []
         for i in range(self.column):
@@ -59,7 +60,7 @@ class BoltedPlate(ObjElmt):
                             Point('l', 'w'),
                             Point(0, 'w'),
                             thick_par='t',
-                            material_obj=str(self.material),
+                            material_obj=self.material,
                             surface_name=self.name)
         holes = []
         for i in range(self.column):

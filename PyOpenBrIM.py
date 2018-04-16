@@ -228,6 +228,12 @@ class PyOpenBrIMElmt(object):
         else:
             print('{} Unacceptable type of input to be converted to OpenBrIM elements.'.format(elmt))
 
+    @staticmethod
+    def prm_to_value(elmt):
+        """PARAMETER to its value"""
+        #@TODO value or name?
+        if isinstance(elmt, PrmElmt):
+            return elmt.get_attrib('V')
 
 class ObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
@@ -523,9 +529,12 @@ class Line(ObjElmt):
             print('Type Error: Point Object is required.')
 
     def set_section(self, section_obj):
-        """section has attribute of material"""
-        if isinstance(section_obj, (Extends, Section)):
-            self.elmt.append(section_obj.elmt)
+        """section has attribute of material. default is <O Extends=>"""
+        if isinstance(section_obj, (Section,Extends)):
+            self.sub(Extends(section_obj))
+        elif isinstance(section_obj, str):
+            print('{} section is not a SECTION object'.format(self.name))
+            self.sub(PrmElmt('',section_obj))
         else:
             print('No Section.')
 
@@ -553,10 +562,10 @@ class Surface(ObjElmt):
             print('!ERROR: Not 4 Points in the Surface OBJECT: {}'.format(self.name))
             return False
         if len(self.elmt.findall("./P[@N='Thickness']")) != 1:
-            print('!ERROR: Not 1 thick parameter in the Surface object {}'.format(self.name))
+            print('!ERROR: Not a thick parameter in the Surface object {}'.format(self.name))
             return False
         if len(self.elmt.findall("./P[@T='Material']")) != 1:
-            print('!ERROR: Not 1 material parameter in the Surface object {}'.format(self.name))
+            print('!ERROR: Not a material parameter in the Surface object {}'.format(self.name))
             return False
         return True
 
