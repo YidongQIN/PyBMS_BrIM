@@ -65,8 +65,14 @@ class PyOpenBrIMElmt(object):
     def get_attrib(self, key):
         a = self.elmt.attrib.get(key)
         if a:
-            return a
+            try:
+                print('{} is a number'.format(self.name))
+                return float(a)
+            except (ValueError, TypeError):
+                print('{} is not a number'.format(self.name))
+                return a
         else:
+            print('{} has no attribute {}'.format(self, key))
             return ''
 
     def add_attr(self, **attrib_dict):
@@ -231,9 +237,23 @@ class PyOpenBrIMElmt(object):
     @staticmethod
     def prm_to_value(elmt):
         """PARAMETER to its value"""
-        #@TODO value or name?
         if isinstance(elmt, PrmElmt):
-            return elmt.get_attrib('V')
+            return elmt.value
+        elif isinstance(elmt, (int, float)):
+            return elmt
+        else:
+            print('{} is not a <P>')
+
+    @staticmethod
+    def prm_to_name(elmt):
+        """PARAMETER to its name, maybe used when refer?"""
+        if isinstance(elmt, PrmElmt):
+            return elmt.get_attrib('N')
+        elif isinstance(elmt, str):
+            return elmt
+        else:
+            print('{} is not a <P>')
+
 
 class ObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
@@ -530,11 +550,11 @@ class Line(ObjElmt):
 
     def set_section(self, section_obj):
         """section has attribute of material. default is <O Extends=>"""
-        if isinstance(section_obj, (Section,Extends)):
+        if isinstance(section_obj, (Section, Extends)):
             self.sub(Extends(section_obj))
         elif isinstance(section_obj, str):
             print('{} section is not a SECTION object'.format(self.name))
-            self.sub(PrmElmt('',section_obj))
+            self.sub(PrmElmt('', section_obj))
         else:
             print('No Section.')
 
@@ -581,7 +601,7 @@ class Surface(ObjElmt):
             self.sub(PrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
         elif isinstance(thick_par, (float, int)):
             self.sub(PrmElmt("Thickness", str(thick_par)))
-        elif isinstance(thick_par,str):
+        elif isinstance(thick_par, str):
             self.sub(PrmElmt("Thickness", thick_par))
         else:
             print("{} requires a PARAMETER @N=Thickness.".format(self.name))
@@ -595,7 +615,7 @@ class Surface(ObjElmt):
                              par_type='Material',
                              role='',
                              des='Material_Surface_{}'.format(self.name)))
-        elif isinstance(mat_obj,str):
+        elif isinstance(mat_obj, str):
             print('Material of Surface {} is a string, please make sure'.format(self.name))
             self.sub(PrmElmt('Material', mat_obj,
                              par_type='Material',
@@ -728,9 +748,11 @@ class ShowTree(object):
         for tab in range(level):
             print('.   ', end='')
         other_info = ''
-        for key in ['T', 'N', 'V', 'Extends']:
-            if elmt.attrib.get(key):
-                other_info = other_info + '{}={}\t'.format(key, elmt.attrib[key])
+        for key in elmt.attrib:
+            other_info = other_info + '{}={}\t'.format(key, elmt.attrib[key])
+        # for key in ['T', 'N', 'V', 'Extends']:
+        #     if elmt.attrib.get(key):
+        #         other_info = other_info + '{}={}\t'.format(key, elmt.attrib[key])
         print('|--<{}> {}'.format(elmt.tag, other_info))
         for sub in elmt:
             ShowTree.branch(sub, level + 1)
