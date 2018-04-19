@@ -61,6 +61,15 @@ use PyOpenBrIM v2 (that is ClassPyOpenBrIM) to generate the xml file for MARC br
 
 New class are required.
 
+* class Sensor
+
+    class straingauge
+
+    class accelerator
+
+看看数据库里面，如何定义sensor的，需要init哪些
+再对照SensorML，看看它是如何定义的
+
 * class Damage(ObjElmt)
 
     use a element to represent the damage in bridge.
