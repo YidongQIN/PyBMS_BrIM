@@ -60,6 +60,9 @@ class BoltedPlate(ObjElmt):
         return plate_def
 
     def fem(self):
+        """FEM is totally different from geometry model.
+        it needs Nodes, not only Points: both coordinates(x,y,z)and fixity,
+        and connection with other elements. """
         pass
 
     def as_proj(self):
