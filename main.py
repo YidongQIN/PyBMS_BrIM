@@ -2,12 +2,15 @@
 from PyOpenBrIM import *
 from PyOBobjects import *
 
+ss = Sensor(119,'type',des='test mysql', database='no db',position=(0,0))
+ss.get_info()
+
+'''
+
 proj = Project('test on PyOB')
 test = BoltedPlate('Plate 0', 5, 50, 50, 6, 8, 8, 4, 4).as_prmodel()
 test.attach_to(proj)
 proj.save_project()
-
-'''
 mat1=Material('C4000Psi','Deck Concrete','Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
 th = PrmElmt('thick',123,par_type='Thick')

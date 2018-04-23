@@ -76,5 +76,10 @@ for x in [0, l_plate.v]:
                       'Column@{},{}'.format(x, y))
         onecol.add_attr(X=x, Y=y)
         onecol.attach_to(fourstorey)
+
+ss = StrainGauge('119','Test straingauge in col 1',0,0,50,'Z','kong bai')
+
+ssgeo = ss.geom()
+ssgeo.attach_to(fourstorey)
 # ---------------
 fourstorey.save_project()
