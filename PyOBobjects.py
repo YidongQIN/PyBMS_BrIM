@@ -14,7 +14,7 @@ from PyOpenBrIM import *
 
 class ConnMySQL(object):
 
-    def __init__(self, host, database, user, password, port=3306, charset="utf8"):
+    def __init__(self, host, database, user, password, port, charset="utf8"):
         self.host = host
         self.database = database
         self.port = port
@@ -22,7 +22,8 @@ class ConnMySQL(object):
         self.password = password
         self.charset = charset
         try:
-            self.conn = mc.connect(host=self.host, port=self.port, user=self.user, password=self.password)
+            self.conn = mc.connect(host=self.host, port=self.port,
+                                   user=self.user, password=self.password)
             # self.conn.autocommit(False)
             # self.conn.set_character_set(self.charset)
             self.cur = self.conn.cursor()
@@ -31,8 +32,6 @@ class ConnMySQL(object):
 
     def __del__(self):
         self.close()
-
-
 
     def select_db(self, db):
         try:
@@ -47,7 +46,7 @@ class ConnMySQL(object):
         except mc.Error as e:
             print("Mysql Error:%s\nSQL:%s" % (e, sql))
 
-    def fetch_row(self, with_description = False):
+    def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
         if with_description:
             col_name = [i[0] for i in self.cur.description]
@@ -126,13 +125,13 @@ class BoltedPlate(ObjElmt):
         self.x_sp = (self.length - 2 * self.xclearance) / (self.column - 1)
         self.y_sp = (self.width - 2 * self.yclearance) / (self.row - 1)
         # self.Pthick = self.prm_to_name(thick)
-        # self.Plength = self.prm_to_name(length)
-        # self.Pwidth = self.prm_to_name(width)
-        # self.Pdiameter = self.prm_to_name(diameter)
-        # self.Pxclearance = self.prm_to_name(xclearance)
-        # self.Pyclearance = self.prm_to_name(yclearance)
-        # self.Pcolumn = self.prm_to_name(column)
-        # self.Prow = self.prm_to_name(row)
+        #         # self.Plength = self.prm_to_name(length)
+        #         # self.Pwidth = self.prm_to_name(width)
+        #         # self.Pdiameter = self.prm_to_name(diameter)
+        #         # self.Pxclearance = self.prm_to_name(xclearance)
+        #         # self.Pyclearance = self.prm_to_name(yclearance)
+        #         # self.Pcolumn = self.prm_to_name(column)
+        #         # self.Prow = self.prm_to_name(row)
 
     def geom(self):
         """a Surface Elmt, use real number not parameters"""
@@ -200,19 +199,19 @@ class BoltedPlate(ObjElmt):
 
 
 class Sensor(ObjElmt):
-    def __init__(self, sensor_id, sensor_type, des, database_config, position_x=0, position_y=0, position_z=0):
+    def __init__(self, sensor_id, sensor_type, des, database_config):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type
         self.db = database_config  # user, passwd, host, database, port
         self.des = des
-        self.x = position_x  # what type? string?
-        self.y = position_y  # what type? string?
-        self.z = position_z  # what type? string?
-        self.dx = 0
-        self.dy = 0
-        self.dz = 0
-
+        self.get_install()
+        # self.x = PositionX (read from DB)
+        # self.y = position_y
+        # self.z = position_z
+        # self.dx = 0
+        # self.dy = 0
+        # self.dz = 0
 
     def print_info(self):
         db = ConnMySQL(**self.db)
@@ -224,17 +223,20 @@ class Sensor(ObjElmt):
         db.close()
 
     def get_install(self):
-        db=ConnMySQL(**self.db)
-        sql = 'select PositionX,PositionY,PositionZ,DirectionX,DirectionY,DirectionZ from bridge_test.sensorchannelinstallation where sensorId = {}'.format(self.id)
+        db = ConnMySQL(**self.db)
+        sql = 'select PositionX, PositionY, PositionZ,' \
+              'DirectionX, DirectionY, DirectionZ ' \
+              'from bridge_test.sensorchannelinstallation ' \
+              'where sensorId = {}'.format(self.id)
         db.query(sql)
-        self.x,self.y,self.z,self.dx,self.dy,self.dz = db.fetch_row()
+        self.x, self.y, self.z, self.dx, self.dy, self.dz = db.fetch_row()
         db.close()
 
     def geom(self):
         """ OpenBrIM geometry model"""
-        if not (self.x,self.y,self.z):
+        if not (self.x, self.y, self.z):
             print('Sensor {} position information is required'.format(self.name))
-        if not (self.dx,self.dy,self.dz):
+        if not (self.dx, self.dy, self.dz):
             print('Sensor {} direction information is required'.format(self.name))
 
     def fem(self):
@@ -246,14 +248,14 @@ class Sensor(ObjElmt):
         return node
 
     def direction_setting(self):
-        # if self.dx^2+self.dy^2+self.dz^2 !=1:
+        # if self.dx^2+self.dy^2+self.dz^2 != 1:
         #     print('Error in Direction data')
-        if self.dx==1:
-            return {}
-        if self.dy==1:
-            return {'RZ':"PI/2"}
-        if self.dz==1:
-            return {'RY':"PI/2"}
+        if self.dx == 1:
+            return {"RZ": "0"}
+        if self.dy == 1:
+            return {"RZ": "PI/2"}
+        if self.dz == 1:
+            return {"RY": "PI/2"}
 
 
 class Temperature(Sensor):
@@ -261,11 +263,10 @@ class Temperature(Sensor):
 
 
 class StrainGauge(Sensor):
-    def __init__(self, sg_id, des, database_config, x, y, z, direction):
-        super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config, x, y, z)
+    def __init__(self, sg_id, des, database_config):
+        super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
         self.name = 'SG{}'.format(sg_id)
         self.id = sg_id
-        self.direction = direction  # X, Y, or Z
         self.width = 2
         self.length = 10
         self.thick = 1
@@ -277,7 +278,7 @@ class StrainGauge(Sensor):
                      Point(self.length / 2, self.width / 2),
                      Point(-self.length / 2, self.width / 2),
                      thick_par=1,
-                     # material_obj='Sensor_StrainGauge',
+                     material_obj='Sensor_StrainGauge',
                      surface_name=self.name)
         ss.add_attr(X=self.x, Y=self.y, Z=self.z, Color='#DC143C')
         ss.add_attr(**self.direction_setting())
@@ -285,10 +286,28 @@ class StrainGauge(Sensor):
 
 
 class Accelerometer(Sensor):
-    def __init__(self, ac_id, des, x, y, z, direction, database_config):
-        super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, x, y, z, database_config)
-        self.direction = direction  # X, Y, or Z
+    def __init__(self, ac_id, des, database_config):
+        super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, database_config)
+        self.name = 'AC{}'.format(ac_id)
+        self.id = ac_id
+        self.width = 2
+        self.length = 10
+        self.thick = 1
+        # self.direction = direction  # X, Y, or Z
 
     def geom(self):
-        pass
-        # @TODO volume
+        ac = Volume('AC{}'.format(self.id), self.x, self.y, self.z)
+        ac.add_attr(Color='#DC143C')
+        ac.set_surface(Point(-self.width / 2, -self.length / 2, 0),
+                       Point(self.width / 2, -self.length / 2, 0),
+                       Point(self.width / 2, self.length / 2, 0),
+                       Point(-self.width / 2, self.length / 2, 0))
+        ac.set_surface(Point(-self.width / 2, -self.length / 2, self.thick),
+                       Point(self.width / 2, -self.length / 2, self.thick),
+                       Point(self.width / 2, self.length / 2, self.thick),
+                       Point(-self.width / 2, self.length / 2, self.thick))
+        return ac
+
+class Displacement(Sensor):
+    def __init__(self, ds_id, des, database_config):
+        super(Displacement, self).__init__(ds_id, 'Displacement', des, database_config)

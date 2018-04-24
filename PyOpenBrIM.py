@@ -293,6 +293,13 @@ class ObjElmt(PyOpenBrIMElmt):
             self.sub(PrmElmt(refer_name, elmt.name,
                              par_type=elmt.get_attrib('T'), role=''))
 
+    def move(self, dx, dy, dz):
+        # @TODO
+        pass
+
+    def rotate(self, rx, ry, rz):
+        pass
+
 
 class PrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
@@ -640,6 +647,18 @@ class Surface(ObjElmt):
     def calc_area(self):
         pass
 
+
+class Volume(ObjElmt):
+
+    def __init__(self, volume_name, x, y, z):
+        super(Volume, self).__init__('Volume', volume_name)
+        self.x = x
+        self.y = y
+        self.z = z
+        self.add_attr(X=self.x,Y=self.y,Z=self.z)
+
+    def set_surface(self,point1, point2, point3, point4):
+        self.sub(Surface(point1, point2, point3, point4))
 
 class FENode(ObjElmt):
 
