@@ -32,11 +32,7 @@ class ConnMySQL(object):
     def __del__(self):
         self.close()
 
-    def sensor_setting(self, sensor_id):
-        """the most common used command"""
-        sql = 'select * from bridge_test.sensor where sensorID ={}'.format(sensor_id)
-        self.query(sql)
-        return self.fetch_row()
+
 
     def select_db(self, db):
         try:
@@ -51,10 +47,13 @@ class ConnMySQL(object):
         except mc.Error as e:
             print("Mysql Error:%s\nSQL:%s" % (e, sql))
 
-    def fetch_row(self):
+    def fetch_row(self, with_description = False):
         result = self.cur.fetchone()
-        col_name = [i[0] for i in self.cur.description]
-        return col_name, result
+        if with_description:
+            col_name = [i[0] for i in self.cur.description]
+            return col_name, result
+        else:
+            return result
 
     def fetch_all(self):
         result = self.cur.fetchall()
@@ -201,34 +200,60 @@ class BoltedPlate(ObjElmt):
 
 
 class Sensor(ObjElmt):
-    def __init__(self, sensor_id, sensor_type, des, position_x, position_y, position_z, database_config):
+    def __init__(self, sensor_id, sensor_type, des, database_config, position_x=0, position_y=0, position_z=0):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
+        self.id = sensor_id
         self.type = sensor_type
+        self.db = database_config  # user, passwd, host, database, port
         self.des = des
         self.x = position_x  # what type? string?
         self.y = position_y  # what type? string?
         self.z = position_z  # what type? string?
-        self.db = database_config  # user, passwd, host, database, port
-        self.geo = self.geom()
+        self.dx = 0
+        self.dy = 0
+        self.dz = 0
 
-    def get_info(self):
-        # db = ConnMySQL(**self.db)
-        db = ConnMySQL(user='root', password='qyd123', host='127.0.0.1', database='bridge_test')
-        info = db.sensor_setting(self.name)
+
+    def print_info(self):
+        db = ConnMySQL(**self.db)
+        sql = 'select * from bridge_test.sensor where sensorID ={}'.format(self.id)
+        db.query(sql)
+        info = db.fetch_row(True)
         for i in range(len(info[0])):
             print('{}: {}'.format(info[0][i], info[1][i]))
+        db.close()
+
+    def get_install(self):
+        db=ConnMySQL(**self.db)
+        sql = 'select PositionX,PositionY,PositionZ,DirectionX,DirectionY,DirectionZ from bridge_test.sensorchannelinstallation where sensorId = {}'.format(self.id)
+        db.query(sql)
+        self.x,self.y,self.z,self.dx,self.dy,self.dz = db.fetch_row()
+        db.close()
 
     def geom(self):
         """ OpenBrIM geometry model"""
-        pass
+        if not (self.x,self.y,self.z):
+            print('Sensor {} position information is required'.format(self.name))
+        if not (self.dx,self.dy,self.dz):
+            print('Sensor {} direction information is required'.format(self.name))
 
     def fem(self):
         """FEM model. For sensor, it's just a node."""
-        # @TODO realizable?
+        node = FENode(self.x, self.y, self.z, self.name)
+        # not sure if realizable?
         # when create a FEM, cannot insert the node into this position
         # because it will change the node number and element
-        node = FENode(self.x,self.y,self.z,self.name)
         return node
+
+    def direction_setting(self):
+        # if self.dx^2+self.dy^2+self.dz^2 !=1:
+        #     print('Error in Direction data')
+        if self.dx==1:
+            return {}
+        if self.dy==1:
+            return {'RZ':"PI/2"}
+        if self.dz==1:
+            return {'RY':"PI/2"}
 
 
 class Temperature(Sensor):
@@ -236,23 +261,26 @@ class Temperature(Sensor):
 
 
 class StrainGauge(Sensor):
-    def __init__(self, sg_id, des, x, y, z, direction, database_config):
-        super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, x, y, z, database_config)
+    def __init__(self, sg_id, des, database_config, x, y, z, direction):
+        super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config, x, y, z)
+        self.name = 'SG{}'.format(sg_id)
+        self.id = sg_id
         self.direction = direction  # X, Y, or Z
+        self.width = 2
+        self.length = 10
+        self.thick = 1
 
     def geom(self):
         """no size"""
-        ss = Surface(Point(-5, -1),
-                     Point(5, -1),
-                     Point(5, 1),
-                     Point(-5, 1),
+        ss = Surface(Point(-self.length / 2, -self.width / 2),
+                     Point(self.length / 2, -self.width / 2),
+                     Point(self.length / 2, self.width / 2),
+                     Point(-self.length / 2, self.width / 2),
                      thick_par=1,
-                     material_obj='Sensor_StrainGauge',
+                     # material_obj='Sensor_StrainGauge',
                      surface_name=self.name)
         ss.add_attr(X=self.x, Y=self.y, Z=self.z, Color='#DC143C')
-        if self.direction == 'Z':
-            #@TODO switch
-            ss.add_attr(RY='PI/2')
+        ss.add_attr(**self.direction_setting())
         return ss
 
 
