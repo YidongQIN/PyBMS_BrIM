@@ -82,7 +82,7 @@ ss1 = StrainGauge(207, 'Test straingauge in col 1', config)
 ss2 = StrainGauge(208, 'Test straingauge in col 1', config)
 ss1.geom().attach_to(fourstorey)
 ss2.geom().attach_to(fourstorey)
-ac = Accelerometer(202,'Test acce',config)
+ac = Accelerometer(201,'Test acce',config)
 ac.geom().attach_to(fourstorey)
 # ---------------
 fourstorey.save_project()

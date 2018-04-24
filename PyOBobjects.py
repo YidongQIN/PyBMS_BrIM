@@ -290,9 +290,9 @@ class Accelerometer(Sensor):
         super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, database_config)
         self.name = 'AC{}'.format(ac_id)
         self.id = ac_id
-        self.width = 2
-        self.length = 10
-        self.thick = 1
+        self.width = 30
+        self.length = 50
+        self.thick = 25
         # self.direction = direction  # X, Y, or Z
 
     def geom(self):
