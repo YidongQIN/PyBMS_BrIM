@@ -77,12 +77,14 @@ for x in [0, l_plate.v]:
         onecol.add_attr(X=x, Y=y)
         onecol.attach_to(fourstorey)
 
+# Sensors
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
-ss1 = StrainGauge(207, 'Test straingauge in col 1', config)
-ss2 = StrainGauge(208, 'Test straingauge in col 1', config)
-ss1.geom().attach_to(fourstorey)
-ss2.geom().attach_to(fourstorey)
-ac = Accelerometer(201,'Test acce',config)
-ac.geom().attach_to(fourstorey)
+# ds201=Displacement(201,'displacement of bottom plate',config)
+# ds201.geom().attach_to(fourstorey)
+ac202 = Accelerometer(202,'Test accelerometers',config)
+ac202.geom().attach_to(fourstorey)
+for i in range(207,211):
+    sg = StrainGauge(i,'Test StrainGauge {}'.format(i),config)
+    sg.geom().attach_to(fourstorey)
 # ---------------
 fourstorey.save_project()

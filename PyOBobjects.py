@@ -63,7 +63,7 @@ class ConnMySQL(object):
             for i in range(0, len(inv)):
                 _d[desc[i][0]] = str(inv[i])
                 d.append(_d)
-        return d
+        return d # a list of dicts
 
     def insert(self, table_name, data):
         columns = data.keys()
@@ -204,18 +204,15 @@ class Sensor(ObjElmt):
         self.id = sensor_id
         self.type = sensor_type
         self.db = database_config  # user, passwd, host, database, port
-        self.des = des
+        # self.des = des
+        # self.x, self.y, self.z, self.dx, self.dy, self.dz
         self.get_install()
-        # self.x = PositionX (read from DB)
-        # self.y = position_y
-        # self.z = position_z
-        # self.dx = 0
-        # self.dy = 0
-        # self.dz = 0
+        self.get_model()
 
-    def print_info(self):
+
+    def read_table(self, tbname):
         db = ConnMySQL(**self.db)
-        sql = 'select * from bridge_test.sensor where sensorID ={}'.format(self.id)
+        sql = 'select * from bridge_test.{} where sensorID ={}'.format(tbname,self.id)
         db.query(sql)
         info = db.fetch_row(True)
         for i in range(len(info[0])):
@@ -224,13 +221,27 @@ class Sensor(ObjElmt):
 
     def get_install(self):
         db = ConnMySQL(**self.db)
-        sql = 'select PositionX, PositionY, PositionZ,' \
-              'DirectionX, DirectionY, DirectionZ ' \
-              'from bridge_test.sensorchannelinstallation ' \
-              'where sensorId = {}'.format(self.id)
+        sql = 'select PositionX, PositionY, PositionZ, DirectionX, DirectionY, DirectionZ from bridge_test.sensorchannelinstallation where sensorId ={}'.format(self.id)
         db.query(sql)
         self.x, self.y, self.z, self.dx, self.dy, self.dz = db.fetch_row()
         db.close()
+
+    def get_model(self, dimension1=10, dimension2=10, dimension3=10):
+        db = ConnMySQL(**self.db)
+        sql1 = 'select manufacturerName, modelNumber from bridge_test.sensor where sensorId = {}'.format(self.id)
+        db.query(sql1)
+        self.fac, self.model =db.fetch_row()
+        sql2 = 'select dimension1, dimension2, dimension3 from bridge_test.sensorchannelinstallation where sensorId = {}'.format(self.id)
+        db.query(sql2)
+        self.width, self.length, self.thick = db.fetch_row()
+        if not self.width:
+            self.width =dimension1
+        if not self.length:
+            self.width =dimension2
+        if not self.thick:
+            self.width =dimension3
+        db.close()
+
 
     def geom(self):
         """ OpenBrIM geometry model"""
@@ -267,9 +278,9 @@ class StrainGauge(Sensor):
         super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
         self.name = 'SG{}'.format(sg_id)
         self.id = sg_id
-        self.width = 2
-        self.length = 10
-        self.thick = 1
+        # self.width = 2
+        # self.length = 10
+        # self.thick = 1
 
     def geom(self):
         """no size"""
@@ -311,3 +322,14 @@ class Accelerometer(Sensor):
 class Displacement(Sensor):
     def __init__(self, ds_id, des, database_config):
         super(Displacement, self).__init__(ds_id, 'Displacement', des, database_config)
+        self.name='DS{}'.format(ds_id)
+        self.id=ds_id
+
+    def link_to_node(self):
+        pass
+
+    def geom(self):
+        # line=Line(Point())
+        # box = Volume()
+        # ds=Group(self.name,line,box)
+        pass

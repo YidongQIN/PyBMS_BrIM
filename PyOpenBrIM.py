@@ -586,13 +586,13 @@ class Surface(ObjElmt):
     def check_surface(self):
         """should have >= 3 Points, 1 Thickness and 1 Material"""
         if len(self.elmt.findall("./O[@T='Point']")) < 3:
-            print('!ERROR: Not 4 Points in the Surface OBJECT: {}'.format(self.name))
+            print('> Warning: Not 4 Points in the Surface OBJECT: {}'.format(self.name))
             return False
         if len(self.elmt.findall("./P[@N='Thickness']")) != 1:
-            print('!ERROR: Not a thick parameter in the Surface object {}'.format(self.name))
+            print('> Warning: Not a thick parameter in the Surface object {}'.format(self.name))
             return False
         if len(self.elmt.findall("./P[@T='Material']")) != 1:
-            print('!ERROR: Not a material parameter in the Surface object {}'.format(self.name))
+            print('> Warning: Not a material parameter in the Surface object {}'.format(self.name))
             return False
         return True
 
