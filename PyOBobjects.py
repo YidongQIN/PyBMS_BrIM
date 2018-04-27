@@ -47,8 +47,8 @@ class RealObj(object):
 
 class Beam(RealObj):
 
-    def __init__(self, beam_id, *points):
-        super(Beam, self).__init__(beam_id, 'BEAM', Line, FELine)
+    def __init__(self, beam_id, *points, section):
+        super(Beam, self).__init__(beam_id, 'BEAM', Line, FELine, section, None)
         if len(points) == 2:
             if isinstance(points[0], Point) and isinstance(points[1], Point):
                 self.two_point(*points)
@@ -59,9 +59,9 @@ class Beam(RealObj):
                 if not isinstance(a, (float, int)):
                     print("Beam {}'s Coordinates must be numbers".format(self.id))
             self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = points
+        self.section = section
         self.geo_xml(Point(self.x1,self.y1,self.z1), Point(self.x2,self.y2,self.z2), section=self.section)
         self.fem_xml(FENode(self.x1,self.y1,self.z1), FENode(self.x2,self.y2,self.z2), section=self.section)
-        #@TODO testify
         # Line() material is included in section definition
 
     def two_point(self, point1, point2):

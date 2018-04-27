@@ -1,12 +1,30 @@
 
 from PyOpenBrIM import *
 from PyOBobjects import *
-
-di = Displacement()
-
-'''
+from PySensor import *
 
 proj = Project('test on PyOB')
+
+
+b1 =Beam(1, FENode(0,0,0), FENode(10,0,0), section=Section('line section','Mat'))
+# ShowTree(b1.geomodel)
+b1.geomodel.attach_to(proj)
+config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
+di = StrainGauge(202,'Test dat path',config)
+di.geom().attach_to(proj)
+print(di.get_install())
+
+ShowTree(proj)
+proj.save_project()
+
+'''
+config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
+di = Sensor(202,'Test dat path','test',config)
+di.read_dat()
+print('file path'+di.datpath)
+print('config: '+str(di.db))
+
+
 test = BoltedPlate('Plate 0', 5, 50, 50, 6, 8, 8, 4, 4).as_prmodel()
 test.attach_to(proj)
 proj.save_project()

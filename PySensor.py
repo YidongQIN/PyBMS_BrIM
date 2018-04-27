@@ -4,61 +4,62 @@ __author__ = 'Yidong QIN'
 Sensors definition in OpenBrIM
 '''
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 from PyOBobjects import *
-
-import numpy as np
-import matplotlib.pyplot as plt
-
 
 
 class Sensor(ObjElmt):
     base_node: FENode
 
-    def __init__(self, sensor_id, sensor_type, des, database_config):
+    def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type
+        self.name = '{}_{}'.format(sensor_type, sensor_id)
+        try:
+            self.datpath = database_config.pop('path')
+            # fileName is from the Server Setting JSON
+        except KeyError:
+            print('For the sensor <{}>,a "path" item is required in the config dictionary'.format(self.name))
         self.db = database_config  # user, passwd, host, database, port
-        #@TODO database_config include the file path of backups
-        # self.des = des
         # self.x, self.y, self.z, self.dx, self.dy, self.dz
         self.get_install()
-        self.get_model()
+        self.get_dimension()
 
     def read_table(self, tbname, *col_names):
         db = ConnMySQL(**self.db)
         sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
         db.query(sql)
         info = db.fetch_row()
+        db.close()
+        return info
+
+    def print_dbinfo(self, tbname, *col_names ):
+        info = self.read_table(tbname, *col_names)
         for i in range(len(info)):
             print('{}: {}'.format(col_names[i], info[i]))
-        db.close()
+
+
+    def read_dat(self):
+        DatProc(self.datpath)
 
     def get_install(self):
-        db = ConnMySQL(**self.db)
-        sql = 'select PositionX, PositionY, PositionZ, DirectionX, DirectionY, DirectionZ from bridge_test.sensorchannelinstallation where sensorId ={}'.format(
-            self.id)
-        db.query(sql)
-        self.x, self.y, self.z, self.dx, self.dy, self.dz = db.fetch_row()
-        db.close()
+        self.x, self.y, self.z, self.dx, self.dy, self.dz = self.read_table('sensorchannelinstallation', 'PositionX', 'PositionY', 'PositionZ', 'DirectionX', 'DirectionY', 'DirectionZ')
 
-    def get_model(self, dimension1=10, dimension2=10, dimension3=10):
-        db = ConnMySQL(**self.db)
-        sql1 = 'select manufacturerName, modelNumber from bridge_test.sensor where sensorId = {}'.format(self.id)
-        db.query(sql1)
-        self.fac, self.model = db.fetch_row()
-        sql2 = 'select dimension1, dimension2, dimension3 from bridge_test.sensorchannelinstallation where sensorId = {}'.format(
-            self.id)
-        db.query(sql2)
-        self.width, self.length, self.thick = db.fetch_row()
+    def get_dimension(self, dimension1=10, dimension2=10, dimension3=10):
+        self.fac, self.model = self.read_table('sensor', 'manufacturerName', 'modelNumber')
+        self.width, self.length, self.thick =self.read_table('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
         if not self.width:
             self.width = dimension1
         if not self.length:
             self.width = dimension2
         if not self.thick:
             self.width = dimension3
-        db.close()
+
+    def get_backup_path(self):
+        pass
 
     def geom(self):
         """ OpenBrIM geometry model"""
@@ -83,13 +84,20 @@ class Sensor(ObjElmt):
 
 
 class Temperature(Sensor):
-    #@TODO
-    pass
+    def __init__(self, tp_id, des, database_config):
+        super(Temperature, self).__init__(tp_id, 'Temperature', des, database_config)
+
+    def geom(self):
+        pass
+
+    def fem(self):
+        pass
 
 
 class StrainGauge(Sensor):
     def __init__(self, sg_id, des, database_config):
         super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
+        print(self.name)
         self.name = 'SG{}'.format(sg_id)
         self.id = sg_id
 
@@ -117,7 +125,7 @@ class Accelerometer(Sensor):
         self.thick = 25
 
     def geom(self):
-        ac = Cuboid(self.width,self.length,self.thick)
+        ac = Cuboid(self.width, self.length, self.thick)
         ac.add_attr(Color='#DC143C')
         self.move_to(self.x, self.y, self.z)
         self.rotate(self.dx, self.dy, self.dz)
@@ -133,16 +141,19 @@ class Displacement(Sensor):
     def geom(self):
         line = Line(Point(0, 0, 0), Point(self.length, 0, 0))
         box = Cuboid(20, self.width, self.thick)
-        box.move_to(self.length/2,0,0)
+        box.move_to(self.length / 2, 0, 0)
         ds = Group(self.name, line, box)
         ds.add_attr(Color='#DC143C')
         self.move_to(self.x, self.y, self.z)
         self.rotate(self.dx, self.dy, self.dz)
 
 
-class PlotDat(object):
+class DatProc(object):
 
-    def __init__(self, file_path ='Server//backup//.dat'):
-        data = np.loadtxt(file_path)
-        plt.plot(data)
+    def __init__(self, file_path='Server//backup//.dat'):
+        self.data = np.loadtxt(file_path)
+        self.plot()
+
+    def plot(self):
+        plt.plot(self.data)
         plt.show()
