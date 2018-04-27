@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyOBobjects import *
+from PySensor import *
 
 fourstorey = Project('The 4 Story Model')
 # 0. Parameters

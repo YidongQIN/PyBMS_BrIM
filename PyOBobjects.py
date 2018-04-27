@@ -12,6 +12,135 @@ import mysql.connector as mc
 from PyOpenBrIM import *
 
 
+class Cuboid(Volume):
+
+    def __init__(self, length, width, thick, cuboid_name=''):
+        super(Cuboid, self).__init__(Surface(Point(-width / 2, -length / 2, 0),
+                                             Point(width / 2, -length / 2, 0),
+                                             Point(width / 2, length / 2, 0),
+                                             Point(-width / 2, length / 2, 0)),
+                                     Surface(Point(-width / 2, -length / 2, thick),
+                                             Point(width / 2, -length / 2, thick),
+                                             Point(width / 2, length / 2, thick),
+                                             Point(-width / 2, length / 2, thick)),
+                                     cuboid_name)
+
+
+class RealObj(object):
+    geomodel: ObjElmt
+    femodel: ObjElmt
+
+    def __init__(self, obj_id, obj_type, geo_class, fem_class, section_obj, material_obj):
+        self.id = obj_id
+        self.type = obj_type
+        self.geo_class = geo_class
+        self.fem_class = fem_class
+        self.section = section_obj
+        self.material = material_obj
+
+    def geo_xml(self, *define, **dicts):
+        self.geomodel = self.geo_class(*define, **dicts)
+
+    def fem_xml(self, *define, **dicts):
+        self.femodel = self.fem_class(*define, **dicts)
+
+
+class Beam(RealObj):
+
+    def __init__(self, beam_id, *points):
+        super(Beam, self).__init__(beam_id, 'BEAM', Line, FELine)
+        if len(points) == 2:
+            if isinstance(points[0], Point) and isinstance(points[1], Point):
+                self.two_point(*points)
+            elif isinstance(points[0], FENode) and isinstance(points[1], FENode):
+                self.two_node(*points)
+        elif len(points) == 6:
+            for a in points:
+                if not isinstance(a, (float, int)):
+                    print("Beam {}'s Coordinates must be numbers".format(self.id))
+            self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = points
+        self.geo_xml(Point(self.x1,self.y1,self.z1), Point(self.x2,self.y2,self.z2), section=self.section)
+        self.fem_xml(FENode(self.x1,self.y1,self.z1), FENode(self.x2,self.y2,self.z2), section=self.section)
+        #@TODO testify
+        # Line() material is included in section definition
+
+    def two_point(self, point1, point2):
+        self.x1 = point1.x
+        self.y1 = point1.x
+        self.z1 = point1.x
+        self.x2 = point2.x
+        self.y2 = point2.x
+        self.z2 = point2.x
+
+    def two_node(self,node1, node2):
+        self.x1 = node1.x
+        self.y1 = node1.x
+        self.z1 = node1.x
+        self.x2 = node2.x
+        self.y2 = node2.x
+        self.z2 = node2.x
+
+    def coordinates(self, x1, y1, z1, x2, y2, z2):
+        self.x1 = x1
+        self.y1 = y1
+        self.z1 = z1
+        self.x2 = x2
+        self.y2 = y2
+        self.z2 = z2
+
+
+class BoltedPlate(ObjElmt):
+
+    def __init__(self, plate_name,
+                 thick, length, width,
+                 diameter, xclearance, yclearance,
+                 column, row,
+                 material='steel'):
+        super(BoltedPlate, self).__init__('Surface', plate_name)
+        self.thick = self.prm_to_value(thick)
+        self.length = self.prm_to_value(length)
+        self.width = self.prm_to_value(width)
+        self.diameter = self.prm_to_value(diameter)
+        self.xclearance = self.prm_to_value(xclearance)
+        self.yclearance = self.prm_to_value(yclearance)
+        self.column = self.prm_to_value(column)
+        self.row = self.prm_to_value(row)
+        self.material = material
+        self.x_sp = (self.length - 2 * self.xclearance) / (self.column - 1)
+        self.y_sp = (self.width - 2 * self.yclearance) / (self.row - 1)
+
+    def geom(self):
+        """a Surface Elmt, use real number not parameters"""
+        plate_def = Surface(Point(0, 0),
+                            Point(self.length, 0),
+                            Point(self.length, self.width),
+                            Point(0, self.width),
+                            thick_par=self.thick,
+                            material_obj=self.material,
+                            surface_name=self.name)
+        holes = []
+        for i in range(self.column):
+            for j in range(self.row):
+                hole = Circle('hole_{}_{}'.format(i, j),
+                              radius=self.diameter / 2,
+                              x=self.xclearance + i * self.x_sp,
+                              y=self.yclearance + j * self.y_sp)
+                hole.sub(PrmElmt('IsCutout', 1))
+                holes.append(hole)
+        plate_def.sub(*holes)
+        return plate_def
+
+    def fem(self):
+        pass
+
+    def as_proj(self):
+        """as a template in OpenBrIM Library"""
+        plateproj = Project(self.name, 'template')
+        plateproj.sub(self.geom())
+        self.elmt = plateproj
+        return plateproj
+
+
 class ConnMySQL(object):
 
     def __init__(self, host, database, user, password, port, charset="utf8"):
@@ -103,245 +232,3 @@ class ConnMySQL(object):
     def close(self):
         self.cur.close()
         self.conn.close()
-
-
-class Cuboid(Volume):
-
-    def __init__(self, length, width, thick, cuboid_name=''):
-        super(Cuboid, self).__init__(Surface(Point(-width / 2, -length / 2, 0),
-                                             Point(width / 2, -length / 2, 0),
-                                             Point(width / 2, length / 2, 0),
-                                             Point(-width / 2, length / 2, 0)),
-                                     Surface(Point(-width / 2, -length / 2, thick),
-                                             Point(width / 2, -length / 2, thick),
-                                             Point(width / 2, length / 2, thick),
-                                             Point(-width / 2, length / 2, thick)),
-                                     cuboid_name)
-
-
-class BoltedPlate(ObjElmt):
-
-    def __init__(self, plate_name,
-                 thick, length, width,
-                 diameter, xclearance, yclearance,
-                 column, row,
-                 material='steel'):
-        super(BoltedPlate, self).__init__('Surface', plate_name)
-        self.thick = self.prm_to_value(thick)
-        self.length = self.prm_to_value(length)
-        self.width = self.prm_to_value(width)
-        self.diameter = self.prm_to_value(diameter)
-        self.xclearance = self.prm_to_value(xclearance)
-        self.yclearance = self.prm_to_value(yclearance)
-        self.column = self.prm_to_value(column)
-        self.row = self.prm_to_value(row)
-        self.material = material
-        self.x_sp = (self.length - 2 * self.xclearance) / (self.column - 1)
-        self.y_sp = (self.width - 2 * self.yclearance) / (self.row - 1)
-        # self.Pthick = self.prm_to_name(thick)
-        #         # self.Plength = self.prm_to_name(length)
-        #         # self.Pwidth = self.prm_to_name(width)
-        #         # self.Pdiameter = self.prm_to_name(diameter)
-        #         # self.Pxclearance = self.prm_to_name(xclearance)
-        #         # self.Pyclearance = self.prm_to_name(yclearance)
-        #         # self.Pcolumn = self.prm_to_name(column)
-        #         # self.Prow = self.prm_to_name(row)
-
-    def geom(self):
-        """a Surface Elmt, use real number not parameters"""
-        plate_def = Surface(Point(0, 0),
-                            Point(self.length, 0),
-                            Point(self.length, self.width),
-                            Point(0, self.width),
-                            thick_par=self.thick,
-                            material_obj=self.material,
-                            surface_name=self.name)
-        holes = []
-        for i in range(self.column):
-            for j in range(self.row):
-                hole = Circle('hole_{}_{}'.format(i, j),
-                              radius=self.diameter / 2,
-                              x=self.xclearance + i * self.x_sp,
-                              y=self.yclearance + j * self.y_sp)
-                hole.sub(PrmElmt('IsCutout', 1))
-                holes.append(hole)
-        plate_def.sub(*holes)
-        return plate_def
-
-    def fem(self):
-        """FEM is totally different from geometry model.
-        it needs Nodes, not only Points: both coordinates(x,y,z)and fixity,
-        and connection with other elements. """
-        pass
-
-    def as_proj(self):
-        """as a template in OpenBrIM Library"""
-        plateproj = Project(self.name, 'template')
-        plateproj.sub(self.geom())
-        self.elmt = plateproj
-        return plateproj
-
-    # def as_prmodel(self):
-    #     """to generate a ParamML model that can be modified in the APP.
-    #     *** GIVEN UP
-    #     the REPEAT in ParamML is complex, so that the row number and the column number is nut parameterized"""
-    #     paramodel = Surface(Point(0, 0),
-    #                         Point('lengthOfPlate', 0),
-    #                         Point('lengthOfPlate', 'widthOfPlate'),
-    #                         Point(0, 'widthOfPlate'),
-    #                         thick_par='thickOfPlate',
-    #                         material_obj=self.material,
-    #                         surface_name=self.name)
-    #     holes = []
-    #     for i in range(self.column):
-    #         for j in range(self.row):
-    #             hole = Circle('hole_{}_{}'.format(i, j),
-    #                           radius='diaOfHole/2',
-    #                           x='x_clearOfHole + ' + str(i * self.x_sp),
-    #                           y='y_clearOfHole + ' + str(j * self.y_sp))
-    #             hole.sub(PrmElmt('IsCutout', 1))
-    #             holes.append(hole)
-    #     paramodel.sub(*holes)
-    #     t = PrmElmt('thickOfPlate', self.Pthick, 'Thickness of each plate')
-    #     l_p = PrmElmt('lengthOfPlate', self.Plength, 'Length of each plate')
-    #     w = PrmElmt('widthOfPlate', self.Pwidth, 'Width of each plate')
-    #     d = PrmElmt('diaOfHole', self.Pdiameter, 'Diameter of each hole')
-    #     x_clear = PrmElmt('x_clearOfHole', self.Pxclearance, 'x clearance from the edge to the hole')
-    #     y_clear = PrmElmt('y_clearOfHole', self.Pyclearance, 'y clearance from the edge to the hole')
-    #     paramodel.sub(t, l_p, w, d, x_clear, y_clear)  # , col_num, row_num)
-    #     return paramodel
-
-
-class Sensor(ObjElmt):
-    base_node: FENode
-
-    def __init__(self, sensor_id, sensor_type, des, database_config):
-        super(Sensor, self).__init__('Sensor', sensor_id, D=des)
-        self.id = sensor_id
-        self.type = sensor_type
-        self.db = database_config  # user, passwd, host, database, port
-        # self.des = des
-        # self.x, self.y, self.z, self.dx, self.dy, self.dz
-        self.get_install()
-        self.get_model()
-
-    def read_table(self, tbname, *col_names):
-        db = ConnMySQL(**self.db)
-        sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
-        db.query(sql)
-        info = db.fetch_row()
-        for i in range(len(info)):
-            print('{}: {}'.format(col_names[i], info[i]))
-        db.close()
-
-    def get_install(self):
-        db = ConnMySQL(**self.db)
-        sql = 'select PositionX, PositionY, PositionZ, DirectionX, DirectionY, DirectionZ from bridge_test.sensorchannelinstallation where sensorId ={}'.format(
-            self.id)
-        db.query(sql)
-        self.x, self.y, self.z, self.dx, self.dy, self.dz = db.fetch_row()
-        db.close()
-
-    def get_model(self, dimension1=10, dimension2=10, dimension3=10):
-        db = ConnMySQL(**self.db)
-        sql1 = 'select manufacturerName, modelNumber from bridge_test.sensor where sensorId = {}'.format(self.id)
-        db.query(sql1)
-        self.fac, self.model = db.fetch_row()
-        sql2 = 'select dimension1, dimension2, dimension3 from bridge_test.sensorchannelinstallation where sensorId = {}'.format(
-            self.id)
-        db.query(sql2)
-        self.width, self.length, self.thick = db.fetch_row()
-        if not self.width:
-            self.width = dimension1
-        if not self.length:
-            self.width = dimension2
-        if not self.thick:
-            self.width = dimension3
-        db.close()
-
-    def geom(self):
-        """ OpenBrIM geometry model"""
-        if not (self.x, self.y, self.z):
-            print('Sensor {} position information is required'.format(self.name))
-        if not (self.dx, self.dy, self.dz):
-            print('Sensor {} direction information is required'.format(self.name))
-
-    def set_base_node(self, fenode):
-        if isinstance(fenode, FENode):
-            self.base_node = fenode
-        else:
-            print('{}.base_node is not a FENode'.format(self.name))
-
-    def fem(self):
-        """FEM model. For sensor, it's just a node."""
-        node = FENode(self.x, self.y, self.z, self.name)
-        # not sure if realizable?
-        # when create a FEM, cannot insert the node into this position
-        # because it will change the node number and element
-        return node
-
-
-class Temperature(Sensor):
-    pass
-
-
-class StrainGauge(Sensor):
-    def __init__(self, sg_id, des, database_config):
-        super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
-        self.name = 'SG{}'.format(sg_id)
-        self.id = sg_id
-
-    def geom(self):
-        ss = Surface(Point(-self.length / 2, -self.width / 2),
-                     Point(self.length / 2, -self.width / 2),
-                     Point(self.length / 2, self.width / 2),
-                     Point(-self.length / 2, self.width / 2),
-                     thick_par=1,
-                     material_obj='Sensor_StrainGauge',
-                     surface_name=self.name)
-        ss.add_attr(Color='#DC143C')
-        self.move_to(self.x, self.y, self.z)
-        self.rotate(self.dx, self.dy, self.dz)
-        return ss
-
-
-class Accelerometer(Sensor):
-    def __init__(self, ac_id, des, database_config):
-        super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, database_config)
-        self.name = 'AC{}'.format(ac_id)
-        self.id = ac_id
-        self.width = 30
-        self.length = 50
-        self.thick = 25
-
-    def geom(self):
-        # ac = Volume(Surface(Point(-self.width / 2, -self.length / 2, 0),
-        #                     Point(self.width / 2, -self.length / 2, 0),
-        #                     Point(self.width / 2, self.length / 2, 0),
-        #                     Point(-self.width / 2, self.length / 2, 0)),
-        #             Surface(Point(-self.width / 2, -self.length / 2, self.thick),
-        #                     Point(self.width / 2, -self.length / 2, self.thick),
-        #                     Point(self.width / 2, self.length / 2, self.thick),
-        #                     Point(-self.width / 2, self.length / 2, self.thick)),
-        #             'AC{}'.format(self.id))
-        ac = Cuboid(self.width,self.length,self.thick)
-        ac.add_attr(Color='#DC143C')
-        self.move_to(self.x, self.y, self.z)
-        self.rotate(self.dx, self.dy, self.dz)
-        return ac
-
-
-class Displacement(Sensor):
-    def __init__(self, ds_id, des, database_config):
-        super(Displacement, self).__init__(ds_id, 'Displacement', des, database_config)
-        self.name = 'DS{}'.format(ds_id)
-        self.id = ds_id
-
-    def geom(self):
-        line = Line(Point(0, 0, 0), Point(self.length, 0, 0))
-        box = Cuboid(20, self.width, self.thick)
-        box.move_to(self.length/2,0,0)
-        ds = Group(self.name, line, box)
-        ds.add_attr(Color='#DC143C')
-        self.move_to(self.x, self.y, self.z)
-        self.rotate(self.dx, self.dy, self.dz)

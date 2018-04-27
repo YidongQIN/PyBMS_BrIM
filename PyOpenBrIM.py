@@ -9,7 +9,6 @@ Object-oriented programming for OpenBrIM
 
 import re
 import xml.etree.ElementTree as eET
-import math
 
 import prettytable as pt
 
@@ -295,21 +294,21 @@ class ObjElmt(PyOpenBrIMElmt):
                              par_type=elmt.get_attrib('T'), role=''))
 
     def move_to(self, new_x, new_y, new_z):
-        self.add_attr(X=new_x,Y=new_y,Z=new_z)
+        self.add_attr(X=new_x, Y=new_y, Z=new_z)
 
     def rotate(self, cos_x, cos_y, cos_z):
-        if cos_x*cos_x + cos_y*cos_y+cos_z*cos_z != 1:
+        if cos_x * cos_x + cos_y * cos_y + cos_z * cos_z != 1:
             print('Sum of square of three cosine values should be 1.')
             return
         # self.rotate_one('RX',cos_x)
-        self.rotate_one('RZ',cos_y)
-        self.rotate_one('RY',cos_z)
+        self.rotate_one('RZ', cos_y)
+        self.rotate_one('RY', cos_z)
 
     def rotate_one(self, r_axis, cosine):
         if cosine == 0:
             return
-        elif cosine ==1:
-            self.add_attr(**{r_axis:'PI/2'})
+        elif cosine == 1:
+            self.add_attr(**{r_axis: 'PI/2'})
 
 
 class PrmElmt(PyOpenBrIMElmt):
@@ -661,12 +660,13 @@ class Surface(ObjElmt):
 
 class Volume(ObjElmt):
 
-    def __init__(self,  surface1,surface2, volume_name=''):
+    def __init__(self, surface1, surface2, volume_name=''):
         super(Volume, self).__init__('Volume', volume_name)
         self.sub(surface1, surface2)
 
-    def set_surface(self,point1, point2, point3, point4):
+    def set_surface(self, point1, point2, point3, point4):
         self.sub(Surface(point1, point2, point3, point4))
+
 
 class FENode(ObjElmt):
 
@@ -727,7 +727,7 @@ class FELine(ObjElmt):
             self.n2 = node2
             self.prm_refer(section, 'Section')
         if beta_angle:
-            self.param_simple('BetaAngle', beta_angle, '')
+            self.param('BetaAngle', beta_angle)
 
     def as_line(self, line_obj: Line):
         pass
