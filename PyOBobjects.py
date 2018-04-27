@@ -63,7 +63,7 @@ class ConnMySQL(object):
             for i in range(0, len(inv)):
                 _d[desc[i][0]] = str(inv[i])
                 d.append(_d)
-        return d # a list of dicts
+        return d  # a list of dicts
 
     def insert(self, table_name, data):
         columns = data.keys()
@@ -103,6 +103,20 @@ class ConnMySQL(object):
     def close(self):
         self.cur.close()
         self.conn.close()
+
+
+class Cuboid(Volume):
+
+    def __init__(self, length, width, thick, cuboid_name=''):
+        super(Cuboid, self).__init__(Surface(Point(-width / 2, -length / 2, 0),
+                                             Point(width / 2, -length / 2, 0),
+                                             Point(width / 2, length / 2, 0),
+                                             Point(-width / 2, length / 2, 0)),
+                                     Surface(Point(-width / 2, -length / 2, thick),
+                                             Point(width / 2, -length / 2, thick),
+                                             Point(width / 2, length / 2, thick),
+                                             Point(-width / 2, length / 2, thick)),
+                                     cuboid_name)
 
 
 class BoltedPlate(ObjElmt):
@@ -199,6 +213,8 @@ class BoltedPlate(ObjElmt):
 
 
 class Sensor(ObjElmt):
+    base_node: FENode
+
     def __init__(self, sensor_id, sensor_type, des, database_config):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
@@ -209,19 +225,19 @@ class Sensor(ObjElmt):
         self.get_install()
         self.get_model()
 
-
-    def read_table(self, tbname):
+    def read_table(self, tbname, *col_names):
         db = ConnMySQL(**self.db)
-        sql = 'select * from bridge_test.{} where sensorID ={}'.format(tbname,self.id)
+        sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
         db.query(sql)
-        info = db.fetch_row(True)
-        for i in range(len(info[0])):
-            print('{}: {}'.format(info[0][i], info[1][i]))
+        info = db.fetch_row()
+        for i in range(len(info)):
+            print('{}: {}'.format(col_names[i], info[i]))
         db.close()
 
     def get_install(self):
         db = ConnMySQL(**self.db)
-        sql = 'select PositionX, PositionY, PositionZ, DirectionX, DirectionY, DirectionZ from bridge_test.sensorchannelinstallation where sensorId ={}'.format(self.id)
+        sql = 'select PositionX, PositionY, PositionZ, DirectionX, DirectionY, DirectionZ from bridge_test.sensorchannelinstallation where sensorId ={}'.format(
+            self.id)
         db.query(sql)
         self.x, self.y, self.z, self.dx, self.dy, self.dz = db.fetch_row()
         db.close()
@@ -230,18 +246,18 @@ class Sensor(ObjElmt):
         db = ConnMySQL(**self.db)
         sql1 = 'select manufacturerName, modelNumber from bridge_test.sensor where sensorId = {}'.format(self.id)
         db.query(sql1)
-        self.fac, self.model =db.fetch_row()
-        sql2 = 'select dimension1, dimension2, dimension3 from bridge_test.sensorchannelinstallation where sensorId = {}'.format(self.id)
+        self.fac, self.model = db.fetch_row()
+        sql2 = 'select dimension1, dimension2, dimension3 from bridge_test.sensorchannelinstallation where sensorId = {}'.format(
+            self.id)
         db.query(sql2)
         self.width, self.length, self.thick = db.fetch_row()
         if not self.width:
-            self.width =dimension1
+            self.width = dimension1
         if not self.length:
-            self.width =dimension2
+            self.width = dimension2
         if not self.thick:
-            self.width =dimension3
+            self.width = dimension3
         db.close()
-
 
     def geom(self):
         """ OpenBrIM geometry model"""
@@ -250,6 +266,12 @@ class Sensor(ObjElmt):
         if not (self.dx, self.dy, self.dz):
             print('Sensor {} direction information is required'.format(self.name))
 
+    def set_base_node(self, fenode):
+        if isinstance(fenode, FENode):
+            self.base_node = fenode
+        else:
+            print('{}.base_node is not a FENode'.format(self.name))
+
     def fem(self):
         """FEM model. For sensor, it's just a node."""
         node = FENode(self.x, self.y, self.z, self.name)
@@ -257,16 +279,6 @@ class Sensor(ObjElmt):
         # when create a FEM, cannot insert the node into this position
         # because it will change the node number and element
         return node
-
-    def direction_setting(self):
-        # if self.dx^2+self.dy^2+self.dz^2 != 1:
-        #     print('Error in Direction data')
-        if self.dx == 1:
-            return {"RZ": "0"}
-        if self.dy == 1:
-            return {"RZ": "PI/2"}
-        if self.dz == 1:
-            return {"RY": "PI/2"}
 
 
 class Temperature(Sensor):
@@ -278,12 +290,8 @@ class StrainGauge(Sensor):
         super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
         self.name = 'SG{}'.format(sg_id)
         self.id = sg_id
-        # self.width = 2
-        # self.length = 10
-        # self.thick = 1
 
     def geom(self):
-        """no size"""
         ss = Surface(Point(-self.length / 2, -self.width / 2),
                      Point(self.length / 2, -self.width / 2),
                      Point(self.length / 2, self.width / 2),
@@ -291,8 +299,9 @@ class StrainGauge(Sensor):
                      thick_par=1,
                      material_obj='Sensor_StrainGauge',
                      surface_name=self.name)
-        ss.add_attr(X=self.x, Y=self.y, Z=self.z, Color='#DC143C')
-        ss.add_attr(**self.direction_setting())
+        ss.add_attr(Color='#DC143C')
+        self.move_to(self.x, self.y, self.z)
+        self.rotate(self.dx, self.dy, self.dz)
         return ss
 
 
@@ -304,32 +313,35 @@ class Accelerometer(Sensor):
         self.width = 30
         self.length = 50
         self.thick = 25
-        # self.direction = direction  # X, Y, or Z
 
     def geom(self):
-        ac = Volume('AC{}'.format(self.id), self.x, self.y, self.z)
+        # ac = Volume(Surface(Point(-self.width / 2, -self.length / 2, 0),
+        #                     Point(self.width / 2, -self.length / 2, 0),
+        #                     Point(self.width / 2, self.length / 2, 0),
+        #                     Point(-self.width / 2, self.length / 2, 0)),
+        #             Surface(Point(-self.width / 2, -self.length / 2, self.thick),
+        #                     Point(self.width / 2, -self.length / 2, self.thick),
+        #                     Point(self.width / 2, self.length / 2, self.thick),
+        #                     Point(-self.width / 2, self.length / 2, self.thick)),
+        #             'AC{}'.format(self.id))
+        ac = Cuboid(self.width,self.length,self.thick)
         ac.add_attr(Color='#DC143C')
-        ac.set_surface(Point(-self.width / 2, -self.length / 2, 0),
-                       Point(self.width / 2, -self.length / 2, 0),
-                       Point(self.width / 2, self.length / 2, 0),
-                       Point(-self.width / 2, self.length / 2, 0))
-        ac.set_surface(Point(-self.width / 2, -self.length / 2, self.thick),
-                       Point(self.width / 2, -self.length / 2, self.thick),
-                       Point(self.width / 2, self.length / 2, self.thick),
-                       Point(-self.width / 2, self.length / 2, self.thick))
+        self.move_to(self.x, self.y, self.z)
+        self.rotate(self.dx, self.dy, self.dz)
         return ac
+
 
 class Displacement(Sensor):
     def __init__(self, ds_id, des, database_config):
         super(Displacement, self).__init__(ds_id, 'Displacement', des, database_config)
-        self.name='DS{}'.format(ds_id)
-        self.id=ds_id
-
-    def link_to_node(self):
-        pass
+        self.name = 'DS{}'.format(ds_id)
+        self.id = ds_id
 
     def geom(self):
-        # line=Line(Point())
-        # box = Volume()
-        # ds=Group(self.name,line,box)
-        pass
+        line = Line(Point(0, 0, 0), Point(self.length, 0, 0))
+        box = Cuboid(20, self.width, self.thick)
+        box.move_to(self.length/2,0,0)
+        ds = Group(self.name, line, box)
+        ds.add_attr(Color='#DC143C')
+        self.move_to(self.x, self.y, self.z)
+        self.rotate(self.dx, self.dy, self.dz)

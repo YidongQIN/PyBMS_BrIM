@@ -79,8 +79,8 @@ for x in [0, l_plate.v]:
 
 # Sensors
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
-# ds201=Displacement(201,'displacement of bottom plate',config)
-# ds201.geom().attach_to(fourstorey)
+ds201=Displacement(201,'displacement of bottom plate',config)
+ds201.geom().attach_to(fourstorey)
 ac202 = Accelerometer(202,'Test accelerometers',config)
 ac202.geom().attach_to(fourstorey)
 for i in range(207,211):

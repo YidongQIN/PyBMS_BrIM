@@ -2,8 +2,7 @@
 from PyOpenBrIM import *
 from PyOBobjects import *
 
-ss = Sensor(119,'type',des='test mysql', database='no db',position=(0,0))
-ss.read_table()
+di = Displacement()
 
 '''
 

@@ -9,6 +9,7 @@ Object-oriented programming for OpenBrIM
 
 import re
 import xml.etree.ElementTree as eET
+import math
 
 import prettytable as pt
 
@@ -293,12 +294,22 @@ class ObjElmt(PyOpenBrIMElmt):
             self.sub(PrmElmt(refer_name, elmt.name,
                              par_type=elmt.get_attrib('T'), role=''))
 
-    def move(self, dx, dy, dz):
-        # @TODO
-        pass
+    def move_to(self, new_x, new_y, new_z):
+        self.add_attr(X=new_x,Y=new_y,Z=new_z)
 
-    def rotate(self, rx, ry, rz):
-        pass
+    def rotate(self, cos_x, cos_y, cos_z):
+        if cos_x*cos_x + cos_y*cos_y+cos_z*cos_z != 1:
+            print('Sum of square of three cosine values should be 1.')
+            return
+        # self.rotate_one('RX',cos_x)
+        self.rotate_one('RZ',cos_y)
+        self.rotate_one('RY',cos_z)
+
+    def rotate_one(self, r_axis, cosine):
+        if cosine == 0:
+            return
+        elif cosine ==1:
+            self.add_attr(**{r_axis:'PI/2'})
 
 
 class PrmElmt(PyOpenBrIMElmt):
@@ -650,12 +661,9 @@ class Surface(ObjElmt):
 
 class Volume(ObjElmt):
 
-    def __init__(self, volume_name, x, y, z):
+    def __init__(self,  surface1,surface2, volume_name=''):
         super(Volume, self).__init__('Volume', volume_name)
-        self.x = x
-        self.y = y
-        self.z = z
-        self.add_attr(X=self.x,Y=self.y,Z=self.z)
+        self.sub(surface1, surface2)
 
     def set_surface(self,point1, point2, point3, point4):
         self.sub(Surface(point1, point2, point3, point4))
