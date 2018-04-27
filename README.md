@@ -28,6 +28,20 @@ Sub-Sub class: Point, Line, Surface,..., inherited from ObjElmt.
 
 aiming at model transfer function between 3D model and FEM model.
 
+--> maybe too complex. later
+
+### version 4
+
+class Sensor
+  | - class Temperature
+  | - class StrainGauge
+  | - class Accelometer
+  | - class Displacement
+
+Question: class Sensor(object) or class Sensor(ObjElmt)?
+ObjElmt, as a new type of ParamML OBJECT, that is like <O T='Sensor' .../>
+Because i want to write new OpenBrIM schema for BrIM.
+
 
 ## PROGRESS HISTORY
 
@@ -44,30 +58,26 @@ Output format is based on
 
 Use OpenBrIM Module to create the xml file in ParamML for MARC bridge.
 
-### Mar.21,2018
+### Mar.21, 2018
 
 the preliminary ClassPyOpenBrIM is done.
 In the next, apply it to re-create the xml for MARC bridge in order to test and modify it.
 
-### Arp 4, 2018
+### Apr 4, 2018
 
 establish the FEM model, and then export SAP2000 file and excel file of it.
 
 in the next, try to transfer the 3D model to FEM model.
 
+### Apr 27, 2018
+basically complete the framework of class Sensor.
+More test maybe.
+Also start to package the RealObjects to Python class. Each RealObject will have both geomodel and femodel.
+
 ## IDEAS FOR NEXT
 
 use PyOpenBrIM v2 (that is ClassPyOpenBrIM) to generate the xml file for MARC bridge and see what can be further developed.
 
-New class are required.
-
-* class Sensor
-
-    class straingauge
-
-    class accelerator
-
-看看数据库里面，如何定义sensor的，需要init哪些
 再对照SensorML，看看它是如何定义的
 
 * class Damage(ObjElmt)
