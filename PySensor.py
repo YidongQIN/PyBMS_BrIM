@@ -7,7 +7,10 @@ Sensors definition in OpenBrIM
 
 from PyOBobjects import *
 
-#@TODO data process. check numpy lib
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 
 class Sensor(ObjElmt):
     base_node: FENode
@@ -135,3 +138,11 @@ class Displacement(Sensor):
         ds.add_attr(Color='#DC143C')
         self.move_to(self.x, self.y, self.z)
         self.rotate(self.dx, self.dy, self.dz)
+
+
+class PlotDat(object):
+
+    def __init__(self, file_path ='Server//backup//.dat'):
+        data = np.loadtxt(file_path)
+        plt.plot(data)
+        plt.show()
