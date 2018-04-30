@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        id="MARC"
+        attributeFormDefault="unqualified" elementFormDefault="qualified"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="P">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="N" use="optional"/>
+          <xs:attribute type="xs:string" name="V" use="optional"/>
+          <xs:attribute type="xs:string" name="Role" use="optional"/>
+          <xs:attribute type="xs:string" name="UT" use="optional"/>
+          <xs:attribute type="xs:string" name="D" use="optional"/>
+          <xs:attribute type="xs:string" name="Ut" use="optional"/>
+          <xs:attribute type="xs:string" name="T" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="O">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="P" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="O" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="N" use="optional"/>
+      <xs:attribute type="xs:string" name="T" use="optional"/>
+      <xs:attribute type="xs:string" name="Length" use="optional"/>
+      <xs:attribute type="xs:string" name="Force" use="optional"/>
+      <xs:attribute type="xs:string" name="Angle" use="optional"/>
+      <xs:attribute type="xs:string" name="Temperature" use="optional"/>
+      <xs:attribute type="xs:string" name="Type" use="optional"/>
+      <xs:attribute type="xs:string" name="D" use="optional"/>
+      <xs:attribute type="xs:string" name="X" use="optional"/>
+      <xs:attribute type="xs:string" name="Y" use="optional"/>
+      <xs:attribute type="xs:string" name="Z" use="optional"/>
+      <xs:attribute type="xs:string" name="S" use="optional"/>
+      <xs:attribute type="xs:string" name="E" use="optional"/>
+      <xs:attribute type="xs:string" name="I" use="optional"/>
+      <xs:attribute type="xs:string" name="CTRL" use="optional"/>
+      <xs:attribute type="xs:string" name="x_index" use="optional"/>
+      <xs:attribute type="xs:string" name="l_index" use="optional"/>
+      <xs:attribute type="xs:string" name="z_index" use="optional"/>
+      <xs:attribute type="xs:string" name="s_index" use="optional"/>
+      <xs:attribute type="xs:string" name="Extends" use="optional"/>
+      <xs:attribute type="xs:string" name="RZ" use="optional"/>
+      <xs:attribute type="xs:string" name="RX" use="optional"/>
+      <xs:attribute type="xs:string" name="Alignment" use="optional"/>
+      <xs:attribute type="xs:string" name="TransAlignRule" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
