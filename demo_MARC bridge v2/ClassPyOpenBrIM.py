@@ -28,12 +28,12 @@ class PyOpenBrIMElmt(object):
         self.name = name
 
     def parse_xmlfile(self, xml_path):
-        """ read a xml file"""
+        """ read a xml_file"""
         if re.match('.*\.xml', xml_path):
             tree = eET.parse(xml_path)
             self.elmt = tree.getroot()
         else:
-            print('"{}" is not a .xml file!'.format(xml_path))
+            print('"{}" is not a .xml_file!'.format(xml_path))
 
     def read_xmlstr(self, xmlstr):
         """read xml string"""
@@ -317,7 +317,7 @@ class Project(ObjElmt):
 
     # save the OpenBrIM model with the name in project attribute
     def save_project(self, path=''):
-        """save this element as a Project in a xml file. \n
+        """save this element as a Project in a xml_file. \n
         Must be a project object as <O T=Project >. \n
         Must have an Project name as the file name. \n
         default path is the same folder with .py. \n
@@ -334,7 +334,7 @@ class Project(ObjElmt):
         elif re.match('.*\.xml', path):
             out_path = path
         else:
-            print('Error: should be a xml file')
+            print('Error: should be a xml_file')
             return
         tree = eET.ElementTree(self.elmt)
         tree.write(out_path, encoding="utf-8", xml_declaration=True)

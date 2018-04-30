@@ -61,7 +61,7 @@ feline.show_sub()
 
 
 newproj = PyOpenBrIMElmt('new proj')
-newproj.parse_xmlfile('xml file/test.xml')
+newproj.parse_xmlfile('xml_file/test.xml')
 # ShowTree(newproj)
 unit1=Unit('first unit')
 ShowTable(unit1)

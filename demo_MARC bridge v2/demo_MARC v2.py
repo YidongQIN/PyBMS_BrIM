@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-use ClassPyOpenBrIM to generate the xml file of MARC Bridge.
+use ClassPyOpenBrIM to generate the xml_file of MARC Bridge.
 modified Mar26, 2018
 """
 

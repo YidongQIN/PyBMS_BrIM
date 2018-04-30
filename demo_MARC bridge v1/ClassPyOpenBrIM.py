@@ -22,7 +22,7 @@ class PyOpenBrIMElmt(object):
         if name != '':
             self.elmt.attrib['N'] = name
 
-    # read XML from .xml file or String and get root
+    # read XML from .xml_file or String and get root
     def read_xmlfile(self, in_path):
         tree = eET.parse(in_path)
         self.elmt = tree.getroot()

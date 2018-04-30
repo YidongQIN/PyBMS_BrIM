@@ -259,5 +259,5 @@ for i in range(span_num):
     add_subNode(deck, PointBR[i + 1])
     add_subNode(deck, PointBL[i + 1])
     add_subNode(root,deck)
-# ---write to .xml file---
+# ---write to .xml_file---
 save_OpenBrIM(root)
