@@ -1,10 +1,12 @@
 
-from PyOpenBrIM import *
-from PyOBobjects import *
-from PySensor import *
+# from PyOpenBrIM import *
+# from PyOBobjects import *
+# from PySensor import *
 
+
+
+'''
 proj = Project('test on PyOB')
-
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
 di = Displacement(202,'Test dat path',config)
 di.geom().attach_to(proj)
@@ -13,7 +15,6 @@ print(di.get_install())
 ShowTree(proj)
 proj.save_project()
 
-'''
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
 di = Sensor(202,'Test dat path','test',config)
 di.plot_dat()

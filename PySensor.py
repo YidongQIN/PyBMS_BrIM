@@ -19,19 +19,17 @@ class Sensor(ObjElmt):
         self.type = sensor_type
         self.name = '{}_{}'.format(sensor_type, sensor_id)
         dbconfig = dict(database_config)
-        # db = database_config.copy()
         try:
             self.datpath = dbconfig.pop('path')
             # fileName is from the Server Setting JSON
         except KeyError:
             print('For the sensor <{}>,a "path" item is required in the config dictionary'.format(self.name))
         self.dbconfig = dbconfig  # user, passwd, host, database, port
-        # self.x, self.y, self.z, self.dx, self.dy, self.dz
-        self.get_install()
-        self.get_dimension()
-        self.get_backup_filename()
+        self.x, self.y, self.z, self.dx, self.dy, self.dz = self.get_install()
+        self.width, self.length, self.thick = self.get_dimension()
+        self.datpath = self.get_backup_filename()
 
-    def read_table(self, tbname, *col_names):
+    def read_database(self, tbname, *col_names):
         db = ConnMySQL(**self.dbconfig)
         sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
         db.query(sql)
@@ -40,7 +38,7 @@ class Sensor(ObjElmt):
         return info
 
     def print_dbinfo(self, tbname, *col_names):
-        info = self.read_table(tbname, *col_names)
+        info = self.read_database(tbname, *col_names)
         for i in range(len(info)):
             print('{}: {}'.format(col_names[i], info[i]))
 
@@ -49,35 +47,27 @@ class Sensor(ObjElmt):
         DatProc('Sensor data of {}'.format(self.name), self.datpath)
 
     def get_install(self):
-        self.x, self.y, self.z, self.dx, self.dy, self.dz = self.read_table('sensorchannelinstallation', 'PositionX',
-                                                                            'PositionY', 'PositionZ', 'DirectionX',
-                                                                            'DirectionY', 'DirectionZ')
-        return self.x, self.y, self.z, self.dx, self.dy, self.dz
+        return self.read_database('sensorchannelinstallation', 'PositionX',
+                               'PositionY', 'PositionZ', 'DirectionX',
+                               'DirectionY', 'DirectionZ')
 
-    def get_dimension(self, dimension1=10, dimension2=10, dimension3=10):
-        self.fac, self.model = self.read_table('sensor', 'manufacturerName', 'modelNumber')
-        self.width, self.length, self.thick = self.read_table('sensorchannelinstallation', 'dimension1', 'dimension2',
-                                                              'dimension3')
-        if not self.width:
-            self.width = dimension1
-        if not self.length:
-            self.width = dimension2
-        if not self.thick:
-            self.width = dimension3
-        return self.fac, self.width, self.width, self.length, self.thick
+    def get_manufac(self):
+        return self.read_database('sensor', 'manufacturerName', 'modelNumber')
+
+    def get_dimension(self):
+        return self.read_database('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
 
     def get_backup_filename(self):
         """fileName is U{unitID}_{ChannelID}.dat"""
-        self.unitid, self.channel = self.read_table('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
-        self.datpath = '{}\\U{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
-        # return self.datpath
+        self.unitid, self.channel = self.read_database('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
+        return '{}\\U{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
 
     def geom(self):
         """ OpenBrIM geometry model"""
         if not (self.x, self.y, self.z):
-            print('Sensor {} position information is required'.format(self.name))
+            print('Sensor <{}> position required'.format(self.name))
         if not (self.dx, self.dy, self.dz):
-            print('Sensor {} direction information is required'.format(self.name))
+            print('Sensor <{}> direction required'.format(self.name))
 
     def set_base_node(self, fenode):
         if isinstance(fenode, FENode):
@@ -99,7 +89,17 @@ class Temperature(Sensor):
         super(Temperature, self).__init__(tp_id, 'Temperature', des, database_config)
 
     def geom(self):
-        pass
+        super(Temperature, self).geom()
+        tp = Surface(Point(-self.length / 2, -self.width / 2),
+                     Point(self.length / 2, -self.width / 2),
+                     Point(self.length / 2, self.width / 2),
+                     Point(-self.length / 2, self.width / 2),
+                     thick_par=1,
+                     material_obj='Sensor_Temperature',
+                     surface_name=self.name)
+        tp.add_attr(Color='#DC143C')
+        tp.move_to(self.x, self.y, self.z)
+        tp.rotate(self.dx, self.dy, self.dz)
 
     def fem(self):
         pass
@@ -108,10 +108,9 @@ class Temperature(Sensor):
 class StrainGauge(Sensor):
     def __init__(self, sg_id, des, database_config):
         super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
-        # self.name = 'SG{}'.format(sg_id)
-        # self.id = sg_id
 
     def geom(self):
+        super(StrainGauge, self).geom()
         ss = Surface(Point(-self.length / 2, -self.width / 2),
                      Point(self.length / 2, -self.width / 2),
                      Point(self.length / 2, self.width / 2),
@@ -132,6 +131,7 @@ class Accelerometer(Sensor):
         # self.id = ac_id
 
     def geom(self):
+        super(Accelerometer, self).geom()
         ac = Cuboid(self.width, self.length, self.thick)
         ac.add_attr(Color='#DC143C')
         ac.move_to(self.x, self.y, self.z)
@@ -146,6 +146,7 @@ class Displacement(Sensor):
         self.id = ds_id
 
     def geom(self):
+        super(Displacement, self).geom()
         line = Line(Point(0, 0, 0), Point(self.length, 0, 0), section=Section('', '', Circle('', 1)))
         box = Cuboid(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
