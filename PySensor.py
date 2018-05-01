@@ -17,7 +17,7 @@ class Sensor(ObjElmt):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type
-        self.name = '{}_{}'.format(sensor_type[0:4], sensor_id)
+        self.name = '{}_{}'.format(sensor_type, sensor_id)
         dbconfig = dict(database_config)
         # db = database_config.copy()
         try:
@@ -39,23 +39,25 @@ class Sensor(ObjElmt):
         db.close()
         return info
 
-    def print_dbinfo(self, tbname, *col_names ):
+    def print_dbinfo(self, tbname, *col_names):
         info = self.read_table(tbname, *col_names)
         for i in range(len(info)):
             print('{}: {}'.format(col_names[i], info[i]))
 
-
-    def read_dat(self):
-        DatProc(self.datpath)
+    def plot_dat(self):
+        print('Dat file path of <{}> is {}'.format(self.name, self.datpath))
+        DatProc('Sensor data of {}'.format(self.name), self.datpath)
 
     def get_install(self):
-        self.x, self.y, self.z, self.dx, self.dy, self.dz = self.read_table('sensorchannelinstallation', 'PositionX', 'PositionY', 'PositionZ', 'DirectionX', 'DirectionY', 'DirectionZ')
+        self.x, self.y, self.z, self.dx, self.dy, self.dz = self.read_table('sensorchannelinstallation', 'PositionX',
+                                                                            'PositionY', 'PositionZ', 'DirectionX',
+                                                                            'DirectionY', 'DirectionZ')
         return self.x, self.y, self.z, self.dx, self.dy, self.dz
-
 
     def get_dimension(self, dimension1=10, dimension2=10, dimension3=10):
         self.fac, self.model = self.read_table('sensor', 'manufacturerName', 'modelNumber')
-        self.width, self.length, self.thick =self.read_table('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
+        self.width, self.length, self.thick = self.read_table('sensorchannelinstallation', 'dimension1', 'dimension2',
+                                                              'dimension3')
         if not self.width:
             self.width = dimension1
         if not self.length:
@@ -66,8 +68,8 @@ class Sensor(ObjElmt):
 
     def get_backup_filename(self):
         """fileName is U{unitID}_{ChannelID}.dat"""
-        self.unitid, self.channel = self.read_table('sensorchannelinstallation','wirelessUnitId','channelID')
-        self.datpath = '{}\\{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
+        self.unitid, self.channel = self.read_table('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
+        self.datpath = '{}\\U{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
         # return self.datpath
 
     def geom(self):
@@ -144,9 +146,9 @@ class Displacement(Sensor):
         self.id = ds_id
 
     def geom(self):
-        line = Line(Point(0, 0, 0), Point(self.length, 0, 0), section=Section('','',Circle('',1)))
+        line = Line(Point(0, 0, 0), Point(self.length, 0, 0), section=Section('', '', Circle('', 1)))
         box = Cuboid(self.width, self.width, self.thick)
-        box.move_to(self.length / 2, 0, -self.thick/2)
+        box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = Group(self.name, line, box)
         ds.add_attr(Color='#DC143C')
         ds.move_to(self.x, self.y, self.z)
@@ -156,10 +158,17 @@ class Displacement(Sensor):
 
 class DatProc(object):
 
-    def __init__(self, file_path='Server//backup//.dat'):
-        self.data = np.loadtxt(file_path)
-        self.plot()
+    def __init__(self, title, file_path):
+        self.title = title
+        try:
+            self.data = np.loadtxt(file_path)
+            self.plot()
+        except OSError as e:
+            print(e)
 
     def plot(self):
         plt.plot(self.data)
+        plt.xlabel('Sampling Point')
+        plt.ylabel('Value')
+        plt.title(self.title)
         plt.show()

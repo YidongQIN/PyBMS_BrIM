@@ -16,7 +16,7 @@ proj.save_project()
 '''
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
 di = Sensor(202,'Test dat path','test',config)
-di.read_dat()
+di.plot_dat()
 print('file path'+di.datpath)
 print('config: '+str(di.db))
 
