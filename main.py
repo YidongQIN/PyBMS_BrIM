@@ -5,12 +5,8 @@ from PySensor import *
 
 proj = Project('test on PyOB')
 
-
-b1 =Beam(1, FENode(0,0,0), FENode(10,0,0), section=Section('line section','Mat'))
-# ShowTree(b1.geomodel)
-b1.geomodel.attach_to(proj)
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
-di = StrainGauge(202,'Test dat path',config)
+di = Displacement(202,'Test dat path',config)
 di.geom().attach_to(proj)
 print(di.get_install())
 

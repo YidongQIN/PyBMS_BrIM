@@ -567,8 +567,10 @@ class Line(ObjElmt):
 
     def set_section(self, section_obj):
         """section has attribute of material. default is <O Extends=>"""
-        if isinstance(section_obj, (Section, Extends)):
+        if isinstance(section_obj, Extends):
             self.sub(Extends(section_obj))
+        elif isinstance(section_obj, Section):
+            self.sub(section_obj)
         elif isinstance(section_obj, str):
             print('{} section is not a SECTION object'.format(self.name))
             self.sub(PrmElmt('', section_obj))

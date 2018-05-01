@@ -47,16 +47,20 @@ class Sensor(ObjElmt):
 
     def get_install(self):
         self.x, self.y, self.z, self.dx, self.dy, self.dz = self.read_table('sensorchannelinstallation', 'PositionX', 'PositionY', 'PositionZ', 'DirectionX', 'DirectionY', 'DirectionZ')
+        return self.x, self.y, self.z, self.dx, self.dy, self.dz
+
 
     def get_dimension(self, dimension1=10, dimension2=10, dimension3=10):
         self.fac, self.model = self.read_table('sensor', 'manufacturerName', 'modelNumber')
         self.width, self.length, self.thick =self.read_table('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
+        assert self.width
         if not self.width:
             self.width = dimension1
         if not self.length:
             self.width = dimension2
         if not self.thick:
             self.width = dimension3
+        return self.fac, self.width, self.width, self.length, self.thick
 
     def get_backup_path(self):
         pass
@@ -110,8 +114,8 @@ class StrainGauge(Sensor):
                      material_obj='Sensor_StrainGauge',
                      surface_name=self.name)
         ss.add_attr(Color='#DC143C')
-        self.move_to(self.x, self.y, self.z)
-        self.rotate(self.dx, self.dy, self.dz)
+        ss.move_to(self.x, self.y, self.z)
+        ss.rotate(self.dx, self.dy, self.dz)
         return ss
 
 
@@ -120,15 +124,15 @@ class Accelerometer(Sensor):
         super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, database_config)
         self.name = 'AC{}'.format(ac_id)
         self.id = ac_id
-        self.width = 30
-        self.length = 50
-        self.thick = 25
+        # self.width = 30
+        # self.length = 50
+        # self.thick = 25
 
     def geom(self):
         ac = Cuboid(self.width, self.length, self.thick)
         ac.add_attr(Color='#DC143C')
-        self.move_to(self.x, self.y, self.z)
-        self.rotate(self.dx, self.dy, self.dz)
+        ac.move_to(self.x, self.y, self.z)
+        ac.rotate(self.dx, self.dy, self.dz)
         return ac
 
 
@@ -139,13 +143,14 @@ class Displacement(Sensor):
         self.id = ds_id
 
     def geom(self):
-        line = Line(Point(0, 0, 0), Point(self.length, 0, 0))
-        box = Cuboid(20, self.width, self.thick)
-        box.move_to(self.length / 2, 0, 0)
+        line = Line(Point(0, 0, 0), Point(self.length, 0, 0), section=Section('','',Circle('',1)))
+        box = Cuboid(self.width, self.width, self.thick)
+        box.move_to(self.length / 2, 0, -self.thick/2)
         ds = Group(self.name, line, box)
         ds.add_attr(Color='#DC143C')
-        self.move_to(self.x, self.y, self.z)
-        self.rotate(self.dx, self.dy, self.dz)
+        ds.move_to(self.x, self.y, self.z)
+        ds.rotate(self.dx, self.dy, self.dz)
+        return ds
 
 
 class DatProc(object):

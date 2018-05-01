@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyOBobjects import *
 from PySensor import *
 
 fourstorey = Project('The 4 Story Model')
@@ -79,13 +78,15 @@ for x in [0, l_plate.v]:
         onecol.attach_to(fourstorey)
 
 # Sensors
-config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
-ds201=Displacement(201,'displacement of bottom plate',config)
+config = dict(user='root', password='qyd123', host='127.0.0.1',
+              database='bridge_test', port=3306,
+              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
+ds201 = Displacement(201, 'displacement of bottom plate', config)
 ds201.geom().attach_to(fourstorey)
-ac202 = Accelerometer(202,'Test accelerometers',config)
+ac202 = Accelerometer(202, 'Test accelerometers', config)
 ac202.geom().attach_to(fourstorey)
-for i in range(207,211):
-    sg = StrainGauge(i,'Test StrainGauge {}'.format(i),config)
+for i in range(207, 211):
+    sg = StrainGauge(i, 'Test StrainGauge {}'.format(i), config)
     sg.geom().attach_to(fourstorey)
 # ---------------
 fourstorey.save_project()
