@@ -27,6 +27,7 @@ class Sensor(ObjElmt):
         # self.x, self.y, self.z, self.dx, self.dy, self.dz
         self.get_install()
         self.get_dimension()
+        self.get_backup_path()
 
     def read_table(self, tbname, *col_names):
         db = ConnMySQL(**self.db)
@@ -63,6 +64,7 @@ class Sensor(ObjElmt):
         return self.fac, self.width, self.width, self.length, self.thick
 
     def get_backup_path(self):
+        #@TODO need DB. now no fileName in the tables of sensorchannelsetting
         pass
 
     def geom(self):
