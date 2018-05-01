@@ -17,20 +17,22 @@ class Sensor(ObjElmt):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type
-        self.name = '{}_{}'.format(sensor_type, sensor_id)
+        self.name = '{}_{}'.format(sensor_type[0:4], sensor_id)
+        dbconfig = dict(database_config)
+        # db = database_config.copy()
         try:
-            self.datpath = database_config.pop('path')
+            self.datpath = dbconfig.pop('path')
             # fileName is from the Server Setting JSON
         except KeyError:
             print('For the sensor <{}>,a "path" item is required in the config dictionary'.format(self.name))
-        self.db = database_config  # user, passwd, host, database, port
+        self.dbconfig = dbconfig  # user, passwd, host, database, port
         # self.x, self.y, self.z, self.dx, self.dy, self.dz
         self.get_install()
         self.get_dimension()
-        self.get_backup_path()
+        self.get_backup_filename()
 
     def read_table(self, tbname, *col_names):
-        db = ConnMySQL(**self.db)
+        db = ConnMySQL(**self.dbconfig)
         sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
         db.query(sql)
         info = db.fetch_row()
@@ -54,7 +56,6 @@ class Sensor(ObjElmt):
     def get_dimension(self, dimension1=10, dimension2=10, dimension3=10):
         self.fac, self.model = self.read_table('sensor', 'manufacturerName', 'modelNumber')
         self.width, self.length, self.thick =self.read_table('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
-        assert self.width
         if not self.width:
             self.width = dimension1
         if not self.length:
@@ -63,9 +64,11 @@ class Sensor(ObjElmt):
             self.width = dimension3
         return self.fac, self.width, self.width, self.length, self.thick
 
-    def get_backup_path(self):
-        #@TODO need DB. now no fileName in the tables of sensorchannelsetting
-        pass
+    def get_backup_filename(self):
+        """fileName is U{unitID}_{ChannelID}.dat"""
+        self.unitid, self.channel = self.read_table('sensorchannelinstallation','wirelessUnitId','channelID')
+        self.datpath = '{}\\{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
+        # return self.datpath
 
     def geom(self):
         """ OpenBrIM geometry model"""
@@ -103,9 +106,8 @@ class Temperature(Sensor):
 class StrainGauge(Sensor):
     def __init__(self, sg_id, des, database_config):
         super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
-        print(self.name)
-        self.name = 'SG{}'.format(sg_id)
-        self.id = sg_id
+        # self.name = 'SG{}'.format(sg_id)
+        # self.id = sg_id
 
     def geom(self):
         ss = Surface(Point(-self.length / 2, -self.width / 2),
@@ -124,11 +126,8 @@ class StrainGauge(Sensor):
 class Accelerometer(Sensor):
     def __init__(self, ac_id, des, database_config):
         super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, database_config)
-        self.name = 'AC{}'.format(ac_id)
-        self.id = ac_id
-        # self.width = 30
-        # self.length = 50
-        # self.thick = 25
+        # self.name = 'AC{}'.format(ac_id)
+        # self.id = ac_id
 
     def geom(self):
         ac = Cuboid(self.width, self.length, self.thick)

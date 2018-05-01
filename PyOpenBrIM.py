@@ -593,7 +593,7 @@ class Surface(ObjElmt):
             self.refer_mat_obj(material_obj)
         if thick_par:
             self.thick_par(thick_par)
-        self.check_surface()
+        # self.check_surface()
 
     def check_surface(self):
         """should have >= 3 Points, 1 Thickness and 1 Material"""
@@ -635,7 +635,7 @@ class Surface(ObjElmt):
                              role='',
                              des='Material_Surface_{}'.format(self.name)))
         elif isinstance(mat_obj, str):
-            print('Material of Surface {} is a string, please make sure'.format(self.name))
+            # print('Material of Surface <{}> is a string, please make sure'.format(self.name))
             self.sub(PrmElmt('Material', mat_obj,
                              par_type='Material',
                              role='',
