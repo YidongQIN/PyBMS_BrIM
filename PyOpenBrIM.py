@@ -745,9 +745,11 @@ class FELine(ObjElmt):
         self.n2 = node
 
 class Text3D(ObjElmt):
-    def __init__(self,text):
-        super(Text3D, self).__init__('Text3D','')
-        # @TODO
+    def __init__(self,text,x,y,z,size=5):
+        super(Text3D, self).__init__('Text3D','',Label=text, FontSize=str(size))
+        self.sub(Point(x,y,z))
+        self.sub(Point(x+5,y,z))
+        self.sub(Point(x,y,z+5))
 
 class FESurface(ObjElmt):
 
