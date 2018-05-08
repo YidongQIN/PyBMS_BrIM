@@ -744,6 +744,10 @@ class FELine(ObjElmt):
         self.prm_refer(node, 'Node2')
         self.n2 = node
 
+class Text3D(ObjElmt):
+    def __init__(self,text):
+        super(Text3D, self).__init__('Text3D','')
+        # @TODO
 
 class FESurface(ObjElmt):
 

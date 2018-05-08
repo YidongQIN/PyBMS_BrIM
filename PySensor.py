@@ -48,8 +48,8 @@ class Sensor(ObjElmt):
 
     def get_install(self):
         return self.read_database('sensorchannelinstallation', 'PositionX',
-                               'PositionY', 'PositionZ', 'DirectionX',
-                               'DirectionY', 'DirectionZ')
+                                  'PositionY', 'PositionZ', 'DirectionX',
+                                  'DirectionY', 'DirectionZ')
 
     def get_manufac(self):
         return self.read_database('sensor', 'manufacturerName', 'modelNumber')
@@ -60,6 +60,7 @@ class Sensor(ObjElmt):
     def get_backup_filename(self):
         """fileName is U{unitID}_{ChannelID}.dat"""
         self.unitid, self.channel = self.read_database('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
+        # @TODO make it clear
         return '{}\\U{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
 
     def geom(self):
@@ -157,9 +158,27 @@ class Displacement(Sensor):
         return ds
 
 
+class Unit(object):
+    """DAQ"""
+
+    # @TODO what is unit for?
+    def __init__(self):
+        pass
+
+
+class Experiment(object):
+    """specify a Experiment by recording task, procedure, data, etc"""
+
+    def __init__(self):
+        """shown as Text3D"""
+        pass
+
+
 class DatProc(object):
+    """Get and process of sensor data"""
 
     def __init__(self, title, file_path):
+        """Get .dat file in a particular path"""
         self.title = title
         try:
             self.data = np.loadtxt(file_path)
