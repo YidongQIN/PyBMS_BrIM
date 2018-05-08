@@ -179,20 +179,21 @@ class ConnMySQL(object):
         result = self.cur.fetchone()
         if with_description:
             col_name = [i[0] for i in self.cur.description]
-            return col_name, result
+            return dict((col,res) for col, res in zip(col_name,result))
         else:
             return result
 
-    def fetch_all(self):
-        result = self.cur.fetchall()
-        desc = self.cur.description
+    def fetch_all(self, with_description=False):
+        result = self.cur.fetchall() # a list of tuples
+        col_name = [i[0] for i in self.cur.description]
+        # only cur.description[0] is the column name
         d = []
-        for inv in result:
-            _d = {}
-            for i in range(0, len(inv)):
-                _d[desc[i][0]] = str(inv[i])
-                d.append(_d)
-        return d  # a list of dicts
+        if with_description:
+            for oneline in result:
+                d.append(dict((col,res) for col, res in zip(col_name,oneline)))
+            return d
+        else:
+            return result
 
     def insert(self, table_name, data):
         columns = data.keys()

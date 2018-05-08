@@ -1,14 +1,21 @@
 
-from PyOpenBrIM import *
+# from PyOpenBrIM import *
 # from PyOBobjects import *
-# from PySensor import *
+from PySensor import *
 
 proj = Project('test on PyOB')
-text = Text3D('Text3D Object',0,0,0)
-text.attach_to(proj)
+config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
+ex =Experiment(20,1, config)
+print(ex.get_expt_info())
+print(ex.get_bridge_info())
+# unit = NetworkUnit(114, config)
+# print(unit.get_unit_info())
+# print(unit.get_channel_install())
 ShowTree(proj)
 proj.save_project()
 '''
+text = Text3D('Text3D Object',0,0,0)
+text.attach_to(proj)
 
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
 di = Displacement(202,'Test dat path',config)

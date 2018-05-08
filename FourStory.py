@@ -93,6 +93,6 @@ config = dict(user='root', password='qyd123', host='127.0.0.1',
 for i in range(207, 211):
     sg = StrainGauge(i, 'Test StrainGauge {}'.format(i), config)
     sg.geom().attach_to(fourstorey)
-    sg.plot_dat()
+    # sg.plot_dat()
 # ---------------
 fourstorey.save_project()

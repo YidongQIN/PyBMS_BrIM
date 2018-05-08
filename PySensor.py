@@ -27,9 +27,10 @@ class Sensor(ObjElmt):
         self.dbconfig = dbconfig  # user, passwd, host, database, port
         self.x, self.y, self.z, self.dx, self.dy, self.dz = self.get_install()
         self.width, self.length, self.thick = self.get_dimension()
+        self.unitid, self.channel = self.get_unit_info()
         self.datpath = self.get_backup_filename()
 
-    def read_database(self, tbname, *col_names):
+    def read_db_one(self, tbname, *col_names):
         db = ConnMySQL(**self.dbconfig)
         sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
         db.query(sql)
@@ -38,29 +39,30 @@ class Sensor(ObjElmt):
         return info
 
     def print_dbinfo(self, tbname, *col_names):
-        info = self.read_database(tbname, *col_names)
+        info = self.read_db_one(tbname, *col_names)
         for i in range(len(info)):
             print('{}: {}'.format(col_names[i], info[i]))
 
     def plot_dat(self):
-        print('Dat file path of <{}> is {}'.format(self.name, self.datpath))
+        print('Dat backup file of <{}> is {}'.format(self.name, self.datpath))
         DatProc('Sensor data of {}'.format(self.name), self.datpath)
 
     def get_install(self):
-        return self.read_database('sensorchannelinstallation', 'PositionX',
-                                  'PositionY', 'PositionZ', 'DirectionX',
-                                  'DirectionY', 'DirectionZ')
+        return self.read_db_one('sensorchannelinstallation', 'PositionX',
+                                'PositionY', 'PositionZ', 'DirectionX',
+                                'DirectionY', 'DirectionZ')
 
     def get_manufac(self):
-        return self.read_database('sensor', 'manufacturerName', 'modelNumber')
+        return self.read_db_one('sensor', 'manufacturerName', 'modelNumber')
 
     def get_dimension(self):
-        return self.read_database('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
+        return self.read_db_one('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
+
+    def get_unit_info(self):
+        return self.read_db_one('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
 
     def get_backup_filename(self):
         """fileName is U{unitID}_{ChannelID}.dat"""
-        self.unitid, self.channel = self.read_database('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
-        # @TODO make it clear
         return '{}\\U{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
 
     def geom(self):
@@ -101,6 +103,7 @@ class Temperature(Sensor):
         tp.add_attr(Color='#DC143C')
         tp.move_to(self.x, self.y, self.z)
         tp.rotate(self.dx, self.dy, self.dz)
+        return tp
 
     def fem(self):
         pass
@@ -158,20 +161,74 @@ class Displacement(Sensor):
         return ds
 
 
-class Unit(object):
+class NetworkUnit(object):
     """DAQ"""
 
-    # @TODO what is unit for?
-    def __init__(self):
-        pass
+    def __init__(self, unitid, dbconfig, *sensorlist):
+        self.id = unitid
+        self.dbconfig = dbconfig
+        self.sensorlist = sensorlist
+
+    def get_unit_info(self):
+        return self.read_db_one('wirelessUnit', 'type', 'modelNumber')
+
+    def get_channel_install(self):
+        return self.read_db_all('sensorchannelinstallation', 'sensorId', 'monitoredAxis', 'channelId')
+
+    def read_db_one(self, tbname, *col_names):
+        db = ConnMySQL(**self.dbconfig)
+        sql = 'select {} from bridge_test.{} where wirelessUnitID ={}'.format(", ".join(col_names), tbname, self.id)
+        db.query(sql)
+        info = db.fetch_row()
+        return info
+
+    def read_db_all(self, tbname, *col_names):
+        db = ConnMySQL(**self.dbconfig)
+        sql = 'select {} from bridge_test.{} where wirelessUnitID ={}'.format(", ".join(col_names), tbname, self.id)
+        db.query(sql)
+        info = db.fetch_all(True)
+        return info
 
 
 class Experiment(object):
     """specify a Experiment by recording task, procedure, data, etc"""
 
-    def __init__(self):
+    def __init__(self, exptid, bridgeid, dbconfig):
         """shown as Text3D"""
-        pass
+        self.id = exptid
+        self.bridgeid = bridgeid
+        self.dbconfig = dbconfig
+        self.name = exptid
+
+    def geom(self, x, y, z, size):
+        return Text3D(self.name, x, y, z, size)
+
+    def get_expt_info(self):
+        expt = self.read_db_one('experimentconfiguration', 'name', 'status')
+        return expt
+
+    def get_bridge_info(self):
+        db = ConnMySQL(**self.dbconfig)
+        sql = "select name, description, material, structuralType from bridge_test.bridge where bridgeId ={}".format(
+            self.bridgeid)
+        db.query(sql)
+        info = db.fetch_row()
+        return info
+
+    def read_db_one(self, tbname, *col_names):
+        db = ConnMySQL(**self.dbconfig)
+        sql = 'select {} from bridge_test.{} where experimentconfigurationId ={}'.format(", ".join(col_names), tbname, self.bridgeid)
+        db.query(sql)
+        info = db.fetch_row()
+        return info
+
+    def read_db_all(self, tbname, *col_names):
+        db = ConnMySQL(**self.dbconfig)
+        sql = 'select {} from bridge_test.{} where experimentconfigurationId ={}'.format(", ".join(col_names), tbname,
+                                                                                         self.id)
+        db.query(sql)
+        info = db.fetch_all(True)
+        return info
 
 
 class DatProc(object):
@@ -182,13 +239,23 @@ class DatProc(object):
         self.title = title
         try:
             self.data = np.loadtxt(file_path)
-            self.plot()
         except OSError as e:
             print(e)
+        self.plot()
+        self.fourier()
 
     def plot(self):
         plt.plot(self.data)
         plt.xlabel('Sampling Point')
         plt.ylabel('Value')
         plt.title(self.title)
+        plt.show()
+
+    def fourier(self):
+        sp = np.fft.fft(self.data)
+        freq = np.fft.fftfreq(self.data.shape[-1])
+        plt.plot(freq, sp.real, freq, sp.imag)
+        plt.xlabel('Frequency')
+        plt.ylabel('dB')
+        plt.title('FFT of {}'.format(self.title))
         plt.show()
