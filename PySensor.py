@@ -49,20 +49,28 @@ class Sensor(ObjElmt):
 
     def get_install(self):
         return self.read_db_one('sensorchannelinstallation',
-                                'PositionX','PositionY', 'PositionZ', 'DirectionX','DirectionY', 'DirectionZ')
+                                'PositionX', 'PositionY', 'PositionZ',
+                                'DirectionX', 'DirectionY', 'DirectionZ')
 
     def get_manufac(self):
         return self.read_db_one('sensor', 'manufacturerName', 'modelNumber')
 
     def get_dimension(self):
-        return self.read_db_one('sensor', 'dimension1', 'dimension2', 'dimension3')
+        return self.read_db_one('sensor',
+                                'dimension1', 'dimension2', 'dimension3')
 
     def get_unit_info(self):
-        return self.read_db_one('sensorchannelinstallation', 'wirelessUnitId', 'channelID')
+        return self.read_db_one('sensorchannelinstallation',
+                                'wirelessUnitId', 'channelID')
 
     def get_backup_filename(self):
         """fileName is U{unitID}_{ChannelID}.dat"""
         return '{}\\U{}_{}.dat'.format(self.datpath, self.unitid, self.channel)
+
+    def get_channel_setting(self):
+        # return self.read_db_one()
+        pass
+
 
     def geom(self):
         """ OpenBrIM geometry model"""
@@ -150,7 +158,8 @@ class Displacement(Sensor):
 
     def geom(self):
         super(Displacement, self).geom()
-        line = Line(Point(0, 0, 0), Point(self.length, 0, 0), section=Section('', '', Circle('', 1)))
+        line = Line(Point(0, 0, 0), Point(self.length, 0, 0),
+                    section=Section('', '', Circle('', 1)))
         box = Cuboid(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = Group(self.name, line, box)
@@ -183,7 +192,8 @@ class NetworkUnit(object):
 
     def read_db_all(self, tbname, *col_names):
         db = ConnMySQL(**self.dbconfig)
-        sql = 'select {} from bridge_test.{} where wirelessUnitID ={}'.format(", ".join(col_names), tbname, self.id)
+        sql = 'select {} from bridge_test.{} where wirelessUnitID ={}'.format(
+            ", ".join(col_names), tbname, self.id)
         db.query(sql)
         info = db.fetch_all(True)
         return info
@@ -216,7 +226,8 @@ class Experiment(object):
 
     def read_db_one(self, tbname, *col_names):
         db = ConnMySQL(**self.dbconfig)
-        sql = 'select {} from bridge_test.{} where experimentconfigurationId ={}'.format(", ".join(col_names), tbname, self.bridgeid)
+        sql = 'select {} from bridge_test.{} where experimentconfigurationId ={}'.format(", ".join(col_names), tbname,
+                                                                                         self.bridgeid)
         db.query(sql)
         info = db.fetch_row()
         return info

@@ -87,7 +87,7 @@ ds201.geom().attach_to(fourstorey)
 # ds201.plot_dat()
 ac202 = Accelerometer(202, 'Test accelerometers', config)
 ac202.geom().attach_to(fourstorey)
-ac202.plot_dat()
+# ac202.plot_dat()
 config = dict(user='root', password='qyd123', host='127.0.0.1',
               database='bridge_test', port=3306,
               path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20')
