@@ -107,7 +107,9 @@ if __name__ == '__main__':
         pointBL.append(Point(i * x_spacing.value, y_spacing.value, 0, point_name='PointBL_%d' % i))
         pointBR.append(Point(i * x_spacing.value, 0, 0, point_name='PointBR_%d' % i))
         pointTL.append(Point(i * x_spacing.value, y_spacing.value, z_height.value, point_name='PointTL_%d' % i))
-        pointTR.append(Point(i * x_spacing.value, 0, z_height.value, point_name='PointTR_%d' % i))
+        pointTR.append(
+            Point(i * x_spacing.value, 0, z_height.value,
+                  point_name='PointTR_%d' % i))
     # 5. Lines
     # 5.1 bottom BR BL
     bottomChordList = []
@@ -118,7 +120,9 @@ if __name__ == '__main__':
     # 5.2 top chords, TR,TL
     topChordList = []
     for i in range(1, span_num.value):
-        topChordList.append(Line(pointTL[i], pointTL[i + 1], Extends(sec_top)))
+        topChordList.append(
+            Line(pointTL[i], pointTL[i + 1],
+                 Section('Line')))
         topChordList.append(Line(pointTR[i], pointTR[i + 1], Extends(sec_top)))
     topChords = Group('Top Chords', *topChordList)
     marc.sub(bottomChords, topChords)
@@ -164,8 +168,12 @@ if __name__ == '__main__':
     nodeTL = []
     nodeTR = []
     for i in range(span_num.value + 1):
-        nodeBL.append(FENode(0, 0, 0, 'NodeBL_{}'.format(i)).as_point(pointBL[i]))
-        nodeBR.append(FENode(0, 0, 0, 'NodeBR_{}'.format(i)).as_point(pointBR[i]))
+        nodeBL.append(
+            FENode(0, 0, 0, 'NodeBL_{}'.format(i)).as_point(pointBL[i]))
+        nodeBR.append(
+            FENode(i * x_spacing.value, 0, z_height.value,
+                   'NodeBR_{}'.format(i))
+                .as_point(pointBR[i]))
         nodeTL.append(FENode(0, 0, 0, 'NodeTL_{}'.format(i)).as_point(pointTL[i]))
         nodeTR.append(FENode(0, 0, 0, 'NodeTR_{}'.format(i)).as_point(pointTR[i]))
     # 7.1.2
@@ -177,13 +185,16 @@ if __name__ == '__main__':
     # 7.2 FELine
     bottomFELineList = []
     for i in range(span_num.value):
-        bottomFELineList.append(FELine(nodeBL[i], nodeBL[i + 1], sec_bc))
+        bottomFELineList.append(
+            FELine(nodeBL[i], nodeBL[i + 1], sec_bc))
         bottomFELineList.append(FELine(nodeBR[i], nodeBR[i + 1], sec_bc))
     Group('Bottom FELines', *bottomFELineList).attach_to(marc)
     # 7.2.2 top FELines, TR,TL
     topFELineList = []
     for i in range(1, span_num.value):
-        topFELineList.append(FELine(nodeTL[i], nodeTL[i + 1], sec_top))
+        topFELineList.append(
+            FELine(nodeTL[i], nodeTL[i + 1],
+                   Section('Line')))
         topFELineList.append(FELine(nodeTR[i], nodeTR[i + 1], sec_top))
     Group('Top FELines', *topFELineList).attach_to(marc)
     # 7.2.3 vertical

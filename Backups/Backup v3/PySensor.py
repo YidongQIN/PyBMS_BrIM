@@ -13,7 +13,7 @@ from PyOBobjects import *
 class Sensor(ObjElmt):
     base_node: FENode
 
-    def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):
+    def __init__(self, sensor_id, sensor_type, des, database_config):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type

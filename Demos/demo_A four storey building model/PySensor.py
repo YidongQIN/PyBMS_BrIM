@@ -48,14 +48,15 @@ class Sensor(ObjElmt):
         DatProc('Sensor data of {}'.format(self.name), self.datpath)
 
     def get_install(self):
-        return self.read_db_one('sensorchannelinstallation',
-                                'PositionX','PositionY', 'PositionZ', 'DirectionX','DirectionY', 'DirectionZ')
+        return self.read_db_one('sensorchannelinstallation', 'PositionX',
+                                'PositionY', 'PositionZ', 'DirectionX',
+                                'DirectionY', 'DirectionZ')
 
     def get_manufac(self):
         return self.read_db_one('sensor', 'manufacturerName', 'modelNumber')
 
     def get_dimension(self):
-        return self.read_db_one('sensor', 'dimension1', 'dimension2', 'dimension3')
+        return self.read_db_one('sensorchannelinstallation', 'dimension1', 'dimension2', 'dimension3')
 
     def get_unit_info(self):
         return self.read_db_one('sensorchannelinstallation', 'wirelessUnitId', 'channelID')

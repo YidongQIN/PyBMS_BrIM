@@ -32,7 +32,7 @@
         </O>
     </O>
     <O N="Parameters Group of Sections" T="Group">
-        <P N="BottomChord_width" Role="Input" UT="Length" V="0"/>
+        <P N="BottomChord_width" V="0" D="describe" Role="Input" UT="Length" />
         <P N="BottomChord_depth" Role="Input" UT="Length" V="6"/>
         <P N="BottomChord_thickness" Role="Input" V="0.375"/>
         <P N="TopChord_width" Role="Input" UT="Length" V="6"/>

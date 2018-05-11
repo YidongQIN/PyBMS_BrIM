@@ -3,7 +3,7 @@ from PyOpenBrIM import *
 
 xx = PrmElmt("x_spacing", '108.3')
 print(type(xx.value))
-print(xx.value)
+print(xx)
 # TopChord_width = PrmElmt("TopChord_width", "6", ut="Length", role="Input")
 
 '''

@@ -28,7 +28,8 @@ holes = []
 
 for i in range(col_num.value):
     for j in range(row_num.value):
-        hole = Circle('hole_{}_{}'.format(i, j), radius=d.value / 2,
+        hole = Circle('hole_{}_{}'.format(i, j),
+                      radius=d.value / 2,
                       x=x_clear.value + i * x_sp,
                       y=y_clear.value + j * y_sp)
         hole.sub(PrmElmt('IsCutout', 1))
