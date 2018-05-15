@@ -11,7 +11,9 @@ from PyOBobjects import *
 
 
 class Sensor(ObjElmt):
-    base_node: FENode
+    # base_node: FENode
+
+    # 考虑用类变量统一组织，比如共享为一个节点树？
 
     def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
