@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from PyPackObj import *
+from PyDatabase import *
 
 
 class Sensor(ObjElmt):
     # base_node: FENode
 
-    # 考虑用类变量统一组织，比如共享为一个节点树？
 
     def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
@@ -145,7 +145,7 @@ class Accelerometer(Sensor):
 
     def geom(self):
         super(Accelerometer, self).geom()
-        ac = Plate(self.width, self.length, self.thick)
+        ac = CubeGeo(self.width, self.length, self.thick)
         ac.add_attr(Color='#DC143C')
         ac.move_to(self.x, self.y, self.z)
         ac.rotate(self.dx, self.dy, self.dz)
@@ -162,7 +162,7 @@ class Displacement(Sensor):
         super(Displacement, self).geom()
         line = Line(Point(0, 0, 0), Point(self.length, 0, 0),
                     section=Section('', '', Circle('', 1)))
-        box = Plate(self.width, self.width, self.thick)
+        box = CubeGeo(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = Group(self.name, line, box)
         ds.add_attr(Color='#DC143C')

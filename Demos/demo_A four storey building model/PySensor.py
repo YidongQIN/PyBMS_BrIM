@@ -136,7 +136,7 @@ class Accelerometer(Sensor):
 
     def geom(self):
         super(Accelerometer, self).geom()
-        ac = Plate(self.width, self.length, self.thick)
+        ac = CubeGeo(self.width, self.length, self.thick)
         ac.add_attr(Color='#DC143C')
         ac.move_to(self.x, self.y, self.z)
         ac.rotate(self.dx, self.dy, self.dz)
@@ -152,7 +152,7 @@ class Displacement(Sensor):
     def geom(self):
         super(Displacement, self).geom()
         line = Line(Point(0, 0, 0), Point(self.length, 0, 0), section=Section('', '', Circle('', 1)))
-        box = Plate(self.width, self.width, self.thick)
+        box = CubeGeo(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = Group(self.name, line, box)
         ds.add_attr(Color='#DC143C')

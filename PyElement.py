@@ -20,7 +20,7 @@ class PyElmt(object):
     # femodel: ObjElmt
 
 
-    def __init__(self, obj_id, obj_type, geo_class, fem_class, section_obj=None, material_obj=None):
+    def __init__(self,  obj_type, obj_id, geo_class, fem_class, section_obj=None, material_obj=None):
         self.id = obj_id
         self.type = obj_type
         self.geo_class = geo_class
@@ -28,6 +28,7 @@ class PyElmt(object):
         self.section = section_obj
         self.material = material_obj
         self.dbconfig:dict
+        self.description:str
 
     def geo_xml(self, *define, **dicts):
         self.geomodel = self.geo_class(*define, **dicts)
@@ -39,11 +40,15 @@ class PyElmt(object):
         """user, passwd, host, database, port"""
         self.dbconfig = dict(db_config) # copy a dict
 
+    def set_desc(self, des):
+        self.description = des
+
+
 class Beam(PyElmt):
 
     def __init__(self, beam_id):
         # init no so many parameters, put the points and nodes to set_model() methods
-        super(Beam, self).__init__(beam_id, 'BEAM', Line, FELine)
+        super(Beam, self).__init__('BEAM',beam_id,  Line, FELine)
 
 
     def set_points(self, *points, section):
@@ -85,3 +90,11 @@ class Beam(PyElmt):
         self.x2 = x2
         self.y2 = y2
         self.z2 = z2
+
+
+class Plate(PyElmt):
+
+    def __init__(self, plate_id):
+        super(PyElmt, self).__init__( 'Plate',plate_id, Surface, FESurface)
+        pass
+

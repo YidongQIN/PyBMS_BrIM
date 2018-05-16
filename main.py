@@ -1,9 +1,16 @@
 
-# from PyOpenBrIM import *
-# from PyOBobjects import *
+from PyOpenBrIM import *
+from PyPackObj import *
 from PySensor import *
 
+newline = StraightBeamGeo(100,0,1,1,'section')
+ShowTable(newline.model)
+# newline.geom()
+'''
 proj = Project('test on PyOB')
+
+ShowTree(proj)
+proj.save_project()
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
 ex =Experiment(20,1, config)
 print(ex.get_expt_info())
@@ -11,9 +18,8 @@ print(ex.get_bridge_info())
 # unit = NetworkUnit(114, config)
 # print(unit.get_unit_info())
 # print(unit.get_channel_install())
-ShowTree(proj)
-proj.save_project()
-'''
+
+
 text = Text3D('Text3D Object',0,0,0)
 text.attach_to(proj)
 

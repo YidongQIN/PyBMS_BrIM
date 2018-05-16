@@ -573,7 +573,7 @@ class Line(ObjElmt):
             self.sub(section_obj)
         elif isinstance(section_obj, str):
             print('{} section is not a SECTION object'.format(self.name))
-            self.sub(PrmElmt('', section_obj))
+            self.sub(PrmElmt('Section', section_obj))
         else:
             print('No Section.')
 

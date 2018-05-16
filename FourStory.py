@@ -61,11 +61,11 @@ col_sec.attach_to(fourstorey)
 # 4. Loading Conditions
 # 5. Geometric model
 for i in range(story_num.v + 1):
-    oneplate = BoltedPlate('Plate{}'.format(i),
-                           t_plate, l_plate, w_plate,
-                           d_hole, x_clear, y_clear,
-                           x_num, y_num,
-                           steel).geom()
+    oneplate = BoltedPlateGeo('Plate{}'.format(i),
+                              t_plate, l_plate, w_plate,
+                              d_hole, x_clear, y_clear,
+                              x_num, y_num,
+                              steel).geom()
     oneplate.add_attr(Z=i * height.v)
     oneplate.attach_to(fourstorey)
 
