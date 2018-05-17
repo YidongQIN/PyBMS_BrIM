@@ -7,6 +7,7 @@ __author__ = 'Yidong QIN'
 Python Elements for BrIM. 
 """
 
+from PyDatabase import *
 from PyPackObj import *
 
 
@@ -16,40 +17,70 @@ class PyElmt(object):
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
 
-    # geomodel: ObjElmt
-    # femodel: ObjElmt
-
-
-    def __init__(self,  obj_type, obj_id, geo_class, fem_class, section_obj=None, material_obj=None):
+    def __init__(self, obj_type, obj_id):
         self.id = obj_id
         self.type = obj_type
-        self.geo_class = geo_class
-        self.fem_class = fem_class
-        self.section = section_obj
-        self.material = material_obj
-        self.dbconfig:dict
-        self.description:str
+        self.name = '{}_{}'.format(self.type, self.id)
+        # may the 2 parameter be enough to define the element?
+        self.geo_class: ObjElmt
+        self.fem_class: ObjElmt
+        self.section: str
+        # self.material: str
+        self.dbconfig = None
+        # self.description: str
 
-    def geo_xml(self, *define, **dicts):
-        self.geomodel = self.geo_class(*define, **dicts)
+    def init_by_db(self):
+        pass
 
-    def fem_xml(self, *define, **dicts):
-        self.femodel = self.fem_class(*define, **dicts)
+    def init_by_io(self):
+        pass
 
-    def conn_db(self, db_config):
-        """user, passwd, host, database, port"""
-        self.dbconfig = dict(db_config) # copy a dict
+    def read_db(self):
+        pass
 
-    def set_desc(self, des):
-        self.description = des
+    # def conn_db(self, db_config):
+    #     """user, passwd, host, database, port"""
+    #     self.dbconfig = dict(db_config)  # copy a dict
+    #     db = ConnMySQL(**self.dbconfig)
+    #     sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
+    #     db.query(sql)
+    #     info = db.fetch_row()
+    #     db.close()
+    #     return info
+
+    def set_attr_value(self):
+        pass
+
+    @property
+    def material(self):
+        return self.material
+
+    @material.setter
+    def material(self, mat: (Material, Extends, str)):
+        self.material = mat
+
+    def set_section(self, section: (Section, str)):
+        self.section = section
+
+    # def geo_xml(self, *define, **dicts):
+    #     self.geomodel = self.geo_class(*define, **dicts)
+    #
+    # def fem_xml(self, *define, **dicts):
+    #     self.femodel = self.fem_class(*define, **dicts)
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, des):
+        self._description = des
 
 
 class Beam(PyElmt):
 
     def __init__(self, beam_id):
         # init no so many parameters, put the points and nodes to set_model() methods
-        super(Beam, self).__init__('BEAM',beam_id,  Line, FELine)
-
+        super(Beam, self).__init__('BEAM', beam_id, Line, FELine)
 
     def set_points(self, *points, section):
         if len(points) == 2:
@@ -95,6 +126,5 @@ class Beam(PyElmt):
 class Plate(PyElmt):
 
     def __init__(self, plate_id):
-        super(PyElmt, self).__init__( 'Plate',plate_id, Surface, FESurface)
+        super(PyElmt, self).__init__('Plate', plate_id, Surface, FESurface)
         pass
-

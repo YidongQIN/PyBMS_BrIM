@@ -3,8 +3,9 @@ from PyOpenBrIM import *
 from PyPackObj import *
 from PySensor import *
 
-newline = StraightBeamGeo(100,0,1,1,'section')
-ShowTable(newline.model)
+# newline = StraightBeamGeo(100,0,1,math.sqrt(3),'section')
+# ShowTree(newline.model)
+ppp=PlateFEM(10,20,30,'mat','PLPLP')
 # newline.geom()
 '''
 proj = Project('test on PyOB')
