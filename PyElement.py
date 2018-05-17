@@ -7,7 +7,6 @@ __author__ = 'Yidong QIN'
 Python Elements for BrIM. 
 """
 
-from PyDatabase import *
 from PyPackObj import *
 
 
@@ -21,19 +20,21 @@ class PyElmt(object):
         self.id = obj_id
         self.type = obj_type
         self.name = '{}_{}'.format(self.type, self.id)
-        # may the 2 parameter be enough to define the element?
         self.geo_class: ObjElmt
         self.fem_class: ObjElmt
-        self.section: str
-        # self.material: str
+        self.section = None
+        self.material = None
         self.dbconfig = None
-        # self.description: str
+        # self.description = None
 
     def init_by_db(self):
         pass
 
     def init_by_io(self):
         pass
+
+    def set_dbconfig(self, **db_config):
+        self.dbconfig = dict(db_config)
 
     def read_db(self):
         pass
@@ -57,7 +58,10 @@ class PyElmt(object):
 
     @material.setter
     def material(self, mat: (Material, Extends, str)):
-        self.material = mat
+        if mat:
+            self.material = mat
+        else:
+            self.read_db()
 
     def set_section(self, section: (Section, str)):
         self.section = section
@@ -67,22 +71,19 @@ class PyElmt(object):
     #
     # def fem_xml(self, *define, **dicts):
     #     self.femodel = self.fem_class(*define, **dicts)
-    @property
-    def description(self):
-        return self._description
 
-    @description.setter
-    def description(self, des):
-        self._description = des
+    def describe_it(self, des):
+        self.description = des
 
 
 class Beam(PyElmt):
 
     def __init__(self, beam_id):
         # init no so many parameters, put the points and nodes to set_model() methods
-        super(Beam, self).__init__('BEAM', beam_id, Line, FELine)
+        super(Beam, self).__init__('BEAM', beam_id)
+        self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = [None] * 6
 
-    def set_points(self, *points, section):
+    def set_points(self, *points):
         if len(points) == 2:
             if isinstance(points[0], Point) and isinstance(points[1], Point):
                 self.two_point(*points)
@@ -93,9 +94,8 @@ class Beam(PyElmt):
                 if not isinstance(a, (float, int)):
                     print("Beam {}'s Coordinates must be numbers".format(self.id))
             self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = points
-        self.section = section
-        self.geo_xml(Point(self.x1, self.y1, self.z1), Point(self.x2, self.y2, self.z2), section=self.section)
-        self.fem_xml(FENode(self.x1, self.y1, self.z1), FENode(self.x2, self.y2, self.z2), section=self.section)
+        # self.geo_xml(Point(self.x1, self.y1, self.z1), Point(self.x2, self.y2, self.z2), section=self.section)
+        # self.fem_xml(FENode(self.x1, self.y1, self.z1), FENode(self.x2, self.y2, self.z2), section=self.section)
         # Line() material is included in section definition
 
     def two_point(self, point1, point2):
