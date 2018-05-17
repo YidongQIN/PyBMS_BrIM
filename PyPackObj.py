@@ -16,7 +16,17 @@ import math
 from PyOpenBrIM import *
 
 
-# @TODO self.model? self.elmt? self.group?
+class ProjGroups(Project):
+
+    def __init__(self, proj_name):
+        super(ProjGroups, self).__init__(proj_name)
+        self.prm_group = Group('Parameter Group')
+        self.mat_group = Group('Material Group')
+        self.sec_group = Group('Section Group')
+        self.geo_group = Group('Geometry Model')
+        self.fem_group = Group('FEM Model')
+        self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
+
 
 class CubeGeo(ObjElmt):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
@@ -92,8 +102,6 @@ class PlateFEM(ObjElmt):
     """FEM model of plate, either normal plate or bolted plate"""
 
     def __init__(self, length, width, thick, material, plate_name):
-        """parameters should be nodes or? if nodes, what is the difference with FESurface?"""
-        # @TODO FEM model needs nodes, not parameters
         super(PlateFEM, self).__init__('FESurface', plate_name)
         self.thick = self.prm_to_value(thick)
         self.length = self.prm_to_value(length)
@@ -101,12 +109,12 @@ class PlateFEM(ObjElmt):
         self.material = material
         self.model = self.fem()
 
-    def fem(self,*nodes):
+    def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
         if nodes:
-            return FESurface(*nodes,thick_par=self.thick,material_obj=self.material,fes_name=self.name)
+            return FESurface(*nodes, thick_par=self.thick, material_obj=self.material, fes_name=self.name)
         else:
-        #if no FENode is given, then create 4 nodes
+            # if no FENode is given, then create 4 nodes
             n1 = FENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
             n2 = FENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))
             n3 = FENode(self.width / 2, self.length / 2, 0, 'N3P_{}'.format(self.name))
@@ -114,11 +122,11 @@ class PlateFEM(ObjElmt):
             fes = FESurface(n1, n2, n3, n4, self.thick, self.material, self.name)
             return Group(self.name, n1, n2, n3, n4, fes)
 
-
     # def set_node(self, x, y, z):
     #     self.sub(FENode(x, y, z))
 
     # def link_node(self, node: FENode):
+    # """FESurface 不能接收多余4个FENode"""
     #     self.model.prm_refer(node)
 
 
@@ -139,6 +147,7 @@ class StraightBeamGeo(ObjElmt):
                     self.section)
         return line
 
+
 class StraightBeamFEM(ObjElmt):
     """FEM for rectangle section beam"""
 
@@ -147,17 +156,18 @@ class StraightBeamFEM(ObjElmt):
         self.length = self.prm_to_value(length)
         self.cos = direction_cos(direction_x, direction_y, direction_z)
         self.section = section
-        self.angle=beta_angle
+        self.angle = beta_angle
         self.model = self.fem()
 
-    def fem(self,*nodes):
+    def fem(self, *nodes):
         if nodes:
-            return FELine(*nodes, section=self.section,beta_angle=self.angle,feline_name=self.name)
+            return FELine(*nodes, section=self.section, beta_angle=self.angle, feline_name=self.name)
         else:
-            n1 = FENode(0,0,0)
-            n2 = FENode(self.length * self.cos[0],self.length * self.cos[1],self.length * self.cos[2])
-            fel = FELine(n1,n2,self.section,self.angle,self.name)
-            return Group(n1,n2,fel)
+            n1 = FENode(0, 0, 0)
+            n2 = FENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])
+            fel = FELine(n1, n2, self.section, self.angle, self.name)
+            return Group(n1, n2, fel)
+
 
 def direction_cos(x, y, z) -> tuple:
     square_root = math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2))

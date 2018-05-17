@@ -52,19 +52,22 @@ class PyElmt(object):
     def set_attr_value(self):
         pass
 
-    @property
-    def material(self):
-        return self.material
+    # @property
+    # def material(self):
+    #     return self.material
 
-    @material.setter
-    def material(self, mat: (Material, Extends, str)):
+    # @material.setter
+    def set_material(self, mat: (Material, Extends, str)):
         if mat:
             self.material = mat
         else:
             self.read_db()
 
-    def set_section(self, section: (Section, str)):
-        self.section = section
+    def set_section(self, sec: (Section, str)):
+        if sec:
+            self.section = sec
+        else:
+            self.read_db()
 
     # def geo_xml(self, *define, **dicts):
     #     self.geomodel = self.geo_class(*define, **dicts)
