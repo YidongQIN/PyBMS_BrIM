@@ -11,14 +11,45 @@ from PyPackObj import *
 
 
 class PyElmt(object):
+
+    def __init__(self, elmt_type, elmt_id):
+        self.id = elmt_id
+        self.type = elmt_type
+        # self.node OR model or elmt ?
+        self.model=None
+
+
+    def model(self):
+        """get model, fem or geo"""
+        pass
+
+    def read_db(self):
+        """get db config and connect to db"""
+        pass
+
+    def openbrim(self):
+        """ may not"""
+        pass
+
+
+
+class PyAbst(PyElmt):
+
+    def __init__(self, obj_type, obj_id):
+        """abstract elements, such as material, section, load case"""
+        super(PyAbst, self).__init__(obj_type,obj_id)
+        self.name = '{}_{}'.format(self.type, self.id)
+
+
+class PyReal(PyElmt):
     """PyElmt is used to represent real members of bridges
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
 
     def __init__(self, obj_type, obj_id):
-        self.id = obj_id
-        self.type = obj_type
+        """real members of structure"""
+        super(PyReal, self).__init__(obj_type, obj_id)
         self.name = '{}_{}'.format(self.type, self.id)
         self.geo_class: OBObjElmt
         self.fem_class: OBObjElmt
@@ -90,9 +121,24 @@ class ProjGroups(OBProject):
         self.fem_group = OBGroup('FEM Model')
         self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
 
-# class Material
+class Material(PyReal):
 
-class Beam(PyElmt):
+    def __init__(self, mat_id, mat_name):
+        super(Material, self).__init__('Material',mat_id)
+        self.name=mat_name
+        print(self.name)
+
+        '''
+        class OBMaterial(OBObjElmt):
+    def __init__(self, mat_name, des='', mat_type='', **attrib_dict):
+        """Material name is mandatory.\n
+        Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
+        there may be no other attributes.
+        """
+        super(OBMaterial, self).__init__('Material', mat_name, D=des, Type=mat_type, **attrib_dict)
+        '''
+
+class Beam(PyReal):
 
     def __init__(self, beam_id):
         # init no so many parameters, put the points and nodes to set_model() methods
@@ -139,8 +185,8 @@ class Beam(PyElmt):
         self.z2 = z2
 
 
-class Plate(PyElmt):
+class Plate(PyReal):
 
     def __init__(self, plate_id):
-        super(PyElmt, self).__init__('Plate', plate_id, OBSurface, OBFESurface)
+        super(PyReal, self).__init__('Plate', plate_id, OBSurface, OBFESurface)
         pass
