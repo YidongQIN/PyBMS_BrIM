@@ -12,23 +12,23 @@ import mysql.connector as mc
 from PyOpenBrIM import *
 
 
-class Cuboid(Volume):
+class Cuboid(OBVolume):
 
     def __init__(self, length, width, thick, cuboid_name=''):
-        super(Cuboid, self).__init__(Surface(Point(-width / 2, -length / 2, 0),
-                                             Point(width / 2, -length / 2, 0),
-                                             Point(width / 2, length / 2, 0),
-                                             Point(-width / 2, length / 2, 0)),
-                                     Surface(Point(-width / 2, -length / 2, thick),
-                                             Point(width / 2, -length / 2, thick),
-                                             Point(width / 2, length / 2, thick),
-                                             Point(-width / 2, length / 2, thick)),
+        super(Cuboid, self).__init__(OBSurface(OBPoint(-width / 2, -length / 2, 0),
+                                               OBPoint(width / 2, -length / 2, 0),
+                                               OBPoint(width / 2, length / 2, 0),
+                                               OBPoint(-width / 2, length / 2, 0)),
+                                     OBSurface(OBPoint(-width / 2, -length / 2, thick),
+                                               OBPoint(width / 2, -length / 2, thick),
+                                               OBPoint(width / 2, length / 2, thick),
+                                               OBPoint(-width / 2, length / 2, thick)),
                                      cuboid_name)
 
 
 class RealObj(object):
-    geomodel: ObjElmt
-    femodel: ObjElmt
+    geomodel: OBObjElmt
+    femodel: OBObjElmt
 
     def __init__(self, obj_id, obj_type, geo_class, fem_class, section_obj, material_obj):
         self.id = obj_id
@@ -48,11 +48,11 @@ class RealObj(object):
 class Beam(RealObj):
 
     def __init__(self, beam_id, *points, section):
-        super(Beam, self).__init__(beam_id, 'BEAM', Line, FELine, section, None)
+        super(Beam, self).__init__(beam_id, 'BEAM', OBLine, OBFELine, section, None)
         if len(points) == 2:
-            if isinstance(points[0], Point) and isinstance(points[1], Point):
+            if isinstance(points[0], OBPoint) and isinstance(points[1], OBPoint):
                 self.two_point(*points)
-            elif isinstance(points[0], FENode) and isinstance(points[1], FENode):
+            elif isinstance(points[0], OBFENode) and isinstance(points[1], OBFENode):
                 self.two_node(*points)
         elif len(points) == 6:
             for a in points:
@@ -60,8 +60,8 @@ class Beam(RealObj):
                     print("Beam {}'s Coordinates must be numbers".format(self.id))
             self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = points
         self.section = section
-        self.geo_xml(Point(self.x1,self.y1,self.z1), Point(self.x2,self.y2,self.z2), section=self.section)
-        self.fem_xml(FENode(self.x1,self.y1,self.z1), FENode(self.x2,self.y2,self.z2), section=self.section)
+        self.geo_xml(OBPoint(self.x1, self.y1, self.z1), OBPoint(self.x2, self.y2, self.z2), section=self.section)
+        self.fem_xml(OBFENode(self.x1, self.y1, self.z1), OBFENode(self.x2, self.y2, self.z2), section=self.section)
         # Line() material is included in section definition
 
     def two_point(self, point1, point2):
@@ -89,7 +89,7 @@ class Beam(RealObj):
         self.z2 = z2
 
 
-class BoltedPlate(ObjElmt):
+class BoltedPlate(OBObjElmt):
 
     def __init__(self, plate_name,
                  thick, length, width,
@@ -111,21 +111,21 @@ class BoltedPlate(ObjElmt):
 
     def geom(self):
         """a Surface Elmt, use real number not parameters"""
-        plate_def = Surface(Point(0, 0),
-                            Point(self.length, 0),
-                            Point(self.length, self.width),
-                            Point(0, self.width),
-                            thick_par=self.thick,
-                            material_obj=self.material,
-                            surface_name=self.name)
+        plate_def = OBSurface(OBPoint(0, 0),
+                              OBPoint(self.length, 0),
+                              OBPoint(self.length, self.width),
+                              OBPoint(0, self.width),
+                              thick_par=self.thick,
+                              material_obj=self.material,
+                              surface_name=self.name)
         holes = []
         for i in range(self.column):
             for j in range(self.row):
-                hole = Circle('hole_{}_{}'.format(i, j),
-                              radius=self.diameter / 2,
-                              x=self.xclearance + i * self.x_sp,
-                              y=self.yclearance + j * self.y_sp)
-                hole.sub(PrmElmt('IsCutout', 1))
+                hole = OBCircle('hole_{}_{}'.format(i, j),
+                                radius=self.diameter / 2,
+                                x=self.xclearance + i * self.x_sp,
+                                y=self.yclearance + j * self.y_sp)
+                hole.sub(OBPrmElmt('IsCutout', 1))
                 holes.append(hole)
         plate_def.sub(*holes)
         return plate_def
@@ -135,7 +135,7 @@ class BoltedPlate(ObjElmt):
 
     def as_proj(self):
         """as a template in OpenBrIM Library"""
-        plateproj = Project(self.name, 'template')
+        plateproj = OBProject(self.name, 'template')
         plateproj.sub(self.geom())
         self.elmt = plateproj
         return plateproj

@@ -11,7 +11,7 @@ from PyPackObj import *
 from PyDatabase import *
 
 
-class Sensor(ObjElmt):
+class Sensor(OBObjElmt):
     # base_node: FENode
 
 
@@ -82,14 +82,14 @@ class Sensor(ObjElmt):
             print('Sensor <{}> direction required'.format(self.name))
 
     def set_base_node(self, fenode):
-        if isinstance(fenode, FENode):
+        if isinstance(fenode, OBFENode):
             self.base_node = fenode
         else:
             print('{}.base_node is not a FENode'.format(self.name))
 
     def fem(self):
         """FEM model. For sensor, it's just a node."""
-        node = FENode(self.x, self.y, self.z, self.name)
+        node = OBFENode(self.x, self.y, self.z, self.name)
         # not sure if realizable?
         # when create a FEM, cannot insert the node into this position
         # because it will change the node number and element
@@ -102,13 +102,13 @@ class Temperature(Sensor):
 
     def geom(self):
         super(Temperature, self).geom()
-        tp = Surface(Point(-self.length / 2, -self.width / 2),
-                     Point(self.length / 2, -self.width / 2),
-                     Point(self.length / 2, self.width / 2),
-                     Point(-self.length / 2, self.width / 2),
-                     thick_par=1,
-                     material_obj='Sensor_Temperature',
-                     surface_name=self.name)
+        tp = OBSurface(OBPoint(-self.length / 2, -self.width / 2),
+                       OBPoint(self.length / 2, -self.width / 2),
+                       OBPoint(self.length / 2, self.width / 2),
+                       OBPoint(-self.length / 2, self.width / 2),
+                       thick_par=1,
+                       material_obj='Sensor_Temperature',
+                       surface_name=self.name)
         tp.add_attr(Color='#DC143C')
         tp.move_to(self.x, self.y, self.z)
         tp.rotate(self.dx, self.dy, self.dz)
@@ -124,13 +124,13 @@ class StrainGauge(Sensor):
 
     def geom(self):
         super(StrainGauge, self).geom()
-        ss = Surface(Point(-self.length / 2, -self.width / 2),
-                     Point(self.length / 2, -self.width / 2),
-                     Point(self.length / 2, self.width / 2),
-                     Point(-self.length / 2, self.width / 2),
-                     thick_par=1,
-                     material_obj='Sensor_StrainGauge',
-                     surface_name=self.name)
+        ss = OBSurface(OBPoint(-self.length / 2, -self.width / 2),
+                       OBPoint(self.length / 2, -self.width / 2),
+                       OBPoint(self.length / 2, self.width / 2),
+                       OBPoint(-self.length / 2, self.width / 2),
+                       thick_par=1,
+                       material_obj='Sensor_StrainGauge',
+                       surface_name=self.name)
         ss.add_attr(Color='#DC143C')
         ss.move_to(self.x, self.y, self.z)
         ss.rotate(self.dx, self.dy, self.dz)
@@ -160,11 +160,11 @@ class Displacement(Sensor):
 
     def geom(self):
         super(Displacement, self).geom()
-        line = Line(Point(0, 0, 0), Point(self.length, 0, 0),
-                    section=Section('', '', Circle('', 1)))
+        line = OBLine(OBPoint(0, 0, 0), OBPoint(self.length, 0, 0),
+                      section=OBSection('', '', OBCircle('', 1)))
         box = CubeGeo(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
-        ds = Group(self.name, line, box)
+        ds = OBGroup(self.name, line, box)
         ds.add_attr(Color='#DC143C')
         ds.move_to(self.x, self.y, self.z)
         ds.rotate(self.dx, self.dy, self.dz)
@@ -212,7 +212,7 @@ class Experiment(object):
         self.name = exptid
 
     def geom(self, x, y, z, size):
-        return Text3D(self.name, x, y, z, size)
+        return OBText3D(self.name, x, y, z, size)
 
     def get_expt_info(self):
         expt = self.read_db_one('experimentconfiguration', 'name', 'status')

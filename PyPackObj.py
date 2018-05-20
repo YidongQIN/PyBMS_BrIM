@@ -16,19 +16,8 @@ import math
 from PyOpenBrIM import *
 
 
-class ProjGroups(Project):
 
-    def __init__(self, proj_name):
-        super(ProjGroups, self).__init__(proj_name)
-        self.prm_group = Group('Parameter Group')
-        self.mat_group = Group('Material Group')
-        self.sec_group = Group('Section Group')
-        self.geo_group = Group('Geometry Model')
-        self.fem_group = Group('FEM Model')
-        self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
-
-
-class CubeGeo(ObjElmt):
+class CubeGeo(OBObjElmt):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
 
     def __init__(self, length, width, thick, cube_name=''):
@@ -43,19 +32,19 @@ class CubeGeo(ObjElmt):
         self.model.move_to(x, y, z)
 
     def geom(self):
-        plate_geomodel = Volume(
-            Surface(Point(-self.width / 2, -self.length / 2, 0),
-                    Point(self.width / 2, -self.length / 2, 0),
-                    Point(self.width / 2, self.length / 2, 0),
-                    Point(-self.width / 2, self.length / 2, 0)),
-            Surface(Point(-self.width / 2, -self.length / 2, self.thick),
-                    Point(self.width / 2, -self.length / 2, self.thick),
-                    Point(self.width / 2, self.length / 2, self.thick),
-                    Point(-self.width / 2, self.length / 2, self.thick)))
+        plate_geomodel = OBVolume(
+            OBSurface(OBPoint(-self.width / 2, -self.length / 2, 0),
+                      OBPoint(self.width / 2, -self.length / 2, 0),
+                      OBPoint(self.width / 2, self.length / 2, 0),
+                      OBPoint(-self.width / 2, self.length / 2, 0)),
+            OBSurface(OBPoint(-self.width / 2, -self.length / 2, self.thick),
+                      OBPoint(self.width / 2, -self.length / 2, self.thick),
+                      OBPoint(self.width / 2, self.length / 2, self.thick),
+                      OBPoint(-self.width / 2, self.length / 2, self.thick)))
         return plate_geomodel
 
 
-class BoltedPlateGeo(ObjElmt):
+class BoltedPlateGeo(OBObjElmt):
 
     def __init__(self, plate_name,
                  thick, length, width,
@@ -78,27 +67,27 @@ class BoltedPlateGeo(ObjElmt):
 
     def geom(self):
         """a Surface Elmt, use real number not parameters"""
-        plate_def = Surface(Point(0, 0),
-                            Point(self.length, 0),
-                            Point(self.length, self.width),
-                            Point(0, self.width),
-                            thick_par=self.thick,
-                            material_obj=self.material,
-                            surface_name=self.name)
+        plate_def = OBSurface(OBPoint(0, 0),
+                              OBPoint(self.length, 0),
+                              OBPoint(self.length, self.width),
+                              OBPoint(0, self.width),
+                              thick_par=self.thick,
+                              material_obj=self.material,
+                              surface_name=self.name)
         holes = []
         for i in range(self.column):
             for j in range(self.row):
-                hole = Circle('hole_{}_{}'.format(i, j),
-                              radius=self.diameter / 2,
-                              x=self.xclearance + i * self.x_sp,
-                              y=self.yclearance + j * self.y_sp)
-                hole.sub(PrmElmt('IsCutout', 1))
+                hole = OBCircle('hole_{}_{}'.format(i, j),
+                                radius=self.diameter / 2,
+                                x=self.xclearance + i * self.x_sp,
+                                y=self.yclearance + j * self.y_sp)
+                hole.sub(OBPrmElmt('IsCutout', 1))
                 holes.append(hole)
         plate_def.sub(*holes)
         return plate_def
 
 
-class PlateFEM(ObjElmt):
+class PlateFEM(OBObjElmt):
     """FEM model of plate, either normal plate or bolted plate"""
 
     def __init__(self, length, width, thick, material, plate_name):
@@ -112,15 +101,15 @@ class PlateFEM(ObjElmt):
     def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
         if nodes:
-            return FESurface(*nodes, thick_par=self.thick, material_obj=self.material, fes_name=self.name)
+            return OBFESurface(*nodes, thick_par=self.thick, material_obj=self.material, fes_name=self.name)
         else:
             # if no FENode is given, then create 4 nodes
-            n1 = FENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
-            n2 = FENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))
-            n3 = FENode(self.width / 2, self.length / 2, 0, 'N3P_{}'.format(self.name))
-            n4 = FENode(-self.width / 2, self.length / 2, 0, 'N4P_{}'.format(self.name))
-            fes = FESurface(n1, n2, n3, n4, self.thick, self.material, self.name)
-            return Group(self.name, n1, n2, n3, n4, fes)
+            n1 = OBFENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
+            n2 = OBFENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))
+            n3 = OBFENode(self.width / 2, self.length / 2, 0, 'N3P_{}'.format(self.name))
+            n4 = OBFENode(-self.width / 2, self.length / 2, 0, 'N4P_{}'.format(self.name))
+            fes = OBFESurface(n1, n2, n3, n4, self.thick, self.material, self.name)
+            return OBGroup(self.name, n1, n2, n3, n4, fes)
 
     # def set_node(self, x, y, z):
     #     self.sub(FENode(x, y, z))
@@ -130,7 +119,7 @@ class PlateFEM(ObjElmt):
     #     self.model.prm_refer(node)
 
 
-class StraightBeamGeo(ObjElmt):
+class StraightBeamGeo(OBObjElmt):
     """beam with rectangle cross-section, accept length and 3 direction parameters instead of 2 points"""
 
     def __init__(self, length, direction_x, direction_y, direction_z, section, beam_name=''):
@@ -141,14 +130,14 @@ class StraightBeamGeo(ObjElmt):
         self.model = self.geom()
 
     def geom(self):
-        line = Line(Point(0, 0, 0), Point(self.length * self.cos[0],
-                                          self.length * self.cos[1],
-                                          self.length * self.cos[2]),
-                    self.section)
+        line = OBLine(OBPoint(0, 0, 0), OBPoint(self.length * self.cos[0],
+                                                self.length * self.cos[1],
+                                                self.length * self.cos[2]),
+                      self.section)
         return line
 
 
-class StraightBeamFEM(ObjElmt):
+class StraightBeamFEM(OBObjElmt):
     """FEM for rectangle section beam"""
 
     def __init__(self, length, direction_x, direction_y, direction_z, section, beta_angle=0, beam_name=''):
@@ -161,12 +150,12 @@ class StraightBeamFEM(ObjElmt):
 
     def fem(self, *nodes):
         if nodes:
-            return FELine(*nodes, section=self.section, beta_angle=self.angle, feline_name=self.name)
+            return OBFELine(*nodes, section=self.section, beta_angle=self.angle, feline_name=self.name)
         else:
-            n1 = FENode(0, 0, 0)
-            n2 = FENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])
-            fel = FELine(n1, n2, self.section, self.angle, self.name)
-            return Group(n1, n2, fel)
+            n1 = OBFENode(0, 0, 0)
+            n2 = OBFENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])
+            fel = OBFELine(n1, n2, self.section, self.angle, self.name)
+            return OBGroup(n1, n2, fel)
 
 
 def direction_cos(x, y, z) -> tuple:

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+__author__ = 'YidongQIN'
+
+from PyElement import *
 from PySensor import *
 
-fourstorey = OBProject('The 4 Story Model')
+fourstoreyPE = ProjGroups('PyElmt 4-Story Model')
 # 0. Parameters
 story_num = OBPrmElmt('Storey_Number', 4, role='Input')  # 4 storey means 5 plates
 height = OBPrmElmt('Height', 300.0, des='Vertical space between two storeys', role='Input')
@@ -43,7 +46,7 @@ for i in range(1, 4):
 # 1. Materials
 steel = OBMaterial('Steel1', mat_type="steel", des="steel of girder")
 steel.mat_property(d="0", E="209", Nu="0.3", a="0.0000065", Fy="50", Fu="65")
-OBGroup('Material Group', steel).attach_to(fourstorey)
+OBGroup('Material Group', steel).attach_to(fourstoreyPE)
 # 2. Section
 # 2.1 column
 col_rect = OBShape('rectangle',
@@ -52,47 +55,4 @@ col_rect = OBShape('rectangle',
                    OBPoint(w_colm.v / 2, t_colm.v / 2),
                    OBPoint(-w_colm.v / 2, t_colm.v / 2))
 col_sec = OBSection('Column', steel, col_rect)
-col_sec.attach_to(fourstorey)
-# 2.2 nut
-
-# 2.4 track
-
-# 3. FE elements
-# 4. Loading Conditions
-# 5. Geometric model
-for i in range(story_num.v + 1):
-    oneplate = BoltedPlateGeo('Plate{}'.format(i),
-                              t_plate, l_plate, w_plate,
-                              d_hole, x_clear, y_clear, x_num, y_num,
-                              steel).geom()
-    oneplate.add_attr(Z=i * height.v)
-    oneplate.attach_to(fourstorey)
-
-for x in [0, l_plate.v]:
-    for y in y_positions:
-        onecol = OBLine(OBPoint(0, 0, 0),
-                        OBPoint(0, 0, total_height + 32),
-                        col_sec,
-                      'Column@{},{}'.format(x, y))
-        onecol.add_attr(X=x, Y=y)
-        onecol.attach_to(fourstorey)
-
-# Sensors
-config = dict(user='root', password='qyd123', host='127.0.0.1',
-              database='bridge_test', port=3306,
-              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180302_141015_19')
-ds201 = Displacement(201, 'displacement of bottom plate', config)
-ds201.geom().attach_to(fourstorey)
-# ds201.plot_dat()
-ac202 = Accelerometer(202, 'Test accelerometers', config)
-ac202.geom().attach_to(fourstorey)
-# ac202.plot_dat()
-config = dict(user='root', password='qyd123', host='127.0.0.1',
-              database='bridge_test', port=3306,
-              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20')
-for i in range(207, 211):
-    sg = StrainGauge(i, 'Test StrainGauge {}'.format(i), config)
-    sg.geom().attach_to(fourstorey)
-    # sg.plot_dat()
-# ---------------
-fourstorey.save_project()
+col_sec.attach_to(fourstoreyPE)

@@ -20,8 +20,8 @@ class PyElmt(object):
         self.id = obj_id
         self.type = obj_type
         self.name = '{}_{}'.format(self.type, self.id)
-        self.geo_class: ObjElmt
-        self.fem_class: ObjElmt
+        self.geo_class: OBObjElmt
+        self.fem_class: OBObjElmt
         self.section = None
         self.material = None
         self.dbconfig = None
@@ -57,13 +57,13 @@ class PyElmt(object):
     #     return self.material
 
     # @material.setter
-    def set_material(self, mat: (Material, Extends, str)):
+    def set_material(self, mat: (OBMaterial, OBExtends, str)):
         if mat:
             self.material = mat
         else:
             self.read_db()
 
-    def set_section(self, sec: (Section, str)):
+    def set_section(self, sec: (OBSection, str)):
         if sec:
             self.section = sec
         else:
@@ -79,6 +79,19 @@ class PyElmt(object):
         self.description = des
 
 
+class ProjGroups(OBProject):
+
+    def __init__(self, proj_name):
+        super(ProjGroups, self).__init__(proj_name)
+        self.prm_group = OBGroup('Parameter Group')
+        self.mat_group = OBGroup('Material Group')
+        self.sec_group = OBGroup('Section Group')
+        self.geo_group = OBGroup('Geometry Model')
+        self.fem_group = OBGroup('FEM Model')
+        self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
+
+# class Material
+
 class Beam(PyElmt):
 
     def __init__(self, beam_id):
@@ -88,9 +101,9 @@ class Beam(PyElmt):
 
     def set_points(self, *points):
         if len(points) == 2:
-            if isinstance(points[0], Point) and isinstance(points[1], Point):
+            if isinstance(points[0], OBPoint) and isinstance(points[1], OBPoint):
                 self.two_point(*points)
-            elif isinstance(points[0], FENode) and isinstance(points[1], FENode):
+            elif isinstance(points[0], OBFENode) and isinstance(points[1], OBFENode):
                 self.two_node(*points)
         elif len(points) == 6:
             for a in points:
@@ -129,5 +142,5 @@ class Beam(PyElmt):
 class Plate(PyElmt):
 
     def __init__(self, plate_id):
-        super(PyElmt, self).__init__('Plate', plate_id, Surface, FESurface)
+        super(PyElmt, self).__init__('Plate', plate_id, OBSurface, OBFESurface)
         pass
