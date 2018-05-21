@@ -5,6 +5,17 @@ from PySensor import *
 from PyDatabase import *
 from PyElement import *
 
+real =PyReal('Line',1)
+print(real.__dict__)
+real.add_attr(attr1="Test1", att2="Oh no")
+print(real.__dict__)
+print(real.att2)
+print(dir(real))
+
+
+'''
+database='bridge_test',
+
 config = dict(user='root', password='qyd123', host='127.0.0.1',
                port=3306,database='bridge_test',
               path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180302_141015_19')
@@ -12,9 +23,6 @@ ds201 = PyElmt('Sensor Test',201)
 ds201.set_dbconfig(**config)
 info = ds201.read_db('sensorId', 'sensor', 'manufacturerName', 'modelNumber',fetch_type='one')
 
-
-'''
-database='bridge_test',
 
 proj = Project('test on PyOB')
 ppp = ProjGroups('name', 'SI')

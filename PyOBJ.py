@@ -30,9 +30,18 @@ class PyElmt(object):
         self.type = elmt_type
         self.db = dict()
 
+    def openbrim(self):
+        """ may not"""
+        pass
+
     def model(self):
         """get model, fem or geo"""
         pass
+
+    # @test
+    def add_attr(self, **dict):
+        #@TODO is this safe? useful?
+        self.__dict__ = {**self.__dict__, **dict}
 
     def set_dbconfig(self, **db_config):
         """get db config and connect to db"""
@@ -61,10 +70,6 @@ class PyElmt(object):
 
     def write_db(self):
         """first check if exist, then update or insert"""
-        pass
-
-    def openbrim(self):
-        """ may not"""
         pass
 
     def relationship(self):
@@ -101,6 +106,7 @@ class PyElmt(object):
         except:
             return
 
+
 class PyAbst(PyElmt):
 
     def __init__(self, elmt_type, elmt_id):
@@ -117,8 +123,6 @@ class PyReal(PyElmt):
     def __init__(self, elmt_type, elmt_id):
         """real members of structure"""
         super(PyReal, self).__init__(elmt_type, elmt_id)
-        self.geo_class: OBObjElmt
-        self.fem_class: OBObjElmt
         self.section = None
         self.material = None
         self.alpha = 0  # the status index
