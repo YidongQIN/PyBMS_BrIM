@@ -16,7 +16,6 @@ import math
 from PyOpenBrIM import *
 
 
-
 class CubeGeo(OBObjElmt):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
 
@@ -103,7 +102,6 @@ class PlateFEM(OBObjElmt):
         if nodes:
             return OBFESurface(*nodes, thick_par=self.thick, material_obj=self.material, fes_name=self.name)
         else:
-            # if no FENode is given, then create 4 nodes
             n1 = OBFENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
             n2 = OBFENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))
             n3 = OBFENode(self.width / 2, self.length / 2, 0, 'N3P_{}'.format(self.name))
@@ -159,7 +157,7 @@ class StraightBeamFEM(OBObjElmt):
 
 
 def direction_cos(x, y, z) -> tuple:
-    square_root = math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2))
+    square_root = math.sqrt(x**2 + y**2 + z**2)
     # cos_x = x / square_root
     # cos_y = y / square_root
     # cos_z = z / square_root

@@ -2,24 +2,28 @@
 from PyOpenBrIM import *
 from PyPackOB import *
 from PySensor import *
-
 from PyDatabase import *
+from PyElement import *
 
-config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
-# config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
+config = dict(user='root', password='qyd123', host='127.0.0.1',
+               port=3306,database='bridge_test',
+              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180302_141015_19')
+ds201 = PyElmt('Sensor Test',201)
+ds201.set_dbconfig(**config)
+info = ds201.read_db('sensorId', 'sensor', 'manufacturerName', 'modelNumber',fetch_type='one')
 
-# compare = ConnMySQL(**config)
-# compare.query('select * from bridge_test.sensor')
-# print(compare.fetch_row(True))
 
+'''
+database='bridge_test',
+
+proj = Project('test on PyOB')
+ppp = ProjGroups('name', 'SI')
+ShowTree(ppp)
 with ConnMySQL(**config) as testconn:
     testconn.query('select * from bridge_test.sensor')
     print(testconn.fetch_row())
     print(testconn.backup_path)
-
-'''
-proj = Project('test on PyOB')
-
+    
 ShowTree(proj)
 proj.save_project()
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)

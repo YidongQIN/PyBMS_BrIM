@@ -10,11 +10,10 @@ Python Elements for BrIM.
 from PyOBJ import *
 
 
-class ProjGroups(OBProject):
-    #@TODO inherit from ABST
+class ProjGroups(OBProject, PyAbst):
 
-    def __init__(self, proj_name):
-        super(ProjGroups, self).__init__(proj_name)
+    def __init__(self, proj_name, template = 'empty'):
+        super(ProjGroups, self).__init__(proj_name, template)
         self.prm_group = OBGroup('Parameter Group')
         self.mat_group = OBGroup('Material Group')
         self.sec_group = OBGroup('Section Group')
@@ -22,7 +21,7 @@ class ProjGroups(OBProject):
         self.fem_group = OBGroup('FEM Model')
         self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
 
-class Material(PyReal):
+class Material(PyAbst):
 
     def __init__(self, mat_id, mat_name):
         super(Material, self).__init__('Material',mat_id)
@@ -89,5 +88,5 @@ class Beam(PyReal):
 class Plate(PyReal):
 
     def __init__(self, plate_id):
-        super(PyReal, self).__init__('Plate', plate_id, OBSurface, OBFESurface)
+        super(PyReal, self).__init__('Plate', plate_id)
         pass

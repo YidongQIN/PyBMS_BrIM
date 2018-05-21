@@ -25,21 +25,26 @@ class ConnMySQL(object):
         # self.charset = charset
 
     def __enter__(self):
-        try:
-            self.conn = mc.connect(host=self.host, port=self.port,
-                                   user=self.user, password=self.password)
-            self.conn.autocommit = True
-            # self.conn.set_character_set(self.charset)
-            self.cur = self.conn.cursor(buffered=True)
-        except mc.Error as e:
-            print("Mysql Error {:d}: {}".format(e.args[0], e.args[1]))
+        self.conn = mc.connect(host=self.host, port=self.port,
+                               user=self.user, password=self.password)
+        self.conn.autocommit = True
+        self.cur = self.conn.cursor(buffered=True)
         return self
+        # try:
+        #     self.conn = mc.connect(host=self.host, port=self.port,
+        #                            user=self.user, password=self.password)
+        #     self.conn.autocommit = True
+        #     # self.conn.set_character_set(self.charset)
+        #     self.cur = self.conn.cursor(buffered=True)
+        # except mc.Error as e:
+        #     print("Mysql Error {:d}: {}".format(e.args[0], e.args[1]))
+        # return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_tb:
-            print('SQL Error Type: {}\n'
-                  '-- Error Value: {}\n'
-                  '-- Error is at: {}'.format(exc_type, exc_val, exc_tb))
+            print('\nSQL Error Type : {}\n'
+                  '--- Error Value: {}\n'
+                  '--- Error is at: {}'.format(exc_type, exc_val, exc_tb))
         self.close()
 
     def select_db(self, db):
@@ -53,7 +58,7 @@ class ConnMySQL(object):
             n = self.cur.execute(sql)
             return n
         except mc.Error as e:
-            print("Mysql Error:{}\nSQL:{}".format(e, sql))
+            print("MySQL Error: {}\n  with SQL: '{}'".format(e, sql))
 
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
@@ -74,6 +79,12 @@ class ConnMySQL(object):
             return d
         else:
             return result
+
+    def select(self, id_name, key_id, db_name, table_name, *col_name):
+        _sql = 'select {} from {}.{} where {}={}' \
+            .format(', '.join(col_name), db_name, table_name, id_name, key_id)
+        print("The SQL script is:\n  '{}'".format(_sql))
+        self.query(_sql)
 
     def insert(self, table_name, data):
         columns = data.keys()
