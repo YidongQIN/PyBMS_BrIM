@@ -7,7 +7,7 @@ Sensors definition in OpenBrIM
 import matplotlib.pyplot as plt
 import numpy as np
 
-from PyPackObj import *
+from PyPackOB import *
 
 
 class Sensor(OBObjElmt):

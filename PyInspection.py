@@ -8,7 +8,7 @@ __author__ = 'Yidong QIN'
 Bridge inspection information
 """
 
-from PyPackObj import *
+from PyPackOB import *
 
 class Inspection(object):
     def __init__(self):

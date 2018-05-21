@@ -7,110 +7,11 @@ __author__ = 'Yidong QIN'
 Python Elements for BrIM. 
 """
 
-from PyPackObj import *
-
-
-class PyElmt(object):
-
-    def __init__(self, elmt_type, elmt_id):
-        self.id = elmt_id
-        self.type = elmt_type
-        # self.node OR model or elmt ?
-        self.model=None
-
-
-    def model(self):
-        """get model, fem or geo"""
-        pass
-
-    def read_db(self):
-        """get db config and connect to db"""
-        pass
-
-    def openbrim(self):
-        """ may not"""
-        pass
-
-
-
-class PyAbst(PyElmt):
-
-    def __init__(self, obj_type, obj_id):
-        """abstract elements, such as material, section, load case"""
-        super(PyAbst, self).__init__(obj_type,obj_id)
-        self.name = '{}_{}'.format(self.type, self.id)
-
-
-class PyReal(PyElmt):
-    """PyElmt is used to represent real members of bridges
-    it contains parameters of the element, by init() or reading database.
-    Thus it could exports geometry model, FEM model and database info
-    later, some other methods may be added, such as SAP2K model method"""
-
-    def __init__(self, obj_type, obj_id):
-        """real members of structure"""
-        super(PyReal, self).__init__(obj_type, obj_id)
-        self.name = '{}_{}'.format(self.type, self.id)
-        self.geo_class: OBObjElmt
-        self.fem_class: OBObjElmt
-        self.section = None
-        self.material = None
-        self.dbconfig = None
-        # self.description = None
-
-    def init_by_db(self):
-        pass
-
-    def init_by_io(self):
-        pass
-
-    def set_dbconfig(self, **db_config):
-        self.dbconfig = dict(db_config)
-
-    def read_db(self):
-        pass
-
-    # def conn_db(self, db_config):
-    #     """user, passwd, host, database, port"""
-    #     self.dbconfig = dict(db_config)  # copy a dict
-    #     db = ConnMySQL(**self.dbconfig)
-    #     sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
-    #     db.query(sql)
-    #     info = db.fetch_row()
-    #     db.close()
-    #     return info
-
-    def set_attr_value(self):
-        pass
-
-    # @property
-    # def material(self):
-    #     return self.material
-
-    # @material.setter
-    def set_material(self, mat: (OBMaterial, OBExtends, str)):
-        if mat:
-            self.material = mat
-        else:
-            self.read_db()
-
-    def set_section(self, sec: (OBSection, str)):
-        if sec:
-            self.section = sec
-        else:
-            self.read_db()
-
-    # def geo_xml(self, *define, **dicts):
-    #     self.geomodel = self.geo_class(*define, **dicts)
-    #
-    # def fem_xml(self, *define, **dicts):
-    #     self.femodel = self.fem_class(*define, **dicts)
-
-    def describe_it(self, des):
-        self.description = des
+from PyOBJ import *
 
 
 class ProjGroups(OBProject):
+    #@TODO inherit from ABST
 
     def __init__(self, proj_name):
         super(ProjGroups, self).__init__(proj_name)

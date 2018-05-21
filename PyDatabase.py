@@ -26,12 +26,24 @@ class ConnMySQL(object):
                                    user=self.user, password=self.password)
             # self.conn.autocommit(False)
             # self.conn.set_character_set(self.charset)
-            self.cur = self.conn.cursor()
+            # self.cur = self.conn.cursor()
+            #buffered, or may have error: 'mysql.connector.errors.InternalError: Unread result found'
+            self.cur = self.conn.cursor(buffered=True)
         except mc.Error as e:
             print("Mysql Error {:d}: {}".format(e.args[0], e.args[1]))
 
-    def __del__(self):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_tb:
+            print('SQL Error Type: {}\n'
+                  '----ErrorValue: {}\n'
+                  '----Error TB: {}'.format(exc_type, exc_val, exc_tb))
         self.close()
+
+    # def __del__(self):
+    #     self.close()
 
     def select_db(self, db):
         try:
@@ -54,10 +66,11 @@ class ConnMySQL(object):
         else:
             return result
 
+
     def fetch_all(self, with_description=False):
         result = self.cur.fetchall()  # a list of tuples
         col_name = [i[0] for i in self.cur.description]
-        # only cur.description[0] is the column name
+        # cur.description[0] is the column name
         d = []
         if with_description:
             for oneline in result:
@@ -70,7 +83,8 @@ class ConnMySQL(object):
         columns = data.keys()
         _prefix = "".join(['INSERT INTO `', table_name, '`'])
         _fields = ",".join(["".join(['`', column, '`']) for column in columns])
-        _values = ",".join(["%s" for i in range(len(columns))])
+        _values = ",".join(["%s"]* len(columns))
+        # _values = ",".join(["%s" for i in range(len(columns))])
         _sql = "".join([_prefix, "(", _fields, ") VALUES (", _values, ")"])
         _params = [data[key] for key in columns]
         return self.cur.execute(_sql, tuple(_params))

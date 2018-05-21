@@ -1,12 +1,23 @@
 
 from PyOpenBrIM import *
-from PyPackObj import *
+from PyPackOB import *
 from PySensor import *
 
-# newline = StraightBeamGeo(100,0,1,math.sqrt(3),'section')
-# ShowTree(newline.model)
-ppp=PlateFEM(10,20,30,'mat','PLPLP')
-# newline.geom()
+from PyDatabase import *
+
+config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
+
+# compare = ConnMySQL(**config)
+# compare.query('select * from bridge_test.sensor')
+# print(compare.fetch_row(True))
+
+with ConnMySQL(**config) as testconn:
+    testconn.query('select * from bridge_test.sensor')
+    print(testconn.fetch_row())
+
+print(["%s" for i in range(5)])
+print(['%s']*5)
+
 '''
 proj = Project('test on PyOB')
 
@@ -20,11 +31,15 @@ print(ex.get_bridge_info())
 # print(unit.get_unit_info())
 # print(unit.get_channel_install())
 
+# newline = StraightBeamGeo(100,0,1,math.sqrt(3),'section')
+# ShowTree(newline.model)
+ppp=PlateFEM(10,20,30,'mat','PLPLP')
+# newline.geom()
+
 
 text = Text3D('Text3D Object',0,0,0)
 text.attach_to(proj)
 
-config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
 di = Displacement(202,'Test dat path',config)
 di.geom().attach_to(proj)
 print(di.get_install())
