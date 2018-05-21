@@ -6,6 +6,7 @@ from PySensor import *
 from PyDatabase import *
 
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)
+# config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306, path = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat')
 
 # compare = ConnMySQL(**config)
 # compare.query('select * from bridge_test.sensor')
@@ -14,9 +15,7 @@ config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge
 with ConnMySQL(**config) as testconn:
     testconn.query('select * from bridge_test.sensor')
     print(testconn.fetch_row())
-
-print(["%s" for i in range(5)])
-print(['%s']*5)
+    print(testconn.backup_path)
 
 '''
 proj = Project('test on PyOB')

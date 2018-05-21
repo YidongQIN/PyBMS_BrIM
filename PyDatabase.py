@@ -14,36 +14,33 @@ import mysql.connector as mc
 
 class ConnMySQL(object):
 
-    def __init__(self, host, database, user, password, port, charset="utf8"):
+    def __init__(self, host, database, user, password, port, **kwargs):
         self.host = host
         self.database = database
         self.port = port
         self.user = user
         self.password = password
-        self.charset = charset
+        self.othersetting = kwargs
+        # charset = "utf8mb4"
+        # self.charset = charset
+
+    def __enter__(self):
         try:
             self.conn = mc.connect(host=self.host, port=self.port,
                                    user=self.user, password=self.password)
-            # self.conn.autocommit(False)
+            self.conn.autocommit = True
             # self.conn.set_character_set(self.charset)
-            # self.cur = self.conn.cursor()
-            #buffered, or may have error: 'mysql.connector.errors.InternalError: Unread result found'
             self.cur = self.conn.cursor(buffered=True)
         except mc.Error as e:
             print("Mysql Error {:d}: {}".format(e.args[0], e.args[1]))
-
-    def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_tb:
             print('SQL Error Type: {}\n'
-                  '----ErrorValue: {}\n'
-                  '----Error TB: {}'.format(exc_type, exc_val, exc_tb))
+                  '-- Error Value: {}\n'
+                  '-- Error is at: {}'.format(exc_type, exc_val, exc_tb))
         self.close()
-
-    # def __del__(self):
-    #     self.close()
 
     def select_db(self, db):
         try:
@@ -66,7 +63,6 @@ class ConnMySQL(object):
         else:
             return result
 
-
     def fetch_all(self, with_description=False):
         result = self.cur.fetchall()  # a list of tuples
         col_name = [i[0] for i in self.cur.description]
@@ -83,7 +79,7 @@ class ConnMySQL(object):
         columns = data.keys()
         _prefix = "".join(['INSERT INTO `', table_name, '`'])
         _fields = ",".join(["".join(['`', column, '`']) for column in columns])
-        _values = ",".join(["%s"]* len(columns))
+        _values = ",".join(["%s"] * len(columns))
         # _values = ",".join(["%s" for i in range(len(columns))])
         _sql = "".join([_prefix, "(", _fields, ") VALUES (", _values, ")"])
         _params = [data[key] for key in columns]
@@ -118,3 +114,13 @@ class ConnMySQL(object):
     def close(self):
         self.cur.close()
         self.conn.close()
+
+    @property
+    def backup_path(self):
+        if 'path' in self.othersetting.keys():
+            return self.othersetting['path']
+        else:
+            return 'No backup file path is provided for {}'.format(self)
+
+class ConnOtherDB(object):
+    pass
