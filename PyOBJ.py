@@ -38,10 +38,12 @@ class PyElmt(object):
         """get model, fem or geo"""
         pass
 
-    # @test
     def add_attr(self, **dict):
-        #@TODO is this safe? useful?
+        """add a dict as attributes.
+        The situation of attribute is complex and different elements will hace totally different attributes"""
+        print("= = You are changing __dict__ of <{}>".format(self.name))
         self.__dict__ = {**self.__dict__, **dict}
+        # be careful, not sure if this is safe
 
     def set_dbconfig(self, **db_config):
         """get db config and connect to db"""
@@ -79,9 +81,6 @@ class PyElmt(object):
     def name(self):
         return '{}_{}'.format(self.type, self.id)
 
-    def description(self, des):
-        self.des = des
-
     @property
     def geo_class(self):
         type_to_geo = dict(Line=OBLine, Plate=OBSurface)
@@ -105,6 +104,9 @@ class PyElmt(object):
             return type_to_abs[self.type]
         except:
             return
+
+    def description(self, des):
+        self.des = des
 
 
 class PyAbst(PyElmt):
