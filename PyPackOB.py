@@ -128,9 +128,10 @@ class StraightBeamGeo(OBObjElmt):
         self.model = self.geom()
 
     def geom(self):
-        line = OBLine(OBPoint(0, 0, 0), OBPoint(self.length * self.cos[0],
-                                                self.length * self.cos[1],
-                                                self.length * self.cos[2]),
+        line = OBLine(OBPoint(0, 0, 0),
+                      OBPoint(self.length * self.cos[0],
+                              self.length * self.cos[1],
+                              self.length * self.cos[2]),
                       self.section)
         return line
 

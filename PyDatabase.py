@@ -10,6 +10,7 @@ not only MySQL, but also NoSQL later.
 """
 
 import mysql.connector as mc
+import pymongo as mg
 
 
 class ConnMySQL(object):
@@ -60,6 +61,14 @@ class ConnMySQL(object):
         except mc.Error as e:
             print("MySQL Error: {}\n  with SQL: '{}'".format(e, sql))
 
+    def fetch(self,fetch_type, with_description=False):
+        if fetch_type is 'ALL':
+            return self.fetch_all(with_description)
+            # return a list of tuples: [(),(),...]
+        else:
+            return self.fetch_row(with_description)
+            # return a tuple
+
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
         if with_description:
@@ -83,7 +92,7 @@ class ConnMySQL(object):
     def select(self, id_name, key_id, db_name, table_name, *col_name):
         _sql = 'select {} from {}.{} where {}={}' \
             .format(', '.join(col_name), db_name, table_name, id_name, key_id)
-        print("The SQL script is:\n  '{}'".format(_sql))
+        print("Executing SQL script:\n  '{}'".format(_sql))
         self.query(_sql)
 
     def insert(self, table_name, data):

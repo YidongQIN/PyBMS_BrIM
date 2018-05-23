@@ -24,11 +24,16 @@ class ProjGroups(OBProject, PyAbst):
 class Material(PyAbst):
 
     def __init__(self, mat_id, mat_name):
-        super(Material, self).__init__('Material',mat_id)
-        self.name=mat_name
+        super(Material, self).__init__('Material',mat_id, mat_name)
         print(self.name)
 
-        '''
+    # @property
+    # def name(self):
+    #     # super(Material, self).name(self.mat_name)
+    #     return self.mat_name
+
+
+'''
         class OBMaterial(OBObjElmt):
     def __init__(self, mat_name, des='', mat_type='', **attrib_dict):
         """Material name is mandatory.\n
@@ -36,7 +41,7 @@ class Material(PyAbst):
         there may be no other attributes.
         """
         super(OBMaterial, self).__init__('Material', mat_name, D=des, Type=mat_type, **attrib_dict)
-        '''
+'''
 
 class Beam(PyReal):
 
@@ -89,4 +94,3 @@ class Plate(PyReal):
 
     def __init__(self, plate_id):
         super(PyReal, self).__init__('Plate', plate_id)
-        pass
