@@ -21,6 +21,19 @@ class ProjGroups(OBProject, PyAbst):
         self.fem_group = OBGroup('FEM Model')
         self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
 
+    def include(self, *members:PyElmt):
+        """ add one member to the project"""
+        #@TODO PyAbst and PyReal are different
+        for member in members:
+            try:
+                self.fem_group.sub(member.model_fem)
+                self.geo_group.sub(member.model_geo)
+                # self.
+            except BaseException as e:
+                print('= = Some error about {} has been ignored'.format(member.name))
+                print(e)
+
+
 class Material(PyAbst):
 
     def __init__(self, mat_id, mat_name):

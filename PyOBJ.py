@@ -29,41 +29,41 @@ class PyElmt(object):
         self.id = elmt_id
         self.type = elmt_type
         self.name = elmt_name
-        self.mysql = dict()
+        self.mysql = {}
+        self.des = None
 
     def openbrim(self, *args, **kwargs):
         """OpenBrIM is geometry model and FEM model"""
+        print(self.name)
         print(args, kwargs)
 
     def model(self, model_class, *args, **kwargs):
         """get model: database, fem or geo"""
+        print(self.name)
         return model_class(*args, **kwargs)
 
-    def model_fem(self, fem_class=None, *args, **kwargs):
-        if fem_class:
-            return fem_class(*args, **kwargs)
-        else:
-            return self.fem_class(*args, **kwargs)
+    #@TODO 把对象的属性分配称两个dict，分别是fem和geo生成所用
+    @property
+    def model_fem(self):
+        """how to judge which prms are required by the fem_class() ?"""
+        # return self.fem_class(OBFENode(0,0,0), OBFENode(10,10,10), section='LineSection')
+        return self._model_fem
+        #@TODO return self.fem_class(**args_of_fem)
 
-    def model_geo(self, geo_class=None, *args, **kwargs):
-        if geo_class:
-            return geo_class(*args, **kwargs)
-        else:
-            return self.geo_class(*args, **kwargs)
+    @model_fem.setter
+    def model_fem(self, femodel):
+        """most cases, unused, should be generated automatically"""
+        self._model_fem = femodel
 
-    def model_db(self,db_class, *args, **kwargs):
+    @property
+    def model_geo(self):
+        return self.geo_class(OBPoint(0, 0, 0), OBPoint(10, 10, 10), section='LineSection')
+
+    def model_db(self, db_class, *args, **kwargs):
         """MySQL or NoSQL"""
         if db_class:
             print(*args, **kwargs)
         return dict(id=self.id)
-
-    # def add_attr(self, **dict):
-    #     """add a dict as attributes.
-    #     The situation of attribute is complex and different elements will hace totally different attributes"""
-    #     print("= = You are changing __dict__ of <{}>".format(self.name))
-    #     self.__dict__ = {**self.__dict__, **dict}
-    #     # be careful, not sure if this is safe
-    #     # ! also, the new attrib may not be recognized by IDE
 
     def mysql_conn(self, **db_config):
         """get db config and connect to db"""
@@ -102,8 +102,8 @@ class PyElmt(object):
                 _condition = '{}={}'.format(id_name, self.id)
                 _db.update(table, *data, condition=_condition)
                 return
-        except:
-            raise
+        except BaseException as e:
+            raise e
 
     def relationship(self):
         """read child nodes and parent nodes from database"""
@@ -114,26 +114,27 @@ class PyElmt(object):
         type_to_geo = dict(Line=OBLine, Plate=OBSurface)
         try:
             return type_to_geo[self.type]
-        except:
-            return
+        except BaseException as e:
+            raise e
 
     @property
     def fem_class(self):
         type_to_fem = dict(Line=OBFELine, Plate=OBFESurface)
         try:
             return type_to_fem[self.type]
-        except:
-            return
+        except BaseException as e:
+            raise e
 
     @property
     def abs_class(self):
         type_to_abs = dict(Material=OBMaterial, Section=OBSection)
         try:
             return type_to_abs[self.type]
-        except:
-            return
+        except BaseException as e:
+            raise e
 
     def description(self, des):
+        assert isinstance(des, str)
         self.des = des
 
 
@@ -155,8 +156,10 @@ class PyReal(PyElmt):
         super(PyReal, self).__init__(elmt_type, elmt_id, elmt_name)
         self.section = None
         self.material = None
+        self.dimension = dict(d1=None)
+        self.position = dict(x=None, y=None, z=None)
+        self.direction = dict(dx=None, dy=None, dz=None)
         self.alpha = 0  # the status index
-        # self.description = None
 
     def init_by_db(self):
         pass
@@ -164,8 +167,23 @@ class PyReal(PyElmt):
     def init_by_io(self):
         pass
 
-    def set_attr_value(self):
-        pass
+    def set_position(self, **pos):
+        for k in pos:
+            if k not in ['x', 'y', 'z']:
+                print('= = Position of {} is recommended to be x,y,z'.format(self.name))
+        self.position = pos
+
+    def set_direction(self, **drc):
+        for k in drc:
+            if k not in ['dx', 'dy', 'dz']:
+                print('= = Direction of {} is recommended to be dx,dy,dz'.format(self.name))
+        self.direction = drc
+
+    def set_dimension(self, **dims):
+        for k in dims:
+            if k not in ['length', 'width', 'thick']:
+                print('= = Dimension of {} is recommended to be length, width, thick, etc'.format(self.name))
+        self.dimension = dims
 
     def set_material(self, mat: (OBMaterial, OBExtends, str)):
         if mat:
