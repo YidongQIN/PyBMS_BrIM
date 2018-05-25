@@ -5,21 +5,17 @@ from PySensor import *
 from PyDatabase import *
 from PyElement import *
 
-# class TestElmt(PyElmt):
-#
-#     def __init__(self, id ,name):
-#         super(TestElmt, self).__init__('NoneType',id,name)
-#         self.
 
 
-project = ProjGroups('Test of multi-sub')
-ShowTree(project)
-new = PyElmt('Line',1,'AL')
-new.model_fem = OBFELine(OBFENode(0,0,0), OBFENode(10,10,10), section='LineSection')
-# new.model_geo(None,OBPoint(0,0,0),OBFENode(10,10,10), section='LineSection')
-project.include(new)
-ShowTree(project)
-project.save_project()
+# project = ProjGroups('Test of multi-sub')
+# ShowTree(project)
+# new = PyElmt('Line',1,'AL')
+# new.model_fem = OBFELine(OBFENode(0,0,0), OBFENode(10,10,10), section='LineSection')
+# # new.model_geo(None,OBPoint(0,0,0),OBFENode(10,10,10), section='LineSection')
+# project.include(new)
+# ShowTree(project)
+# project.save_project()
+
 '''
 database='bridge_test',
 

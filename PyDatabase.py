@@ -61,7 +61,7 @@ class ConnMySQL(object):
         except mc.Error as e:
             print("MySQL Error: {}\n  with SQL: '{}'".format(e, sql))
 
-    def fetch(self,fetch_type, with_description=False):
+    def fetch(self, fetch_type, with_description=False):
         if fetch_type is 'ALL':
             return self.fetch_all(with_description)
             # return a list of tuples: [(),(),...]
@@ -142,5 +142,24 @@ class ConnMySQL(object):
         else:
             return 'No backup file path is provided for {}'.format(self)
 
-class ConnOtherDB(object):
-    pass
+
+class ConnMongoDB(object):
+
+    def __init__(self, database, host='localhost', port=27017):
+        self.host = host
+        self.port = port
+        self.db = database
+
+    def __enter__(self):
+        """one database contains many collections (collection = table of MySQL),
+        so the """
+        self.client =mg.MongoClient(self.host,self.port)
+        self.db = self.client[self.db]
+        return self.db
+
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_tb:
+            print('\nSQL Error Type : {}\n'
+                  '--- Error Value: {}\n'
+                  '--- Error is at: {}'.format(exc_type, exc_val, exc_tb))
