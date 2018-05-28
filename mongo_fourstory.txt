@@ -68,7 +68,32 @@ db.Section.insert([
 // Structure (geometry3D and FEM)
 
 // a. 5 plates
-
+db.Member.insertMany([
+        {
+            name:"Plate0",
+            id:"",
+            type:"",
+            Geo_class:"",
+            FEM_class:"",
+            x:"",
+            y:"",
+            z:"",
+            thick:"",
+            length:"",
+            width:"",
+            d_hole:"",
+            x_clear:"",
+            y_clear:"",
+            ncol:"",
+            nrow:"",
+            material:""
+        }
+    ])
 // b. 8 columns
+db.Member.insertMany([
+        {
+            name:""
+        }
 
+    ])
 // c. sensors
