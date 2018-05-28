@@ -1,0 +1,53 @@
+use fours
+db.createCollection('Parameter')
+db.createCollection('Section')
+db.createCollection('Material')
+db.createCollection('Member')
+db.createCollection('Load')
+
+db.Parameter.insertMany([
+    {name:'Storey_Number', value:4},
+    {name:'Height', value:300.0},
+    {name:'Height_top', value:270.0},
+    {name:'t', value:13},
+    {name:'l', value:405.0},
+    {name:'w', value:303.0},
+    {name:'d', value:6.0},
+    {name:'x_clear', value:50.0},
+    {name:'y_clear', value:24.0},
+    {name:'ncol', value:7},
+    {name:'nrow', value:11},
+    {name:'Thick_column', value:1.0},
+    {name:'Width_column', value:25.0},
+    {name:'Interval_1', value:36.2},
+    {name:'Interval_2', value:26.8},
+    {name:'Interval_3', value:77.0},
+    {name:'TrackDiameter', value:18.0},
+    {name:'h1_track', value:23.0},
+    {name:'h2_track', value:6.0},
+    {name:'Width_track', value:49.0}
+])
+
+db.Material.insertMany([
+{
+    name: 'Steel1',
+    mat_type: "steel",
+    des: "steel of girder",
+    d: "0.0000007345",
+    E: "29000",
+    Nu: "0.3",
+    a: "0.0000065",
+    Fy: "50",
+    Fu: "65"
+},
+{
+    name: 'C4000Psi',
+    mat_type: "concrete",
+    des: "Concrete of deck",
+    d: "0.0000002248",
+    E: "3604.9965",
+    Nu: "0.3",
+    a: "0.0000055",
+    Fc28: "4"
+}
+])
