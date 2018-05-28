@@ -29,25 +29,46 @@ db.Parameter.insertMany([
 ])
 
 db.Material.insertMany([
-{
-    name: 'Steel1',
-    mat_type: "steel",
-    des: "steel of girder",
-    d: "0.0000007345",
-    E: "29000",
-    Nu: "0.3",
-    a: "0.0000065",
-    Fy: "50",
-    Fu: "65"
-},
-{
-    name: 'C4000Psi',
-    mat_type: "concrete",
-    des: "Concrete of deck",
-    d: "0.0000002248",
-    E: "3604.9965",
-    Nu: "0.3",
-    a: "0.0000055",
-    Fc28: "4"
-}
+    {
+        name: 'Steel1',
+        mat_type: "steel",
+        des: "steel of girder",
+        d: "0.0000007345",
+        E: "29000",
+        Nu: "0.3",
+        a: "0.0000065",
+        Fy: "50",
+        Fu: "65"
+    },
+    {
+        name: 'C4000Psi',
+        mat_type: "concrete",
+        des: "Concrete of deck",
+        d: "0.0000002248",
+        E: "3604.9965",
+        Nu: "0.3",
+        a: "0.0000055",
+        Fc28: "4"
+    }
 ])
+
+// how to describe the Section?
+db.Section.insert([
+    {
+        name: "Column",
+        shapes:{
+            shape_name:"rectangel",
+            type:"rectangel",
+            width:"" //@TODO
+        }
+    }
+])
+
+
+// Structure (geometry3D and FEM)
+
+// a. 5 plates
+
+// b. 8 columns
+
+// c. sensors
