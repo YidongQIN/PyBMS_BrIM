@@ -11,6 +11,7 @@ not only MySQL, but also NoSQL later.
 
 import mysql.connector as mc
 import pymongo as mg
+import pprint
 
 
 class ConnMySQL(object):
@@ -145,17 +146,17 @@ class ConnMySQL(object):
 
 class ConnMongoDB(object):
 
-    def __init__(self, database, host='localhost', port=27017):
+    def __init__(self, database_name, host='localhost', port=27017):
         self.host = host
         self.port = port
-        self.db = database
+        self.db_name = database_name
+        self.client =mg.MongoClient(self.host,self.port)
+        self.db = self.client[self.db_name]
+        print("Collections of <{}> are:\n{}".format(self.db_name,self.db.collection_names(False)))
+
 
     def __enter__(self):
-        """one database contains many collections (collection = table of MySQL),
-        so the """
-        self.client =mg.MongoClient(self.host,self.port)
-        self.db = self.client[self.db]
-        return self.db
+        return self
 
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -163,3 +164,9 @@ class ConnMongoDB(object):
             print('\nSQL Error Type : {}\n'
                   '--- Error Value: {}\n'
                   '--- Error is at: {}'.format(exc_type, exc_val, exc_tb))
+
+    def col_find_one(self, collection, condition):
+        print(condition)
+        a = self.db[collection].find_one(condition)
+        print(a)
+        return a

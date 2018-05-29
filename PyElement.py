@@ -12,7 +12,7 @@ from PyOBJ import *
 
 class ProjGroups(OBProject, PyAbst):
 
-    def __init__(self, proj_name, template = 'empty'):
+    def __init__(self, proj_name, template='empty'):
         super(ProjGroups, self).__init__(proj_name, template)
         self.prm_group = OBGroup('Parameter Group')
         self.mat_group = OBGroup('Material Group')
@@ -21,9 +21,9 @@ class ProjGroups(OBProject, PyAbst):
         self.fem_group = OBGroup('FEM Model')
         self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
 
-    def include(self, *members:PyElmt):
+    def include(self, *members: PyElmt):
         """ add one member to the project"""
-        #@TODO PyAbst and PyReal are different
+        # @TODO PyAbst and PyReal are different
         for member in members:
             try:
                 self.fem_group.sub(member.model_fem)
@@ -37,7 +37,8 @@ class ProjGroups(OBProject, PyAbst):
 class Material(PyAbst):
 
     def __init__(self, mat_id, mat_name):
-        super(Material, self).__init__('Material',mat_id, mat_name)
+        """Material name is mandatory. Material Type is Steel, Concrete, etc."""
+        super(Material, self).__init__('Material', mat_id, mat_name)
         print(self.name)
 
     # @property
@@ -46,21 +47,11 @@ class Material(PyAbst):
     #     return self.mat_name
 
 
-'''
-        class OBMaterial(OBObjElmt):
-    def __init__(self, mat_name, des='', mat_type='', **attrib_dict):
-        """Material name is mandatory.\n
-        Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
-        there may be no other attributes.
-        """
-        super(OBMaterial, self).__init__('Material', mat_name, D=des, Type=mat_type, **attrib_dict)
-'''
-
 class Beam(PyReal):
 
-    def __init__(self, beam_id):
+    def __init__(self, beam_id, beam_name):
         # init no so many parameters, put the points and nodes to set_model() methods
-        super(Beam, self).__init__('BEAM', beam_id)
+        super(Beam, self).__init__('BEAM', beam_id, beam_name)
         self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = [None] * 6
 
     def set_points(self, *points):

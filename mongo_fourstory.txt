@@ -57,15 +57,31 @@ db.Section.insert([
     {
         name: "Column",
         shapes:{
-            shape_name:"rectangel",
-            type:"rectangel",
-            width:"" //@TODO
+            shape_name:"rectangle",
+            type:"rectangle",
+            width:"", //@TODO
+            length:""
         }
     }
 ])
 
 
 // Structure (geometry3D and FEM)
+db.Member.insertMany([
+        {
+            name:"Node0",
+            type:"FENode",
+            x:"",
+            y:"",
+            z:"",
+            tx:"",
+            ty:"",
+            tz:"",
+            rx:"",
+            ry:"",
+            rz:""
+        }
+    ])
 
 // a. 5 plates
 db.Member.insertMany([
@@ -87,6 +103,11 @@ db.Member.insertMany([
             ncol:"",
             nrow:"",
             material:""
+            nodes:[
+                {
+                    // Node1
+                }
+            ]
         }
     ])
 // b. 8 columns

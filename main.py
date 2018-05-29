@@ -5,7 +5,25 @@ from PySensor import *
 from PyDatabase import *
 from PyElement import *
 
+import pymongo as mg
+import pprint
 
+
+# client= mg.MongoClient()
+# database = client['fours']
+# prm = database.Parameter
+# print(prm)
+# b = prm.find({'value':{'$gt': 200}}) #.find() returns a cursor
+# print(b)
+# pprint.pprint(b)
+# for a in b:
+#     print(a)
+#     pprint.pprint(a)
+#     idid = a['_id']
+#     print(idid)
+
+with ConnMongoDB('fours') as mgdb:
+    mgdb.col_find_one('Parameter',{'value':{'$gt':200}})
 
 # project = ProjGroups('Test of multi-sub')
 # ShowTree(project)
