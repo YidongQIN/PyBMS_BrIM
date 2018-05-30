@@ -157,7 +157,7 @@ class PyReal(PyElmt):
         self.section = None
         self.material = None
         self.dimension = dict(d1=None)
-        self.position = dict(x=None, y=None, z=None)
+        self.position = dict(x=None, y=None, z=None) #@TODO points or coordinates?
         self.direction = dict(dx=None, dy=None, dz=None)
         self.alpha = 0  # the status index
 

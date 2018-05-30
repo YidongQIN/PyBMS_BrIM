@@ -11,7 +11,6 @@ not only MySQL, but also NoSQL later.
 
 import mysql.connector as mc
 import pymongo as mg
-import pprint
 
 
 class ConnMySQL(object):
@@ -150,14 +149,12 @@ class ConnMongoDB(object):
         self.host = host
         self.port = port
         self.db_name = database_name
-        self.client =mg.MongoClient(self.host,self.port)
+        self.client = mg.MongoClient(self.host, self.port)
         self.db = self.client[self.db_name]
-        print("Collections of <{}> are:\n{}".format(self.db_name,self.db.collection_names(False)))
-
+        print("Collections of database <{}> are:\n\t{}".format(self.db_name, self.db.collection_names(False)))
 
     def __enter__(self):
         return self
-
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_tb:
@@ -166,7 +163,53 @@ class ConnMongoDB(object):
                   '--- Error is at: {}'.format(exc_type, exc_val, exc_tb))
 
     def col_find_one(self, collection, condition):
-        print(condition)
-        a = self.db[collection].find_one(condition)
-        print(a)
-        return a
+        """ if the condition is not just one field"""
+        result = self.db[collection].find_one(condition)
+        print(result)
+        return result
+
+    def col_find_all(self, collection, condition):
+        """ if the condition is not just one field"""
+        cursor = self.db[collection].find(condition)
+        _l = [doc for doc in cursor]
+        print(_l)
+        return _l
+
+    def find_by_kv(self, collection, key_field, value):
+        """find one document and return a BSON"""
+        result = self.db[collection].find_one({key_field: value})
+        if not result:
+            print('No result in <{}> with {}={}'.format(collection, key_field, value))
+        else:
+            print('Result in <{}> with {}={} is:'.format(collection, key_field, value))
+            print(result)
+        return result
+
+    def findall_by_kv(self, collection, key_field, value):
+        """find all documents matched the condition, return a list"""
+        cursor = self.db[collection].find({key_field: value})
+        _l = [doc for doc in cursor]
+        if len(_l) == 0:
+            print('No result in <{}> with {}={}'.format(collection, key_field, value))
+        else:
+            print('Results in <{}> with {}={} are:'.format(collection, key_field, value))
+            for a in _l:
+                print(a)
+        return _l
+
+    def insert_to(self, collection, **field_value):
+        try:
+            field_value['_id']=field_value['id']
+            print("Document's '_id' is {}".format(field_value['_id']))
+            field_value.pop('id')
+        except KeyError:
+            print("No '_id' field contained, will be assigned automatically")
+        self.db[collection].insert(field_value)
+
+    def insert_attribute(self, collection, elmt):
+        """elmt has __dict__"""
+        _d = {}
+        for key, value in elmt.__dict__.items():
+            if value:
+                _d[key] = value
+        self.insert_to(collection, **_d)

@@ -8,22 +8,18 @@ from PyElement import *
 import pymongo as mg
 import pprint
 
-
-# client= mg.MongoClient()
-# database = client['fours']
-# prm = database.Parameter
-# print(prm)
-# b = prm.find({'value':{'$gt': 200}}) #.find() returns a cursor
-# print(b)
-# pprint.pprint(b)
-# for a in b:
-#     print(a)
-#     pprint.pprint(a)
-#     idid = a['_id']
-#     print(idid)
+point1=OBPoint(0,1,2,'PPP')
+beam1 = Beam(3,'BBB')
+beam1.set_dimension(length=10, width=15, thick=3)
+beam1.set_points(1,1,1,20,20,20)
+print(beam1.__dict__)
 
 with ConnMongoDB('fours') as mgdb:
-    mgdb.col_find_one('Parameter',{'value':{'$gt':200}})
+    # mgdb.col_find_one('Parameter',{'value':{'$gt':200}})
+    # mgdb.findall_by_kv('Parameter','value', {'$gt':300})
+    # mgdb.find_by_kv('Parameter', 'name', 'ncol')
+    # mgdb.insert_attribute('Member', beam1)
+    mgdb.find_by_kv('Member','_id',3)
 
 # project = ProjGroups('Test of multi-sub')
 # ShowTree(project)

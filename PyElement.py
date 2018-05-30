@@ -70,6 +70,7 @@ class Beam(PyReal):
         # Line() material is included in section definition
 
     def two_point(self, point1, point2):
+        # self.position[]
         self.x1 = point1.x
         self.y1 = point1.x
         self.z1 = point1.x
