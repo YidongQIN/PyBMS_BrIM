@@ -199,7 +199,7 @@ class ConnMongoDB(object):
 
     def insert_to(self, collection, **field_value):
         try:
-            field_value['_id']=field_value['id']
+            field_value['_id'] = field_value['id']
             print("Document's '_id' is {}".format(field_value['_id']))
             field_value.pop('id')
         except KeyError:
@@ -212,4 +212,9 @@ class ConnMongoDB(object):
         for key, value in elmt.__dict__.items():
             if value:
                 _d[key] = value
-        self.insert_to(collection, **_d)
+        try:
+            self.insert_to(collection, **_d)
+            pass
+        except mg.errors.DuplicateKeyError as e:
+            print(e)
+            print("".format())

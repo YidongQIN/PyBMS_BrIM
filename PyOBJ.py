@@ -156,9 +156,9 @@ class PyReal(PyElmt):
         super(PyReal, self).__init__(elmt_type, elmt_id, elmt_name)
         self.section = None
         self.material = None
-        self.dimension = dict(d1=None)
-        self.position = dict(x=None, y=None, z=None) #@TODO points or coordinates?
-        self.direction = dict(dx=None, dy=None, dz=None)
+        self.dimension = dict()
+        self.position = dict() #@TODO points or coordinates?
+        self.direction = dict()
         self.alpha = 0  # the status index
 
     def init_by_db(self):
