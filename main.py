@@ -9,18 +9,23 @@ import pymongo as mg
 import pprint
 
 point1=OBPoint(0,1,2,'PPP')
+point1.id=25
 beamId=4
 beam1 = Beam(beamId, 'BBB')
 beam1.set_dimension(length=10, width=15, thick=3)
 beam1.set_points(1,1,1,20,20,20)
-print(beam1.__dict__)
+# print(beam1.__dict__)
+# print(point1.__dict__)
 
 with ConnMongoDB('fours') as mgdb:
     # mgdb.col_find_one('Parameter',{'value':{'$gt':200}})
     # mgdb.findall_by_kv('Parameter','value', {'$gt':300})
     # mgdb.find_by_kv('Parameter', 'name', 'ncol')
-    mgdb.insert_attribute('Member', beam1)
-    mgdb.find_by_kv('Member','_id', beamId)
+    # mgdb.insert_elmt('Member', beam1)
+    # mgdb.find_by_kv('Member','_id', beamId)
+    mgdb.update_elmt('Member',point1)
+    mgdb.findall_by_kv('Member','name','PPP')
+
 
 # project = ProjGroups('Test of multi-sub')
 # ShowTree(project)

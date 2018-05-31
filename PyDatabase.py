@@ -158,63 +158,77 @@ class ConnMongoDB(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_tb:
-            print('\nSQL Error Type : {}\n'
+            print('\nMongo Error Type : {}\n'
                   '--- Error Value: {}\n'
                   '--- Error is at: {}'.format(exc_type, exc_val, exc_tb))
 
     def col_find_one(self, collection, condition):
         """ if the condition is not just one field"""
         result = self.db[collection].find_one(condition)
-        print(result)
+        if result:
+            print(
+                "Found a document in <{}> matched <>".format(collection, condition))
+            print("  - {}".format(result))
+        else:
+            print(
+                "Found NO document in <{}> matched <>".format(collection, condition))
         return result
 
     def col_find_all(self, collection, condition):
         """ if the condition is not just one field"""
         cursor = self.db[collection].find(condition)
         _l = [doc for doc in cursor]
-        print(_l)
+        if _l:
+            print(
+                "Found {} document(s) in <{}> matched <{}>".format(len(_l), collection, condition))
+            for a in _l:
+                print("  - {}".format(a))
+        else:
+            print(
+                "Found NO document in <{}> matched <{}>".format(collection, condition))
         return _l
 
     def find_by_kv(self, collection, key_field, value):
         """find one document and return a BSON"""
-        result = self.db[collection].find_one({key_field: value})
-        if not result:
-            print('No result in <{}> with {}={}'.format(collection, key_field, value))
-        else:
-            print('Result in <{}> with {}={} is:'.format(collection, key_field, value))
-            print(result)
-        return result
+        _condition = {key_field: value}
+        return self.col_find_one(collection, _condition)
 
     def findall_by_kv(self, collection, key_field, value):
         """find all documents matched the condition, return a list"""
-        cursor = self.db[collection].find({key_field: value})
-        _l = [doc for doc in cursor]
-        if len(_l) == 0:
-            print('No result in <{}> with {}={}'.format(collection, key_field, value))
-        else:
-            print('Results in <{}> with {}={} are:'.format(collection, key_field, value))
-            for a in _l:
-                print(a)
-        return _l
+        _condition = {key_field: value}
+        return self.col_find_all(collection, _condition)
 
-    def insert_to(self, collection, **field_value):
+    def insert_elmt(self, collection, elmt):
+        """elmt has __dict__"""
+        try:
+            self.db[collection].insert(self.modify_field_value(elmt))
+        except mg.errors.DuplicateKeyError as e:
+            print("This document already exists")
+            print(e)
+
+    def update_elmt(self, collection, elmt):
+        """first find, then update or insert"""
+        try:
+            if self.find_by_kv(collection, '_id', elmt.id):
+                print("The document with <'_id'> of {} has been found".format(elmt.id))
+            else:
+                print('A new document will be inserted.')
+            self.db[collection].update({'_id': elmt.__dict__['id']}, self.modify_field_value(elmt), True)
+        except AttributeError as e:
+            print("The elmt <{}> does not have a <'id'> attribute".format(elmt.name or elmt))
+            print(e)
+
+    @staticmethod
+    def modify_field_value(elmt):
+        """change the 'id" to '_id', or should modify all PyElmt?"""
+        field_value = dict()
+        for key, value in elmt.__dict__.items():
+            if value:
+                field_value[key] = value
         try:
             field_value['_id'] = field_value['id']
             print("Document's '_id' is {}".format(field_value['_id']))
             field_value.pop('id')
         except KeyError:
             print("No '_id' field contained, will be assigned automatically")
-        self.db[collection].insert(field_value)
-
-    def insert_attribute(self, collection, elmt):
-        """elmt has __dict__"""
-        _d = {}
-        for key, value in elmt.__dict__.items():
-            if value:
-                _d[key] = value
-        try:
-            self.insert_to(collection, **_d)
-            pass
-        except mg.errors.DuplicateKeyError as e:
-            print(e)
-            print("".format())
+        return field_value
