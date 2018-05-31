@@ -29,54 +29,42 @@ class PyElmt(object):
         self.id = elmt_id
         self.type = elmt_type
         self.name = elmt_name
-        self.mysql = {}
+        self.db = {}
         self.des = None
+        # self.model=None
 
     def openbrim(self, *args, **kwargs):
         """OpenBrIM is geometry model and FEM model"""
-        print(self.name)
+        # new OBOpenBrIM() ?
+        print(self.name, self.type)
         print(args, kwargs)
 
-    def model(self, model_class, *args, **kwargs):
-        """get model: database, fem or geo"""
-        print(self.name)
-        return model_class(*args, **kwargs)
+    def set_database(self, **kwargs):
+        if self.type == 'Sensor':
+            # for now, only Sensor use MySQL
+            self.conn_mysql(**kwargs)
+        else:
+            self.conn_mongo(**kwargs)
 
-    #@TODO 把对象的属性分配称两个dict，分别是fem和geo生成所用
-    @property
-    def model_fem(self):
-        """how to judge which prms are required by the fem_class() ?"""
-        # return self.fem_class(OBFENode(0,0,0), OBFENode(10,10,10), section='LineSection')
-        return self._model_fem
-        #@TODO return self.fem_class(**args_of_fem)
-
-    @model_fem.setter
-    def model_fem(self, femodel):
-        """most cases, unused, should be generated automatically"""
-        self._model_fem = femodel
-
-    @property
-    def model_geo(self):
-        return self.geo_class(OBPoint(0, 0, 0), OBPoint(10, 10, 10), section='LineSection')
-
-    def model_db(self, db_class, *args, **kwargs):
-        """MySQL or NoSQL"""
-        if db_class:
-            print(*args, **kwargs)
-        return dict(id=self.id)
-
-    def mysql_conn(self, **db_config):
+    def conn_mysql(self, **db_config):
         """get db config and connect to db"""
         try:
             for _k in ['user', 'password', 'host', 'port', 'database']:
-                self.mysql[_k] = db_config[_k]
+                self.db[_k] = db_config[_k]
+        except KeyError as e:
+            print('<{}> db_config Missing Key = {}'.format(self.name, e))
+
+    def conn_mongo(self, **db_config):
+        try:
+            for _k in ['host', 'port', 'database']:
+                self.db[_k] = db_config[_k]
         except KeyError as e:
             print('<{}> db_config Missing Key = {}'.format(self.name, e))
 
     def mysql_read(self, id_name, table, *columns, fetch_type='ALL', with_des=False):
         try:
-            with ConnMySQL(**self.mysql) as _db:
-                _db.select(id_name, self.id, self.mysql['database'], table, *columns)
+            with ConnMySQL(**self.db) as _db:
+                _db.select(id_name, self.id, self.db['database'], table, *columns)
                 _result = _db.fetch(fetch_type, with_des)
                 print("SQL result is:\n  {}".format(_result))
                 return _result
@@ -88,7 +76,7 @@ class PyElmt(object):
     def mysql_insert(self, table, *data):
         """first check if exist, then update or insert"""
         try:
-            with ConnMySQL(**self.mysql) as _db:
+            with ConnMySQL(**self.db) as _db:
                 _db.insert(table, *data)
         except TypeError as e:
             print('<{}> Type Error\n  {}'.format(self.name, e))
@@ -98,12 +86,26 @@ class PyElmt(object):
     def mysql_update(self, id_name, table, *data):
         """update the records of the element"""
         try:
-            with ConnMySQL(**self.mysql) as _db:
+            with ConnMySQL(**self.db) as _db:
                 _condition = '{}={}'.format(id_name, self.id)
                 _db.update(table, *data, condition=_condition)
                 return
         except BaseException as e:
             raise e
+
+    def mongo_read(self, collection):
+        try:
+            with ConnMongoDB(**self.db) as _db:
+                _db.find_by_kv(collection, '_id', self.id)
+        except:
+            print('Error when reading from MongoDB')
+
+    def mongo_write(self, collection):
+        try:
+            with ConnMongoDB(**self.db) as _db:
+                _db.insert_elmt(collection, self)
+        except:
+            print('Error when writing into MongoDB')
 
     def relationship(self):
         """read child nodes and parent nodes from database"""
@@ -134,6 +136,7 @@ class PyElmt(object):
             raise e
 
     def description(self, des):
+        """description, attached documents, etc"""
         assert isinstance(des, str)
         self.des = des
 
@@ -143,6 +146,10 @@ class PyAbst(PyElmt):
     def __init__(self, elmt_type, elmt_id, elmt_name):
         """abstract elements, such as material, section, load case"""
         super(PyAbst, self).__init__(elmt_type, elmt_id, elmt_name)
+
+    def model(self):
+        return self.abs_class
+
 
 
 class PyReal(PyElmt):
@@ -157,7 +164,7 @@ class PyReal(PyElmt):
         self.section = None
         self.material = None
         self.dimension = dict()
-        self.position = dict() #@TODO points or coordinates?
+        self.position = dict()
         self.direction = dict()
         self.alpha = 0  # the status index
 
@@ -196,3 +203,18 @@ class PyReal(PyElmt):
             self.section = sec
         else:
             self.mysql_read(self.id, 'table name', 'SectionColumn')
+
+    @property
+    def model_fem(self):
+        """how to judge which prms are required by the fem_class() ?"""
+        # return self.fem_class(OBFENode(0,0,0), OBFENode(10,10,10), section='LineSection')
+        return self._model_fem
+
+    @model_fem.setter
+    def model_fem(self, femodel):
+        """most cases, unused, should be generated automatically"""
+        self._model_fem = femodel
+
+    @property
+    def model_geo(self):
+        return self.geo_class()

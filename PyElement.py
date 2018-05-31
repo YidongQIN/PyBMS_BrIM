@@ -23,16 +23,28 @@ class ProjGroups(OBProject, PyAbst):
 
     def include(self, *members: PyElmt):
         """ add one member to the project"""
-        # @TODO PyAbst and PyReal are different
         for member in members:
+            assert isinstance(member, PyElmt)
+            # PyElmt may be abstract or real
+            abs_dict = {'Parameter': self.prm_group,
+                        'Section': self.sec_group,
+                        'Material': self.mat_group,}
             try:
-                self.fem_group.sub(member.model_fem)
-                self.geo_group.sub(member.model_geo)
-                # self.
+                if member.type in abs_dict:
+                    # abstract elements include Parameter, Section, Material
+                    abs_dict[member.type].sub(member.model)
+                else:
+                    # all other elements are Real, have both fem and geo
+                    self.fem_group.sub(member.model_fem)
+                    self.geo_group.sub(member.model_geo)
             except BaseException as e:
                 print('= = Some error about {} has been ignored'.format(member.name))
                 print(e)
 
+class Parameter(PyAbst):
+
+    def __init__(self, prm_id, prm_name):
+        super(Parameter, self).__init__('Parameter', prm_id, prm_name)
 
 class Material(PyAbst):
 
@@ -41,10 +53,8 @@ class Material(PyAbst):
         super(Material, self).__init__('Material', mat_id, mat_name)
         print(self.name)
 
-    # @property
-    # def name(self):
-    #     # super(Material, self).name(self.mat_name)
-    #     return self.mat_name
+    def mongo_read(self, collection):
+        super(Material, self).mongo_read('Material')
 
 
 class Beam(PyReal):
