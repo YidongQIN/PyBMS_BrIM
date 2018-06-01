@@ -8,6 +8,9 @@ from PyElement import *
 import pymongo as mg
 import pprint
 
+with ConnMongoDB('fours') as mgdb:
+    mgdb.col_find_one('Parameter',{'value':{'$gt':200}})
+    mgdb.findall_by_kv('Parameter','value', {'$gt':300})
 
 
 '''
