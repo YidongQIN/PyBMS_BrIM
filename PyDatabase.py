@@ -17,12 +17,12 @@ import PyOBJ
 
 class ConnMySQL(object):
 
-    def __init__(self, host, database, user, password, port, **kwargs):
-        self.host = host
+    def __init__(self, database, user, password, host, port, **kwargs):
         self.database = database
-        self.port = port
         self.user = user
         self.password = password
+        self.host = host
+        self.port = port
         self.othersetting = kwargs
         # charset = "utf8mb4"
         # self.charset = charset
@@ -33,15 +33,6 @@ class ConnMySQL(object):
         self.conn.autocommit = True
         self.cur = self.conn.cursor(buffered=True)
         return self
-        # try:
-        #     self.conn = mc.connect(host=self.host, port=self.port,
-        #                            user=self.user, password=self.password)
-        #     self.conn.autocommit = True
-        #     # self.conn.set_character_set(self.charset)
-        #     self.cur = self.conn.cursor(buffered=True)
-        # except mc.Error as e:
-        #     print("Mysql Error {:d}: {}".format(e.args[0], e.args[1]))
-        # return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_tb:
@@ -65,11 +56,9 @@ class ConnMySQL(object):
 
     def fetch(self, fetch_type, with_description=False):
         if fetch_type is 'ALL':
-            return self.fetch_all(with_description)
-            # return a list of tuples: [(),(),...]
+            return self.fetch_all(with_description) # return a list of tuples: [(),(),...]
         else:
-            return self.fetch_row(with_description)
-            # return a tuple
+            return self.fetch_row(with_description) # return a tuple
 
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
@@ -81,10 +70,9 @@ class ConnMySQL(object):
 
     def fetch_all(self, with_description=False):
         result = self.cur.fetchall()  # a list of tuples
-        col_name = [i[0] for i in self.cur.description]
-        # cur.description[0] is the column name
-        d = []
+        col_name = [i[0] for i in self.cur.description] #cur.description[0] = column name
         if with_description:
+            d = []
             for oneline in result:
                 d.append(dict((col, res) for col, res in zip(col_name, oneline)))
             return d
@@ -160,9 +148,9 @@ class ConnMongoDB(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_tb:
-            print('\nMongo Error Type : {}\n'
-                  '--- Error Value: {}\n'
-                  '--- Error is at: {}'.format(exc_type, exc_val, exc_tb))
+            print("Mongo Error Type : {}".format(exc_type))
+            print("----- Error Value: {}".format(exc_val))
+            print("----- Error is at: {}".format(exc_tb))
 
     def col_find_one(self, collection, condition):
         """ if the condition is not just one field"""
@@ -180,14 +168,11 @@ class ConnMongoDB(object):
         """ if the condition is not just one field"""
         cursor = self.db[collection].find(condition)
         _l = [doc for doc in cursor]
+        print(
+            "Found {} document(s) in <{}> matched <{}>".format(len(_l), collection, condition))
         if _l:
-            print(
-                "Found {} document(s) in <{}> matched <{}>".format(len(_l), collection, condition))
             for a in _l:
                 print("  - {}".format(a))
-        else:
-            print(
-                "Found NO document in <{}> matched <{}>".format(collection, condition))
         return _l
 
     def find_by_kv(self, collection, key_field, value):
@@ -207,6 +192,7 @@ class ConnMongoDB(object):
         except mg.errors.DuplicateKeyError as e:
             print("This document already exists")
             print(e)
+            raise e
 
     def update_elmt(self, collection, elmt):
         """first find, then update or insert"""

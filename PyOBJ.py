@@ -40,26 +40,22 @@ class PyElmt(object):
         print(args, kwargs)
 
     def set_database(self, **kwargs):
-        if self.type == 'Sensor':
-            # for now, only Sensor use MySQL
-            self.conn_mysql(**kwargs)
-        else:
-            self.conn_mongo(**kwargs)
+        try:
+            if self.type == 'Sensor':
+                # for now, only Sensor use MySQL
+                self.conn_mysql(**kwargs)
+            else:
+                self.conn_mongo(**kwargs)
+        except KeyError as e:
+            print('Missing setting for db')
 
-    def conn_mysql(self, **db_config):
+    def conn_mysql(self, database, user, password, host='localhost', port=3306):
         """get db config and connect to db"""
-        try:
-            for _k in ['user', 'password', 'host', 'port', 'database']:
-                self.db[_k] = db_config[_k]
-        except KeyError as e:
-            print('<{}> db_config Missing Key = {}'.format(self.name, e))
+        self.db = {'user': user, 'password': password, 'database': database,
+                   'host': host, 'port': port}
 
-    def conn_mongo(self, **db_config):
-        try:
-            for _k in ['host', 'port', 'database']:
-                self.db[_k] = db_config[_k]
-        except KeyError as e:
-            print('<{}> db_config Missing Key = {}'.format(self.name, e))
+    def conn_mongo(self, database, host='localhost', port=27017):
+        self.db = {'host': host, 'port': port, 'database': database}
 
     def mysql_read(self, id_name, table, *columns, fetch_type='ALL', with_des=False):
         try:
@@ -97,19 +93,18 @@ class PyElmt(object):
         try:
             with ConnMongoDB(**self.db) as _db:
                 _db.find_by_kv(collection, '_id', self.id)
-        except:
+        except BaseException as e:
             print('Error when reading from MongoDB')
+            raise e
 
     def mongo_write(self, collection):
+        """find, then insert or update"""
         try:
             with ConnMongoDB(**self.db) as _db:
                 _db.insert_elmt(collection, self)
-        except:
+        except BaseException as e:
             print('Error when writing into MongoDB')
-
-    def relationship(self):
-        """read child nodes and parent nodes from database"""
-        pass
+            raise e
 
     @property
     def geo_class(self):
@@ -151,7 +146,6 @@ class PyAbst(PyElmt):
         return self.abs_class
 
 
-
 class PyReal(PyElmt):
     """PyReal is used to represent real members of bridges.
     it contains parameters of the element, by init() or reading database.
@@ -167,6 +161,7 @@ class PyReal(PyElmt):
         self.position = dict()
         self.direction = dict()
         self.alpha = 0  # the status index
+        self._model_fem = None
 
     def init_by_db(self):
         pass
@@ -218,3 +213,9 @@ class PyReal(PyElmt):
     @property
     def model_geo(self):
         return self.geo_class()
+
+
+class ModelType(object):
+
+    def __init__(self, type_name):
+        print(type_name)
