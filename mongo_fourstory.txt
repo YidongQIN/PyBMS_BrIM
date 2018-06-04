@@ -59,7 +59,7 @@ db.Section.insert([
         shapes:{
             shape_name:"rectangle",
             type:"rectangle",
-            width:"", //@TODO
+            width:"",
             length:""
         }
     }
