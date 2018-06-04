@@ -51,12 +51,12 @@ The OpenBrIM is only treated as an interface of the model, not the root of all w
 The whole class hierarchy for PyBrIM will be:
 
 ```
-PyOBJ
+ABrIMELMT
     +-- PyElmt
         +-- PyDesign/Construct
         +-- PySensor
         +-- PyInspect
-    +-- PyXML
+    +-- PyXML = PyOBPack
         +-- PyOpenBrIM
     +-- PyDatabase
         +-- PyMongo

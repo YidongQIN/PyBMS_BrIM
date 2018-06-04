@@ -7,7 +7,7 @@ __author__ = 'Yidong QIN'
 Python Elements for BrIM. 
 """
 
-from PyOBJ import *
+from ABrIMELMT import *
 
 
 class ProjGroups(OBProject, PyAbst):

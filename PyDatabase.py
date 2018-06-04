@@ -12,7 +12,7 @@ not only MySQL, but also NoSQL later.
 import mysql.connector as mc
 import pymongo as mg
 
-import PyOBJ
+import ABrIMELMT
 
 
 class ConnMySQL(object):
@@ -209,7 +209,7 @@ class ConnMongoDB(object):
     @staticmethod
     def modify_field_value(elmt):
         """change the 'id" to '_id', or should modify all PyElmt?"""
-        assert isinstance(elmt, PyOBJ.PyElmt)
+        assert isinstance(elmt, ABrIMELMT.PyElmt)
         field_value = dict()
         for key, value in elmt.__dict__.items():
             if value:
