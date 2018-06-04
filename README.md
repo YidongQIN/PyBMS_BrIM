@@ -42,6 +42,26 @@ Question: class Sensor(object) or class Sensor(ObjElmt)?
 ObjElmt, as a new type of ParamML OBJECT, that is like <O T='Sensor' .../>
 Because i want to write new OpenBrIM schema for BrIM.
 
+### version 5
+
+The structure of all code has been changed.
+
+The OpenBrIM is only treated as an interface of the model, not the root of all works.
+
+The whole class hierarchy for PyBrIM will be:
+
+```
+PyOBJ
+    +-- PyElmt
+        +-- PyDesign/Construct
+        +-- PySensor
+        +-- PyInspect
+    +-- PyXML
+        +-- PyOpenBrIM
+    +-- PyDatabase
+        +-- PyMongo
+        +-- PyMySQL
+```
 
 ## PROGRESS HISTORY
 
@@ -74,6 +94,12 @@ basically complete the framework of class Sensor.
 More test maybe.
 Also start to package the RealObjects to Python class. Each RealObject will have both geomodel and femodel.
 
+### May, 2018
+
+Introduce the MongoDB for structure and non-structure members as its schema-free character.
+
+Each element in the bridge, like a beam or a deck, will have different attributes.
+
 ## IDEAS FOR NEXT
 
 use PyOpenBrIM v2 (that is ClassPyOpenBrIM) to generate the xml file for MARC bridge and see what can be further developed.
@@ -95,9 +121,8 @@ use PyOpenBrIM v2 (that is ClassPyOpenBrIM) to generate the xml file for MARC br
 
 ## UN-DONE
 
-1. more templates, for project, units, sections, materials.
-2. uniform the variable name of different classes and methods.
-    For example, 'attributes', 'attribute_dict' and 'attrib_dict'.
+1. attributes of elements, like position, dimension, db_config, etc.
+2. how to generate model of the elements? as attribute or use @property?
 3. Method to draw the section.
 
 ## TIPS
