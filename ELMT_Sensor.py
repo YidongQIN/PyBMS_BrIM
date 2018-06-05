@@ -7,26 +7,25 @@ Sensors definition in OpenBrIM
 import matplotlib.pyplot as plt
 import numpy as np
 
-from PyPackOB import *
-from PyDatabase import *
+from BrDatabase import *
+from BrXML import *
 
 
 class Sensor(OBObjElmt):
     # base_node: FENode
-
 
     def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):
         super(Sensor, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type
         self.name = '{}_{}'.format(sensor_type, sensor_id)
-        dbconfig = dict(database_config)
+        _dbconfig = dict(database_config)
         try:
-            self.datpath = dbconfig.pop('path')
+            self.datpath = _dbconfig.pop('path')
             # fileName is from the Server Setting JSON
         except KeyError:
             print('For the sensor <{}>,a "path" item is required in the config dictionary'.format(self.name))
-        self.dbconfig = dbconfig  # user, passwd, host, database, port
+        self.dbconfig = _dbconfig  # user, passwd, host, database, port
         self.x, self.y, self.z, self.dx, self.dy, self.dz = self.get_install()
         self.width, self.length, self.thick = self.get_dimension()
         self.unitid, self.channel = self.get_unit_info()
@@ -72,7 +71,6 @@ class Sensor(OBObjElmt):
     def get_channel_setting(self):
         # return self.read_db_one()
         pass
-
 
     def geom(self):
         """ OpenBrIM geometry model"""

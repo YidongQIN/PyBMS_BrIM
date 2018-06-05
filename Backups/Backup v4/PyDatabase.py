@@ -4,7 +4,7 @@
 __author__ = 'Yidong QIN'
 
 """
-BrIM should use database to store the information of elements, 
+BrIM should use database to store the information of elements,
 structural members or non-structural members, such as sensor, etc.
 not only MySQL, but also NoSQL later.
 """
@@ -12,7 +12,7 @@ not only MySQL, but also NoSQL later.
 import mysql.connector as mc
 import pymongo as mg
 
-import ABrIMELMT
+import PyOBJ
 
 
 class ConnMySQL(object):

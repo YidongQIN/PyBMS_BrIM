@@ -4,10 +4,6 @@
 __author__ = 'Yidong QIN'
 
 '''
-Templates for OpenBrIM, including geometry models and FEM models, 
-Basic flow: PyOpenBrIM ->PyObjects -> PyElmt
-as OpenBrIM is still complex for directly used
-of course, PyElmt can use PyOB, PyObj just pack some of the classes.
 
 '''
 
@@ -158,7 +154,7 @@ class StraightBeamFEM(OBObjElmt):
 
 
 def direction_cos(x, y, z) -> tuple:
-    square_root = math.sqrt(x**2 + y**2 + z**2)
+    square_root = math.sqrt(x ** 2 + y ** 2 + z ** 2)
     # cos_x = x / square_root
     # cos_y = y / square_root
     # cos_z = z / square_root

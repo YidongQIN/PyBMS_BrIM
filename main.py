@@ -1,9 +1,9 @@
 
 from PyOpenBrIM import *
-from PyPackOB import *
-from PySensor import *
-from PyDatabase import *
-from PyElement import *
+from BrXML import *
+from ELMT_Sensor import *
+from BrDatabase import *
+from ELMT_Design import *
 
 import pymongo as mg
 import pprint

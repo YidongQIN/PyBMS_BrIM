@@ -4,23 +4,10 @@
 __author__ = 'Yidong QIN'
 
 """
-This is the most important part of my BMS based on BIM.
-
-It is the bridge between the Modelling and the codes.
-PyOBJ inherits from PyOB->PyPackOB and PyDB, as well as other software like PySAP2K in the future.
-and then is used for PyElement, PySensor or PyInspection.
-
-PyOpenBrIM->PyPackOB  PyDatabase  Py_other_interface...
-\__________________________________________/
-                     |
-                   *PyOBJ*
-                     |
-/------------------------------------------\ 
-PyElement   PySensor  PyInspection  Py...
 """
 
-from PyDatabase import *
-from PyPackOB import *
+from BrDatabase import *
+from BrXML import *
 
 
 class PyElmt(object):
