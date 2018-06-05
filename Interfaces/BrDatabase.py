@@ -1,12 +1,13 @@
-#!/usr/bin/env python3
+# usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 __author__ = 'Yidong QIN'
 
 """
-BrIM should use database to store the information of elements, 
-structural members or non-structural members, such as sensor, etc.
-not only MySQL, but also NoSQL later.
+BrIM use database to store the information of elements.
+structural members, like beams, columns, are stored in NoSQL
+and non-structural members, such as sensor, etc.
+
 """
 
 import mysql.connector as mc
@@ -207,6 +208,7 @@ class ConnMongoDB(object):
     @staticmethod
     def modify_field_value(elmt):
         """change the 'id" to '_id', or should modify all PyElmt?"""
+        from BMS_BrIM import ABrIMELMT
         assert isinstance(elmt, ABrIMELMT.PyElmt)
         field_value = dict()
         for key, value in elmt.__dict__.items():

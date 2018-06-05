@@ -29,6 +29,7 @@ class Sensor(OBObjElmt):
         self.width, self.length, self.thick = self.get_dimension()
         self.unitid, self.channel = self.get_unit_info()
         self.datpath = self.get_backup_filename()
+        self.base_node = None
 
     def read_db_one(self, tbname, *col_names):
         db = ConnMySQL(**self.dbconfig)

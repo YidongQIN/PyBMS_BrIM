@@ -744,12 +744,14 @@ class OBFELine(OBObjElmt):
         self.prm_refer(node, 'Node2')
         self.n2 = node
 
+
 class OBText3D(OBObjElmt):
-    def __init__(self,text,x,y,z,size=5):
+    def __init__(self, text, x, y, z, size=5):
         super(OBText3D, self).__init__('Text3D', '', Label=text, FontSize=str(size))
         self.sub(OBPoint(x, y, z))
         self.sub(OBPoint(x + 5, y, z))
         self.sub(OBPoint(x, y, z + 5))
+
 
 class OBFESurface(OBObjElmt):
 

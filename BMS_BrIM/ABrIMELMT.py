@@ -35,6 +35,7 @@ class PyElmt(object):
                 self.conn_mongo(**kwargs)
         except KeyError as e:
             print('Missing setting for db')
+            print(e)
 
     def conn_mysql(self, database, user, password, host='localhost', port=3306):
         """get db config and connect to db"""

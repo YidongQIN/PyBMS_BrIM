@@ -28,23 +28,25 @@ class ProjGroups(OBProject, PyAbst):
             # PyElmt may be abstract or real
             abs_dict = {'Parameter': self.prm_group,
                         'Section': self.sec_group,
-                        'Material': self.mat_group,}
+                        'Material': self.mat_group, }
             try:
                 if member.type in abs_dict:
                     # abstract elements include Parameter, Section, Material
-                    abs_dict[member.type].sub(member.model)
+                    abs_dict[member.type].sub(member)
                 else:
                     # all other elements are Real, have both fem and geo
-                    self.fem_group.sub(member.model_fem)
-                    self.geo_group.sub(member.model_geo)
+                    self.fem_group.sub(member)
+                    self.geo_group.sub(member)
             except BaseException as e:
                 print('= = Some error about {} has been ignored'.format(member.name))
                 print(e)
+
 
 class Parameter(PyAbst):
 
     def __init__(self, prm_id, prm_name):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
+
 
 class Material(PyAbst):
 
