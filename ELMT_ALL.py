@@ -22,18 +22,19 @@ from ELMT_Design import *
 from ELMT_Inspect import *
 from ELMT_Sensor import *
 
-print("Now using ELMT_ALL.py, all available classes are:")
-available = dir()
-to_del = []
-for i in available:
-    if i[0] == '_':
-        to_del.append(i)
-for d in to_del:
-    available.remove(d)
-print(available)
+
 
 if __name__ == '__main__':
     project = ProjGroups
     inspect = Inspection
     sensor = Sensor
+    print("Now using ELMT_ALL.py, all available classes are:")
+    available = dir()
+    to_del = []
+    for i in available:
+        if i[0] == '_':
+            to_del.append(i)
+    for d in to_del:
+        available.remove(d)
+    print(available)
     print('======')
