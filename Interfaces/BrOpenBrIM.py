@@ -317,7 +317,7 @@ class OBPrmElmt(PyOpenBrIMElmt):
     def __init__(self, par_name, value, des='', role='', par_type='', ut='', uc=''):
         """create a new PARAMETER in OpenBrIM ParamML. \n
         Mandatory: name, value.\n
-        D-> des is description of the parameter.\n
+        D-> des is describe of the parameter.\n
         par_type is the Type of parameter, such as Material. """
         if par_name:
             super(OBPrmElmt, self).__init__('P', par_name, V=str(value), D=des, UT=ut, UC=uc, Role=role, T=par_type)

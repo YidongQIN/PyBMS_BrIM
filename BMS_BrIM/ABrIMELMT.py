@@ -15,34 +15,32 @@ class PyElmt(object):
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         self.id = elmt_id
         self.type = elmt_type
-        self.name = elmt_name
-        self.db = {}
-        self.des = None
-        # self.model=None
+        if elmt_name:
+            self.name = elmt_name
+        else:
+            self.name = elmt_type + '_' + str(elmt_id)
+        self.db: dict = None
+        self.node: (OBObjElmt, OBPrmElmt) = None
+        self.des: str = None
 
-    def openbrim(self, *args, **kwargs):
-        """OpenBrIM is geometry model and FEM model"""
-        # new OBOpenBrIM() ?
-        print(self.name, self.type)
-        print(args, kwargs)
-
-    def set_database(self, **kwargs):
+    def set_database(self, **db_config):
         try:
             if self.type == 'Sensor':
                 # for now, only Sensor use MySQL
-                self.conn_mysql(**kwargs)
+                self._conn_mysql(**db_config)
             else:
-                self.conn_mongo(**kwargs)
+                self._conn_mongo(**db_config)
         except KeyError as e:
             print('Missing setting for db')
             print(e)
 
-    def conn_mysql(self, database, user, password, host='localhost', port=3306):
-        """get db config and connect to db"""
+    def _conn_mysql(self, database, user, password, host='localhost', port=3306):
+        """get db config and connect to MySQL"""
         self.db = {'user': user, 'password': password, 'database': database,
                    'host': host, 'port': port}
 
-    def conn_mongo(self, database, host='localhost', port=27017):
+    def _conn_mongo(self, database, host='localhost', port=27017):
+        """get db config and connect to MongoDB"""
         self.db = {'host': host, 'port': port, 'database': database}
 
     def mysql_read(self, id_name, table, *columns, fetch_type='ALL', with_des=False):
@@ -56,6 +54,12 @@ class PyElmt(object):
             print('<{}> Type Error\n  {}'.format(self.name, e))
         except BaseException as e:
             print('<{}> Error\n  {}'.format(self.name, e))
+
+    def mysql_write(self, id_name, table, *data):
+        if self.mysql_read(id_name, table):
+            self.mysql_update(id_name, table, *data)
+        else:
+            self.mysql_insert(table, *data)
 
     def mysql_insert(self, table, *data):
         """first check if exist, then update or insert"""
@@ -118,15 +122,15 @@ class PyElmt(object):
         except BaseException as e:
             raise e
 
-    def description(self, des):
-        """description, attached documents, etc"""
+    def describe(self, des):
+        """describe, attached documents, etc"""
         assert isinstance(des, str)
         self.des = des
 
 
 class PyAbst(PyElmt):
 
-    def __init__(self, elmt_type, elmt_id, elmt_name):
+    def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(PyAbst, self).__init__(elmt_type, elmt_id, elmt_name)
 
@@ -140,7 +144,7 @@ class PyReal(PyElmt):
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
 
-    def __init__(self, elmt_type, elmt_id, elmt_name):
+    def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
         super(PyReal, self).__init__(elmt_type, elmt_id, elmt_name)
         self.section = None
@@ -201,9 +205,3 @@ class PyReal(PyElmt):
     @property
     def model_geo(self):
         return self.geo_class()
-
-
-class ModelType(object):
-
-    def __init__(self, type_name):
-        print(type_name)

@@ -47,6 +47,7 @@ class ConnMySQL(object):
             print("Mysql Error {:d}: {}".format(e.args[0], e.args[1]))
 
     def query(self, sql):
+        print("Executing SQL script:\n  '{}'".format(sql))
         try:
             n = self.cur.execute(sql)
             return n
@@ -62,14 +63,14 @@ class ConnMySQL(object):
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
         if with_description:
-            col_name = [i[0] for i in self.cur.description]
+            col_name = [i[0] for i in self.cur.describe]
             return dict((col, res) for col, res in zip(col_name, result))
         else:
             return result
 
     def fetch_all(self, with_description=False):
         result = self.cur.fetchall()  # a list of tuples
-        col_name = [i[0] for i in self.cur.description]  # cur.description[0] = column name
+        col_name = [i[0] for i in self.cur.describe]  # cur.describe[0] = column name
         if with_description:
             d = []
             for oneline in result:
@@ -77,6 +78,13 @@ class ConnMySQL(object):
             return d
         else:
             return result
+
+    def have_a_look(self, db_name, table_name):
+        _sql = 'select * from {}.{} '.format(db_name, table_name)
+        self.query(_sql)
+        _result = self.fetch_all()
+        for row in _result:
+            print(row)
 
     def select(self, id_name, key_id, db_name, table_name, *col_name):
         _sql = 'select {} from {}.{} where {}={}' \
@@ -134,10 +142,10 @@ class ConnMySQL(object):
 
 class ConnMongoDB(object):
 
-    def __init__(self, database_name, host='localhost', port=27017):
+    def __init__(self, database, host='localhost', port=27017):
         self.host = host
         self.port = port
-        self.db_name = database_name
+        self.db_name = database
         self.client = mg.MongoClient(self.host, self.port)
         self.db = self.client[self.db_name]
         print("Collections of database <{}> are:\n\t{}".format(self.db_name, self.db.collection_names(False)))
@@ -184,6 +192,12 @@ class ConnMongoDB(object):
         _condition = {key_field: value}
         return self.col_find_all(collection, _condition)
 
+    def have_a_look(self, collection):
+        print("All documents in <{}> are:".format(collection))
+        cursor =self.db[collection].find()
+        for i in cursor:
+            print('  - '+str(i))
+
     def insert_elmt(self, collection, elmt):
         """elmt has __dict__"""
         try:
@@ -191,7 +205,7 @@ class ConnMongoDB(object):
         except mg.errors.DuplicateKeyError as e:
             print("This document already exists")
             print(e)
-            raise e
+            raise
 
     def update_elmt(self, collection, elmt):
         """first find, then update or insert"""
@@ -204,6 +218,18 @@ class ConnMongoDB(object):
         except AttributeError as e:
             print("The elmt <{}> does not have a <'id'> attribute".format(elmt.name or elmt))
             print(e)
+            raise
+
+    def delete_elmt(self, collection, elmt):
+        try:
+            if self.find_by_kv(collection, '_id', elmt.id):
+                self.db[collection].delete_one({'_id': elmt.id})
+                print('Successfully Delete the element whose id={}'.format(elmt.id))
+            else:
+                print('Cannot find such a document in Collection <{}> with id={}'.format(collection, elmt.id))
+        except:
+            print('Deleting element <{}> error'.format(elmt))
+            raise
 
     @staticmethod
     def modify_field_value(elmt):

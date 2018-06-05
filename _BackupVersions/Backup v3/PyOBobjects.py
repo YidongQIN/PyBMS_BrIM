@@ -178,14 +178,14 @@ class ConnMySQL(object):
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
         if with_description:
-            col_name = [i[0] for i in self.cur.description]
+            col_name = [i[0] for i in self.cur.describe]
             return col_name, result
         else:
             return result
 
     def fetch_all(self):
         result = self.cur.fetchall()
-        desc = self.cur.description
+        desc = self.cur.describe
         d = []
         for inv in result:
             _d = {}

@@ -131,7 +131,7 @@ class PyElmt(object):
             raise e
 
     def description(self, des):
-        """description, attached documents, etc"""
+        """describe, attached documents, etc"""
         assert isinstance(des, str)
         self.des = des
 

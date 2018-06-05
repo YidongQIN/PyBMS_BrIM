@@ -209,7 +209,7 @@ class Experiment(object):
 
     def get_bridge_info(self):
         db = ConnMySQL(**self.dbconfig)
-        sql = "select name, description, material, structuralType from bridge_test.bridge where bridgeId ={}".format(
+        sql = "select name, describe, material, structuralType from bridge_test.bridge where bridgeId ={}".format(
             self.bridgeid)
         db.query(sql)
         info = db.fetch_row()

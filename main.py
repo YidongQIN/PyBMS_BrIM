@@ -1,18 +1,12 @@
 from BMS_BrIM import *
 
-with ConnMongoDB('fours') as mgdb:
-    mgdb.col_find_one('Parameter', {'value': 4})
-    mgdb.findall_by_kv('Parameter', 'value', {'$gt': 200})
+test=PyElmt('OOne', 2)
+
 
 # print(dir())
 
 '''
 
-point1=OBPoint(0,1,2,'PPP')
-point1.id=25
-beamId=4
-beam1 = Beam(beamId, 'BBB')
-beam1.set_dimension(length=10, width=15, thick=3)
 beam1.set_points(1,1,1,20,20,20)
 print(beam1.__dict__)
 print(point1.__dict__)
@@ -25,8 +19,10 @@ with ConnMongoDB('fours') as mgdb:
     mgdb.find_by_kv('Member','_id', beamId)
     mgdb.update_elmt('Member',point1)
     mgdb.findall_by_kv('Member','name','PPP')
-    
-    
+    mgdb.delete_elmt('Member',point1)
+    mgdb.have_a_look('Member')
+
+
 database='bridge_test',
 
 config = dict(user='root', password='qyd123', host='127.0.0.1',
@@ -44,7 +40,7 @@ with ConnMySQL(**config) as testconn:
     testconn.query('select * from bridge_test.sensor')
     print(testconn.fetch_row())
     print(testconn.backup_path)
-    
+
 ShowTree(proj)
 proj.save_project()
 config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port = 3306)

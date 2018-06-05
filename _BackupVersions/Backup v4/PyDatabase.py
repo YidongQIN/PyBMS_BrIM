@@ -63,14 +63,14 @@ class ConnMySQL(object):
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
         if with_description:
-            col_name = [i[0] for i in self.cur.description]
+            col_name = [i[0] for i in self.cur.describe]
             return dict((col, res) for col, res in zip(col_name, result))
         else:
             return result
 
     def fetch_all(self, with_description=False):
         result = self.cur.fetchall()  # a list of tuples
-        col_name = [i[0] for i in self.cur.description] #cur.description[0] = column name
+        col_name = [i[0] for i in self.cur.describe] #cur.describe[0] = column name
         if with_description:
             d = []
             for oneline in result:
