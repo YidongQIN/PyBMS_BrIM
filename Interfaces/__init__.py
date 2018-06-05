@@ -7,3 +7,4 @@ __author__ = 'Yidong QIN'
 
 """
 if __name__ == '__main__':
+    print(dir())
