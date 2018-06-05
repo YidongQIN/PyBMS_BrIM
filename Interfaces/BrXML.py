@@ -9,7 +9,7 @@ __author__ = 'Yidong QIN'
 
 import math
 
-from BMS_BrIM.PyOpenBrIM import *
+from Interfaces.BrOpenBrIM import *
 
 
 class CubeGeo(OBObjElmt):

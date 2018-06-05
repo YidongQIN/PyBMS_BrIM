@@ -7,8 +7,7 @@ Sensors definition in OpenBrIM
 import matplotlib.pyplot as plt
 import numpy as np
 
-from BMS_BrIM.BrDatabase import *
-from BMS_BrIM.BrXML import *
+from BMS_BrIM.ABrIMELMT import *
 
 
 class Sensor(OBObjElmt):
@@ -46,7 +45,7 @@ class Sensor(OBObjElmt):
 
     def plot_dat(self):
         print('Dat backup file of <{}> is {}'.format(self.name, self.datpath))
-        DatProc('Sensor data of {}'.format(self.name), self.datpath)
+        DatProc('Sensor _data of {}'.format(self.name), self.datpath)
 
     def get_install(self):
         return self.read_db_one('sensorchannelinstallation',
@@ -200,7 +199,7 @@ class NetworkUnit(object):
 
 
 class Experiment(object):
-    """specify a Experiment by recording task, procedure, data, etc"""
+    """specify a Experiment by recording task, procedure, _data, etc"""
 
     def __init__(self, exptid, bridgeid, dbconfig):
         """shown as Text3D"""
@@ -242,7 +241,7 @@ class Experiment(object):
 
 
 class DatProc(object):
-    """Get and process of sensor data"""
+    """Get and process of sensor _data"""
 
     def __init__(self, title, file_path):
         """Get .dat file in a particular path"""

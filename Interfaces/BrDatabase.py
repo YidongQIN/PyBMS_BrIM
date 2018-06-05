@@ -12,8 +12,6 @@ not only MySQL, but also NoSQL later.
 import mysql.connector as mc
 import pymongo as mg
 
-import BMS_BrIM.ABrIMELMT
-
 
 class ConnMySQL(object):
 
@@ -56,9 +54,9 @@ class ConnMySQL(object):
 
     def fetch(self, fetch_type, with_description=False):
         if fetch_type is 'ALL':
-            return self.fetch_all(with_description) # return a list of tuples: [(),(),...]
+            return self.fetch_all(with_description)  # return a list of tuples: [(),(),...]
         else:
-            return self.fetch_row(with_description) # return a tuple
+            return self.fetch_row(with_description)  # return a tuple
 
     def fetch_row(self, with_description=False):
         result = self.cur.fetchone()
@@ -70,7 +68,7 @@ class ConnMySQL(object):
 
     def fetch_all(self, with_description=False):
         result = self.cur.fetchall()  # a list of tuples
-        col_name = [i[0] for i in self.cur.description] #cur.description[0] = column name
+        col_name = [i[0] for i in self.cur.description]  # cur.description[0] = column name
         if with_description:
             d = []
             for oneline in result:

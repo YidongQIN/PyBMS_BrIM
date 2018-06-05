@@ -8,7 +8,7 @@ __author__ = 'Yidong QIN'
 Bridge inspection information
 """
 
-from BMS_BrIM.BrXML import *
+from BMS_BrIM.ABrIMELMT import *
 
 class Inspection(object):
     def __init__(self):

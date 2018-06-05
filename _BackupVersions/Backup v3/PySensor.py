@@ -44,7 +44,7 @@ class Sensor(OBObjElmt):
 
     def plot_dat(self):
         print('Dat file path of <{}> is {}'.format(self.name, self.datpath))
-        DatProc('Sensor data of {}'.format(self.name), self.datpath)
+        DatProc('Sensor _data of {}'.format(self.name), self.datpath)
 
     def get_install(self):
         return self.read_database('sensorchannelinstallation', 'PositionX',

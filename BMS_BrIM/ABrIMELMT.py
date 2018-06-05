@@ -6,8 +6,8 @@ __author__ = 'Yidong QIN'
 """
 """
 
-from BMS_BrIM.BrDatabase import *
-from BMS_BrIM.BrXML import *
+from Interfaces.BrDatabase import *
+from Interfaces.BrXML import *
 
 
 class PyElmt(object):
