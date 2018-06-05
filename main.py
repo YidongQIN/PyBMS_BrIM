@@ -1,17 +1,10 @@
-
-from PyOpenBrIM import *
-from BrXML import *
-from ELMT_Sensor import *
-from BrDatabase import *
-from ELMT_Design import *
-
-import pymongo as mg
-import pprint
+from ELMT_ALL import *
 
 with ConnMongoDB('fours') as mgdb:
-    mgdb.col_find_one('Parameter',{'value':4})
-    mgdb.findall_by_kv('Parameter','value', {'$gt':200})
+    mgdb.col_find_one('Parameter', {'value': 4})
+    mgdb.findall_by_kv('Parameter', 'value', {'$gt': 200})
 
+# print(dir())
 
 '''
 
@@ -185,4 +178,3 @@ print(type(xx.value))
 print(xx.value)
 
 '''''
-
