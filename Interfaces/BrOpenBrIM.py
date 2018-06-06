@@ -602,10 +602,6 @@ class OBPoint(OBObjElmt):
         self.z = z
         # self.check_num()
 
-    def as_node(self):
-        #TODO every feo class have a method of as_fem()
-        pass
-
     def check_num(self):
         """typically the coordinates should be numbers.
         But parameters are allowed, and in that case the values are strings"""
