@@ -23,14 +23,15 @@ class ConnMySQL(object):
         self.host = host
         self.port = port
         self.othersetting = kwargs
-        # charset = "utf8mb4"
-        # self.charset = charset
-
-    def __enter__(self):
         self.conn = mc.connect(host=self.host, port=self.port,
                                user=self.user, password=self.password)
         self.conn.autocommit = True
         self.cur = self.conn.cursor(buffered=True)
+        # charset = "utf8mb4"
+        # self.charset = charset
+
+    def __enter__(self):
+
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

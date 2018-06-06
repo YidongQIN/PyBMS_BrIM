@@ -107,9 +107,9 @@ class Temperature(Sensor):
                        thick_par=1,
                        material_obj='Sensor_Temperature',
                        surface_name=self.name)
-        tp.add_attr(Color='#DC143C')
+        tp.set_attrib(Color='#DC143C')
         tp.move_to(self.x, self.y, self.z)
-        tp.rotate(self.dx, self.dy, self.dz)
+        tp.rotate_angle(self.dx, self.dy, self.dz)
         return tp
 
     def fem(self):
@@ -129,9 +129,9 @@ class StrainGauge(Sensor):
                        thick_par=1,
                        material_obj='Sensor_StrainGauge',
                        surface_name=self.name)
-        ss.add_attr(Color='#DC143C')
+        ss.set_attrib(Color='#DC143C')
         ss.move_to(self.x, self.y, self.z)
-        ss.rotate(self.dx, self.dy, self.dz)
+        ss.rotate_angle(self.dx, self.dy, self.dz)
         return ss
 
 
@@ -144,9 +144,9 @@ class Accelerometer(Sensor):
     def geom(self):
         super(Accelerometer, self).geom()
         ac = CubeGeo(self.width, self.length, self.thick)
-        ac.add_attr(Color='#DC143C')
+        ac.set_attrib(Color='#DC143C')
         ac.move_to(self.x, self.y, self.z)
-        ac.rotate(self.dx, self.dy, self.dz)
+        ac.rotate_angle(self.dx, self.dy, self.dz)
         return ac
 
 
@@ -163,9 +163,9 @@ class Displacement(Sensor):
         box = CubeGeo(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = OBGroup(self.name, line, box)
-        ds.add_attr(Color='#DC143C')
+        ds.set_attrib(Color='#DC143C')
         ds.move_to(self.x, self.y, self.z)
-        ds.rotate(self.dx, self.dy, self.dz)
+        ds.rotate_angle(self.dx, self.dy, self.dz)
         return ds
 
 

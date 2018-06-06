@@ -86,7 +86,7 @@ if __name__ == '__main__':
     sec_ver.attach_to(group_sections)
     # 2.2.4 web
     circle = OBObjElmt('Circle')
-    circle.param("Radius", "WebRadius")
+    circle.new_parameter("Radius", "WebRadius")
     sp_cir = OBShape('Shape_WebCircle', circle)
     sec_web = OBSection('Section_Web', girder_steel, sp_cir)
     sec_web.attach_to(group_sections)

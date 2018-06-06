@@ -110,7 +110,7 @@ class PlateFEM(OBObjElmt):
 
     # def link_node(self, node: FENode):
     # """FESurface 不能接收多余4个FENode"""
-    #     self.model.prm_refer(node)
+    #     self.model.refer_elmt(node)
 
 
 class StraightBeamGeo(OBObjElmt):

@@ -1,14 +1,25 @@
 from BMS_BrIM import *
 import math
 
-a=0
-print(math.acos(a))
 
-# test=PyOpenBrIMElmt('O','test name', a=666, b='madan')
-# newproj = PyOpenBrIMElmt("O",'new proj')
-# new_node = PyOpenBrIMElmt('O', 'new node1', D='~ TEST ~ ', UC='test')
-# new_node2 = PyOpenBrIMElmt('O', 'new_node2', D='~ ~ TEST ~ ~')
-# new_par = PyOpenBrIMElmt('P', '666', par_type='p_tag')
+
+test=PyOpenBrIMElmt('O','test name', a=666, b='madan')
+newproj = PyOpenBrIMElmt("O",'new proj')
+new_node = PyOpenBrIMElmt('O', 'new node1', D='~ TEST ~ ', UC='test')
+new_node2 = PyOpenBrIMElmt('O', 'new_node2', D='~ ~ TEST ~ ~')
+new_par = PyOpenBrIMElmt('P', '666', par_type='p_tag')
+pp = OBPrmElmt('  v ',100)
+pp2 = OBPrmElmt(' a ','10.0')
+pp.show_info()
+pp2.show_info()
+
+mat1=OBMaterial('C4000Psi','Deck Concrete','Concrete')
+mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
+mat1.show_mat_table()
+
+
+
+# pp.attach_to(new_node)
 # new_node.attach_to(newproj)
 # new_node2.attach_to(newproj)
 # newproj.attach_to(test)
@@ -88,8 +99,7 @@ print('config: '+str(di.db))
 test = BoltedPlate('Plate 0', 5, 50, 50, 6, 8, 8, 4, 4).as_prmodel()
 test.attach_to(proj)
 proj.save_project()
-mat1=Material('C4000Psi','Deck Concrete','Concrete')
-mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
+
 th = PrmElmt('thick',123,par_type='Thick')
 
 point=[]
@@ -145,7 +155,7 @@ ShowTree(newproj)
 # print('---search test---')
 # newproj.findall_by_xpath('.//','Y')
 # print('---find all sub by key&value test----')
-# results=newproj.findall_by_attribute(N='test param')
+# results=newproj.findall_by_attribute(N='test new_parameter')
 # print(results)
 # print(newproj.verify_attributes(T='Project'))
 # ResultsTable(results)

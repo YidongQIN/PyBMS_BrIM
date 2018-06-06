@@ -126,7 +126,7 @@ unit1=Unit('first unit')
 ShowTable(unit1)
 mat1=Material('C4000Psi','Deck Concrete','Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
-# mat1.show_mat()
+# mat1.show_mat_table()
 
 
 
@@ -175,7 +175,7 @@ ShowTree(newproj)
 # print('---search test---')
 # newproj.findall_by_xpath('.//','Y')
 # print('---find all sub by key&value test----')
-# results=newproj.findall_by_attribute(N='test param')
+# results=newproj.findall_by_attribute(N='test new_parameter')
 # print(results)
 # print(newproj.verify_attributes(T='Project'))
 # ResultsTable(results)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PySensor import *
+from BMS_BrIM import *
 
 fourstorey = OBProject('The 4 Story Model')
 # 0. Parameters
@@ -34,11 +34,11 @@ b_track = OBPrmElmt('Width_track', 49.0)
 #                       d_track, h1_track, h2_track, b_track)
 # sec_par_group.attach_to(fourstorey)
 # some parameters out XML file
-total_height = story_num.v * height.v
+total_height = story_num.value * height.value
 y_clears = list(map(lambda e: e.value, [in_1, in_2, in_3, in_2, in_1]))
-y_positions = [in_1.v + w_colm.v / 2]
+y_positions = [in_1.value + w_colm.value / 2]
 for i in range(1, 4):
-    y_i = y_positions[i - 1] + y_clears[i] + w_colm.v
+    y_i = y_positions[i - 1] + y_clears[i] + w_colm.value
     y_positions.append(y_i)
 # 1. Materials
 steel = OBMaterial('Steel1', mat_type="steel", des="steel of girder")
@@ -47,10 +47,10 @@ OBGroup('Material Group', steel).attach_to(fourstorey)
 # 2. Section
 # 2.1 column
 col_rect = OBShape('rectangle',
-                   OBPoint(-w_colm.v / 2, -t_colm.v / 2),
-                   OBPoint(w_colm.v / 2, -t_colm.v / 2),
-                   OBPoint(w_colm.v / 2, t_colm.v / 2),
-                   OBPoint(-w_colm.v / 2, t_colm.v / 2))
+                   OBPoint(-w_colm.value / 2, -t_colm.value / 2),
+                   OBPoint(w_colm.value / 2, -t_colm.value / 2),
+                   OBPoint(w_colm.value / 2, t_colm.value / 2),
+                   OBPoint(-w_colm.value / 2, t_colm.value / 2))
 col_sec = OBSection('Column', steel, col_rect)
 col_sec.attach_to(fourstorey)
 # 2.2 nut
@@ -60,28 +60,30 @@ col_sec.attach_to(fourstorey)
 # 3. FE elements
 # 4. Loading Conditions
 # 5. Geometric model
-for i in range(story_num.v + 1):
+
+
+for i in range(story_num.value + 1):
     oneplate = BoltedPlateGeo('Plate{}'.format(i),
                               t_plate, l_plate, w_plate,
                               d_hole, x_clear, y_clear,
                               x_num, y_num,
                               steel).geom()
-    oneplate.add_attr(Z=i * height.v)
+    oneplate.set_attrib(Z=i * height.value)
     oneplate.attach_to(fourstorey)
 
-for x in [0, l_plate.v]:
+for x in [0, l_plate.value]:
     for y in y_positions:
         onecol = OBLine(OBPoint(0, 0, 0),
                         OBPoint(0, 0, total_height + 32),
                         col_sec,
-                      'Column@{},{}'.format(x, y))
-        onecol.add_attr(X=x, Y=y)
+                        'Column@{},{}'.format(x, y))
+        onecol.set_attrib(X=x, Y=y)
         onecol.attach_to(fourstorey)
 
 # Sensors
 config = dict(user='root', password='qyd123', host='127.0.0.1',
               database='bridge_test', port=3306,
-              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180302_141015_19')
+              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\')
 ds201 = Displacement(201, 'displacement of bottom plate', config)
 ds201.geom().attach_to(fourstorey)
 # ds201.plot_dat()
@@ -90,10 +92,11 @@ ac202.geom().attach_to(fourstorey)
 # ac202.plot_dat()
 config = dict(user='root', password='qyd123', host='127.0.0.1',
               database='bridge_test', port=3306,
-              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20')
+              path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180327_161910_20')
 for i in range(207, 211):
     sg = StrainGauge(i, 'Test StrainGauge {}'.format(i), config)
     sg.geom().attach_to(fourstorey)
     # sg.plot_dat()
-# ---------------
+
+ShowTree(fourstorey)
 fourstorey.save_project()

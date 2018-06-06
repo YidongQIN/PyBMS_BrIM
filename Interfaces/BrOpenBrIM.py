@@ -23,7 +23,7 @@ class PyOpenBrIMElmt(object):
             _attributes = {}
         for _k, _v in attrib_dict.items():
             if _v:
-                _attributes[_k] = _v
+                _attributes[_k] = str(_v)
         self.elmt = eET.Element(tag_o_p, **_attributes)
         self.name = name
 
@@ -79,7 +79,7 @@ class PyOpenBrIMElmt(object):
                 print('Update {}.{} with new value <{}>'.format(self.name, _key, _value))
             else:
                 print('Add {} new attribute {} = {}'.format(self.name, _key, _value))
-            self.elmt.set(_key, _value)
+            self.elmt.set(_key, str(_value))
 
     def copy_attrib_from(self, elmt, *attrib_key_list):
         """copy from an element the attributes in the dict"""
@@ -263,7 +263,6 @@ class OBObjElmt(PyOpenBrIMElmt):
         N = ? as name is recommended to be provided.\n
         attributes are in format of dict.
         """
-        # sub classes will override this method by object_type = 'Point"...
         super(OBObjElmt, self).__init__('O', obj_name, T=object_type, **obj_attrib)
         self.type = object_type
 
@@ -273,10 +272,10 @@ class OBObjElmt(PyOpenBrIMElmt):
         for a in PyOpenBrIMElmt.to_elmt_list(*child):
             self.elmt.append(a)
 
-    def sub_par(self, par_name, par_value):
+    def sub_new_par(self, par_name, par_value):
         self.sub(OBPrmElmt(par_name, par_value))
 
-    def param(self, par_name, par_value, des='', role='', par_type=''):
+    def new_parameter(self, par_name, par_value, des='', role='', par_type=''):
         """sometimes, a just one OBJECT need the PARAMETER \n
         its better to define it when the OBJECT created.\n
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
@@ -287,7 +286,7 @@ class OBObjElmt(PyOpenBrIMElmt):
             self.elmt.attrib['T'] = extend_from.elmt.attrib['T']
             self.elmt.attrib['Extends'] = extend_from.elmt.attrib['N']
 
-    def prm_refer(self, elmt, refer_name):
+    def refer_elmt(self, elmt, refer_name):
         if isinstance(elmt, PyOpenBrIMElmt):
             self.sub(OBPrmElmt(refer_name, elmt.name,
                                par_type=elmt.get_attrib('T'), role=''))
@@ -298,24 +297,16 @@ class OBObjElmt(PyOpenBrIMElmt):
     def rotate_angle(self, angle_x=0, angle_y=0, angle_z=0):
         self.set_attrib(RX=angle_x, RY=angle_y, RZ=angle_z)
 
-    def rotate(self, cos_x, cos_y, cos_z):
-        """ why use cosine value?"""
-        if cos_x * cos_x + cos_y * cos_y + cos_z * cos_z != 1:
-            print('Sum of square of three cosine values should be 1.')
-            return
-        # self.rotate_one('RX',cos_x)
-        self.rotate_one('RZ', cos_y)
-        self.rotate_one('RY', cos_z)
-
-    def rotate_one(self, r_axis, cosine):
-        """ undicided how"""
-        if -1 <= cosine <= 1:
-            if cosine == 0:
-                return
-            elif cosine == 1:
-                self.set_attrib(**{r_axis: 'PI/2'})
-        else:
-            print('Value Error for cosine of {}'.format(self.name))
+    #
+    # def rotate_one(self, r_axis, cosine):
+    #     """ undecided how"""
+    #     if -1 <= cosine <= 1:
+    #         if cosine == 0:
+    #             return
+    #         elif cosine == 1:
+    #             self.set_attrib(**{r_axis: 'PI/2'})
+    #     else:
+    #         print('Value Error for cosine of {}'.format(self.name))
 
 
 class OBPrmElmt(PyOpenBrIMElmt):
@@ -326,17 +317,17 @@ class OBPrmElmt(PyOpenBrIMElmt):
         Mandatory: name, value.\n
         D-> des is describe of the parameter.\n
         par_type is the Type of parameter, such as Material. """
-        if par_name:
-            super(OBPrmElmt, self).__init__('P', par_name, V=str(value), D=des, UT=ut, UC=uc, Role=role, T=par_type)
-            try:
-                self.value = float(value)
-                if self.value == int(self.value):
-                    self.value = int(self.value)
-            except (ValueError, TypeError):
-                self.value = str(value)
-            self.v = self.value  # just for short
-        else:
-            print('Parameter must have name and value')
+        _name = par_name.strip()
+        if not _name:
+            print('The name of Parameter cannot be EMPTY')
+            raise ValueError
+        try:
+            self.value = float(value)
+            if self.value == int(self.value):
+                self.value = int(self.value)
+        except ValueError:
+            self.value = str(value)
+        super(OBPrmElmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
 
 
 class OBProject(OBObjElmt):
@@ -344,10 +335,10 @@ class OBProject(OBObjElmt):
         """create new project with a template"""
         super(OBProject, self).__init__('Project', proj_name)
         if template == 'template':
-            origin_string = '<O N="" T="Project" D="A template in OpenBrIM Library">\n</O>'
+            origin_string = '<O T="Project" D="A template in OpenBrIM Library">\n</O>'
         elif template == 'SI':
             origin_string = """
-<O N="" T="Project" Alignment="None" TransAlignRule="Right">
+<O T="Project" Alignment="None" TransAlignRule="Right">
     <O N="Units" T="Group">
         <O N="Internal" T="Unit" Length="Millimeter" Force="Newton" Angle="Radian" Temperature="Celsius" />
         <O N="Geometry" T="Unit" Length="Meter" Force="KiloNewton" Angle="Radian" Temperature="Celsius" />
@@ -359,7 +350,7 @@ class OBProject(OBObjElmt):
             """
         elif template == 'US':
             origin_string = """
-<O N="" T="Project" Alignment="None" TransAlignRule="Right">
+<O T="Project" Alignment="None" TransAlignRule="Right">
     <O N="Units" T="Group">
         <O N="Internal" T="Unit" Length="Inch" Force="Kip" Angle="Radian" Temperature="Fahrenheit" />
         <O N="Geometry" T="Unit" Length="Feet" Force="Kip" Angle="Degree" Temperature="Fahrenheit" />
@@ -370,31 +361,26 @@ class OBProject(OBObjElmt):
 </O>
            """
         else:
-            origin_string = '<O N="" T="Project">\n</O>'
+            origin_string = '<O T="Project">\n</O>'
         self.read_xmlstr(origin_string)
         self.elmt.attrib['N'] = proj_name
 
-    # save the OpenBrIM model with the name in project attribute
     def save_project(self, path=''):
         """save this element as a Project in a xml_file. \n
-        Must be a project object as <O T=Project >. \n
         Must have an Project name as the file name. \n
         default path is the same folder with .py. \n
         default file name is the element name. \n
-        may input a new file path to """
-        if self.elmt.tag != 'O' or self.elmt.attrib.get('T') != 'Project':
-            print('! WARNING: "{}" is not a Project object as <O T=Project>'.format(self.name))
-            return
+        may input a new file path."""
         if self.elmt.attrib['N'] == '':
             self.name = input('Please name the project:\n')
         self.elmt.attrib['N'] = self.name
         if path == '':
-            out_path = self.elmt.attrib['N'] + '.xml'
+            out_path = self.name + '.xml'
         elif re.match('.*\.xml', path):
             out_path = path
         else:
             print('Error: should be a xml_file')
-            return
+            raise ValueError
         tree = eET.ElementTree(self.elmt)
         tree.write(out_path, encoding="utf-8", xml_declaration=True)
         print('Project is saved @ "{}".'.format(out_path))
@@ -408,34 +394,36 @@ class OBMaterial(OBObjElmt):
         """
         super(OBMaterial, self).__init__('Material', mat_name, D=des, Type=mat_type, **attrib_dict)
 
-    def mat_property(self, **name_value):
+    def mat_property(self, **key_value):
         """parameters generally defined of the material, \n
         such as d->Density, E-> modulus of elasticity, \n
         Nu->Poisson's Ratio, a->Coefficient of Thermal Expansion, \n
         Fc28/Fy/Fu -> Strength.
         """
-        for key, value in name_value.items():
-            self.add_mat_par(key, value)
+        for _key, _value in key_value.items():
+            self.add_mat_par(_key, _value)
 
     def add_mat_par(self, n, v, des=''):
-        d = dict(d="Density",
-                 E="modulus of Elasticity",
-                 a="Coefficient of Thermal Expansion",
-                 Nu="Poisson's Ratio",
-                 Fc28="Concrete Compressive Strength",
-                 Fy="Steel Yield Strength",
-                 Fu="Steel Ultimate Strength").get(n)
-        if des != '':
-            d = des
-        self.elmt.append(eET.Element('P', N=n, V=str(v), D=d))
+        if not des:
+            _desdict = dict(d="Density",
+                            E="modulus of Elasticity",
+                            a="Coefficient of Thermal Expansion",
+                            Nu="Poisson's Ratio",
+                            Fc28="Concrete Compressive Strength",
+                            Fy="Steel Yield Strength",
+                            Fu="Steel Ultimate Strength")
+            des = _desdict.get(n)
+        self.elmt.append(eET.Element('P', N=n, V=str(v), D=des))
 
-    def show_mat(self):
+    def show_mat_table(self):
         print('{} is {} ({}):'.format(self.name, self.elmt.attrib['Type'], self.elmt.attrib['D']))
+        tb = pt.PrettyTable(["Tag", "Name", "Value", "Description"])
+        tb.align = 'l'
         for each_par in self.elmt:
-            print('\t<{0}>{3}: {1}={2} '.format(each_par.tag,
-                                                each_par.attrib['N'],
-                                                each_par.attrib['V'],
-                                                each_par.attrib['D']))
+            row = [each_par.tag, each_par.attrib['N'], each_par.attrib['V'], each_par.attrib['D']]
+            tb.add_row(row)
+        print('Table of Material parameters:')
+        print(tb)
 
 
 class OBSection(OBObjElmt):
@@ -452,8 +440,8 @@ class OBSection(OBObjElmt):
     def sect_property(self, **properties):
         """parameters generally mechanical characters, \n
         such as Ax, Iy, Iz, \n """
-        for ch, value in properties.items():
-            self.elmt.append(eET.Element('P', N=ch, V=str(value)))
+        for _property_name, _property_value in properties.items():
+            self.elmt.append(OBPrmElmt(_property_name, str(_property_value)))
 
 
 class OBShape(OBObjElmt):
@@ -461,8 +449,6 @@ class OBShape(OBObjElmt):
     def __init__(self, shape_name, *obj_list):
         super(OBShape, self).__init__('Shape', shape_name)
         self.sub(*obj_list)
-        # for point in point_list:
-        #     self.sub(point)
 
     def is_cutout(self, y_n='Y'):
         if y_n.upper() == 'Y':
@@ -568,25 +554,22 @@ class OBFELine(OBObjElmt):
     def __init__(self, node1, node2, section, beta_angle=0, feline_name=''):
         super(OBFELine, self).__init__('FELine', feline_name)
         if isinstance(node1, OBFENode) and isinstance(node2, OBFENode) and isinstance(section, OBSection):
-            self.prm_refer(node1, 'Node1')
+            self.refer_elmt(node1, 'Node1')
             self.n1 = node1
-            self.prm_refer(node2, 'Node2')
+            self.refer_elmt(node2, 'Node2')
             self.n2 = node2
-            self.prm_refer(section, 'Section')
+            self.refer_elmt(section, 'Section')
         if beta_angle:
-            self.param('BetaAngle', beta_angle)
-
-    def as_line(self, line_obj):
-        pass
+            self.new_parameter('BetaAngle', beta_angle)
 
     def set_node_start(self, node):
         self.del_sub('P', N='Node1')
-        self.prm_refer(node, 'Node1')
+        self.refer_elmt(node, 'Node1')
         self.n1 = node
 
     def set_node_end(self, node):
         self.del_sub('P', N='Node2')
-        self.prm_refer(node, 'Node2')
+        self.refer_elmt(node, 'Node2')
         self.n2 = node
 
 
@@ -594,19 +577,16 @@ class OBFESurface(OBObjElmt):
 
     def __init__(self, node1, node2, node3, node4, thick_par, material_obj, fes_name=''):
         super(OBFESurface, self).__init__('FESurface', fes_name)
-        self.prm_refer(node1, 'Node1')
+        self.refer_elmt(node1, 'Node1')
         self.n1 = (node1.x, node1.y, node1.z)
-        self.prm_refer(node2, 'Node2')
+        self.refer_elmt(node2, 'Node2')
         self.n2 = (node2.x, node2.y, node2.z)
-        self.prm_refer(node3, 'Node3')
+        self.refer_elmt(node3, 'Node3')
         self.n3 = (node3.x, node3.y, node3.z)
-        self.prm_refer(node4, 'Node4')
+        self.refer_elmt(node4, 'Node4')
         self.n4 = (node4.x, node4.y, node4.z)
-        self.prm_refer(thick_par, 'Thickness')
-        self.prm_refer(material_obj, 'Material')
-
-    def as_surface(self, surface_obj):
-        pass
+        self.refer_elmt(thick_par, 'Thickness')
+        self.refer_elmt(material_obj, 'Material')
 
 
 class OBPoint(OBObjElmt):
@@ -621,6 +601,10 @@ class OBPoint(OBObjElmt):
         self.y = y
         self.z = z
         # self.check_num()
+
+    def as_node(self):
+        #TODO every feo class have a method of as_fem()
+        pass
 
     def check_num(self):
         """typically the coordinates should be numbers.
@@ -748,17 +732,11 @@ class OBSurface(OBObjElmt):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
         self.check_del_sub('P', N="Thickness")
         self.sub(OBPrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
-        # self.elmt.append(eET.Element
-        # ('P', dict(N="Thickness", V=str(thickness), D=des, Role=role, T=par_type, UT=ut, UC=uc)))
 
     def change_material(self, material, des='', role='', name='SurfaceMaterial', ut='', uc=''):
         """material parameter of Surface.\n Only material is mandatory"""
         self.check_del_sub('P', T="Material")
         self.sub(OBPrmElmt(name, material, des, role, 'Material', ut, uc))
-        # self.elmt.append(eET.Element('P', dict(T='Material', V=material, D=des, N=name, Role=role, UT=ut, UC=uc)))
-
-    def calc_area(self):
-        pass
 
 
 class OBVolume(OBObjElmt):
@@ -871,4 +849,4 @@ class ShowTable(object):
             row.append(other[:-2])
             tb.add_row(row)
         print('\n Table of Result PARAMetER')
-        print
+        print(tb)
