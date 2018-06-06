@@ -18,13 +18,13 @@ class PyOpenBrIMElmt(object):
 
     def __init__(self, tag_o_p, name, **attrib_dict):
         if name:
-            attributes = dict(N=name)
+            _attributes = dict(N=name)
         else:
-            attributes = {}
-        for k, v in attrib_dict.items():
-            if v != '':
-                attributes[k] = v
-        self.elmt = eET.Element(tag_o_p, **attributes)
+            _attributes = {}
+        for _k, _v in attrib_dict.items():
+            if _v:
+                _attributes[_k] = _v
+        self.elmt = eET.Element(tag_o_p, **_attributes)
         self.name = name
 
     def parse_xmlfile(self, xml_path):
@@ -41,119 +41,118 @@ class PyOpenBrIMElmt(object):
 
     def attach_to(self, parent):
         """attach this element to parent element(s)"""
-        for p in PyOpenBrIMElmt.to_elmt_list(parent):
-            p.append(self.elmt)
+        for _parent in PyOpenBrIMElmt.to_elmt_list(parent):
+            _parent.append(self.elmt)
 
-    def show_info(self, if_self='Y', if_sub='N'):
+    def show_info(self, if_sub=False):
         """show tags and attributes of itself or sub elements"""
-        if if_self.upper() == 'Y':
-            print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
-            if if_sub.upper() == 'Y':
-                pass
-        if if_sub.upper() == 'Y':
+        print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
+        if if_sub:
             self.show_sub()
 
     def show_sub(self):
         """show all sub elements' tags and attributes"""
-        count = 0
+        _count = 0
         print('- Sub elements of "{}":'.format(self.name))
-        for c in self.elmt:
-            count = count + 1
-            print('  <{}> {}'.format(c.tag, c.attrib))
-        print('- Totally {} sub elements.\n'.format(count))
+        for _child in self.elmt:
+            _count = _count + 1
+            print('  - <{}> {}'.format(_child.tag, _child.attrib))
+        print('- Totally {} sub elements.\n'.format(_count))
 
     def get_attrib(self, key):
-        a = self.elmt.attrib.get(key)
-        if a:
+        _value = self.elmt.attrib.get(key)
+        if _value:
             try:
-                print('{} is a number'.format(self.name))
-                return float(a)
-            except (ValueError, TypeError):
-                print('{} is not a number'.format(self.name))
-                return a
+                _fv = float(_value)
+                print('{}.{} is a float of {}'.format(self.name, key, _fv))
+                return _fv
+            except ValueError:
+                print('{}.{} is not a float'.format(self.name, key))
+                return _value
         else:
-            print('{} has no attribute {}'.format(self, key))
-            return ''
+            print('{} does not have the attribute of {}'.format(self.name, key))
+            return
 
-    def add_attr(self, **attrib_dict):
-        for key in attrib_dict:
-            value = attrib_dict.get(key)
-            if isinstance(value, (int, float)):
-                value = str(value)
-            self.elmt.set(key, value)
+    def set_attrib(self, **attrib_dict):
+        for _key, _value in attrib_dict.items():
+            if self.elmt.attrib.get(_key):
+                print('Update {}.{} with new value <{}>'.format(self.name, _key, _value))
+            else:
+                print('Add {} new attribute {} = {}'.format(self.name, _key, _value))
+            self.elmt.set(_key, _value)
 
-    def update(self, **attrib_dict):
-        """update the attributes"""
-        for key in attrib_dict:
-            if key in self.elmt.attrib:
-                self.elmt.set(key, attrib_dict.get(key))
-
-    def copy_attrib_from(self, elmt, *attrib_key):
+    def copy_attrib_from(self, elmt, *attrib_key_list):
         """copy from an element the attributes in the dict"""
-        temp = PyOpenBrIMElmt.to_ob_elmt(elmt)
-        for key in attrib_key:
-            if temp.attrib[key]:
-                self.elmt.set(key, temp.attrib[key])
+        _temp = PyOpenBrIMElmt.to_ob_elmt(elmt)
+        if not attrib_key_list:
+            self.set_attrib(**_temp.attrib)
+        else:
+            for _key in attrib_key_list:
+                try:
+                    self.elmt.set(_key, _temp.attrib[_key])
+                except KeyError as e:
+                    print('Element {} has no attribute {}'.format(elmt.name, _key))
+                    raise e
 
-    def findall_by_xpath(self, xpath, if_print='N'):
+    def findall_by_xpath(self, xpath):
         """return a list of all sub elmt that matched the
         (xpath)[https://docs.python.org/3/library/xml.etree.elementtree.
         html?highlight=xpath#xpath-support]"""
-        tree = eET.ElementTree(self.elmt)
-        results = tree.findall(xpath)
-        if if_print.upper() == 'Y':
-            for a in results:
-                print('<{}> {}'.format(a.tag, a.attrib))
-        return results
-
-    def find_by_xpath(self, xpath, if_print='N'):
         # tree = eET.ElementTree(self.elmt)
-        results = self.elmt.findall(xpath)
-        if if_print.upper() == 'Y':
-            for a in results:
-                print('<{}> {}'.format(a.tag, a.attrib))
-        return results
+        # results = tree.findall(xpath)
+        _results = self.elmt.findall(xpath)
+        print("ALL Results of '{}' in {} are:".format(xpath, self.name))
+        for _one in _results:
+            print('  - <{}> {}'.format(_one.tag, _one.attrib))
+        return _results
 
-    def findsub_by_attributes(self, **attributes):
-        results = []
-        for any_elmt in self.elmt:
-            if PyOpenBrIMElmt.match_attribute(any_elmt, **attributes):
-                results.append(any_elmt)
-        return results
+    def find_by_xpath(self, xpath):
+        _result = self.elmt.find(xpath)
+        print("One Result of '{}' in {} are:".format(xpath, self.name))
+        print('  - <{}> {}'.format(_result.tag, _result.attrib))
+        return _result
+
+    def find_sub_by_attributes(self, **attributes):
+        """only the sub nodes, no sub-sub nodes"""
+        _results = []
+        for _one_elmt in self.elmt:
+            if PyOpenBrIMElmt.match_attribute(_one_elmt, **attributes):
+                _results.append(_one_elmt)
+        return _results
 
     def findall_by_attribute(self, **attributes):
         """find in elmt.iter() by the attributes"""
         # results is a list[] of elements
-        results = []
+        _results = []
         for any_elmt in self.elmt.iter():
             if PyOpenBrIMElmt.match_attribute(any_elmt, **attributes):
-                results.append(any_elmt)
-        return results
+                _results.append(any_elmt)
+        return _results
 
     def del_all_sub(self):
         """remove all sub elements from this elmt"""
-        to_del = self.elmt.findall('./')
+        _del = self.elmt.findall('./')
         print('These elements will be deleted')
-        for c in to_del:
-            print('<{}> {}'.format(c.tag, c.attrib))
-            self.elmt.remove(c)
+        for _d in _del:
+            print('<{}> {}'.format(_d.tag, _d.attrib))
+            self.elmt.remove(_d)
         # self.elmt.clear() remove subs, but also all attributes of itself
 
     def del_sub(self, tag='O or P', **attrib_dict):
-        elmt_to_del = []
-        for child in self.elmt:
-            if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **attrib_dict):
-                elmt_to_del.append(child)
-        for one in elmt_to_del:
-            self.elmt.remove(one)
+        _elmt_to_del = []
+        for _child in self.elmt:
+            if PyOpenBrIMElmt.match_tag(_child, tag) and PyOpenBrIMElmt.match_attribute(_child, **attrib_dict):
+                _elmt_to_del.append(_child)
+        for _d in _elmt_to_del:
+            self.elmt.remove(_d)
 
     def check_del_sub(self, tag='O or P', **attrib_dict):
         """remove elmt with particular tag and attributes"""
         elmt_to_del = []
-        confirm = ''
-        for child in self.elmt:
-            if PyOpenBrIMElmt.match_tag(child, tag) and PyOpenBrIMElmt.match_attribute(child, **attrib_dict):
-                elmt_to_del.append(child)
+        confirm = False
+        for _child in self.elmt:
+            if PyOpenBrIMElmt.match_tag(_child, tag) and PyOpenBrIMElmt.match_attribute(_child, **attrib_dict):
+                elmt_to_del.append(_child)
         # list all elmt to be deleted
         if elmt_to_del:
             print('Confirm the Elements to be deleted')
@@ -294,9 +293,13 @@ class OBObjElmt(PyOpenBrIMElmt):
                                par_type=elmt.get_attrib('T'), role=''))
 
     def move_to(self, new_x, new_y, new_z):
-        self.add_attr(X=new_x, Y=new_y, Z=new_z)
+        self.set_attrib(X=new_x, Y=new_y, Z=new_z)
+
+    def rotate_angle(self, angle_x=0, angle_y=0, angle_z=0):
+        self.set_attrib(RX=angle_x, RY=angle_y, RZ=angle_z)
 
     def rotate(self, cos_x, cos_y, cos_z):
+        """ why use cosine value?"""
         if cos_x * cos_x + cos_y * cos_y + cos_z * cos_z != 1:
             print('Sum of square of three cosine values should be 1.')
             return
@@ -305,10 +308,14 @@ class OBObjElmt(PyOpenBrIMElmt):
         self.rotate_one('RY', cos_z)
 
     def rotate_one(self, r_axis, cosine):
-        if cosine == 0:
-            return
-        elif cosine == 1:
-            self.add_attr(**{r_axis: 'PI/2'})
+        """ undicided how"""
+        if -1 <= cosine <= 1:
+            if cosine == 0:
+                return
+            elif cosine == 1:
+                self.set_attrib(**{r_axis: 'PI/2'})
+        else:
+            print('Value Error for cosine of {}'.format(self.name))
 
 
 class OBPrmElmt(PyOpenBrIMElmt):
@@ -508,6 +515,100 @@ class OBGroup(OBObjElmt):
         self.sub(elmts)
 
 
+class OBFENode(OBObjElmt):
+
+    def __init__(self, x, y, z, node_name=''):
+        super(OBFENode, self).__init__('Node', node_name, X=x, Y=y, Z=z)
+        self.x = x
+        self.y = y
+        self.z = z
+        self.tx = 0
+        self.ty = 0
+        self.tz = 0
+        self.rx = 0
+        self.ry = 0
+        self.rz = 0
+
+    def coordinate(self, x, y, z):
+        self.x = x
+        self.elmt.attrib['X'] = str(x)
+        self.y = y
+        self.elmt.attrib['Y'] = str(y)
+        self.z = z
+        self.elmt.attrib['Z'] = str(z)
+
+    def fixity(self, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0):
+        self.tx = tx
+        self.elmt.attrib['Tx'] = str(tx)
+        self.ty = ty
+        self.elmt.attrib['Ty'] = str(ty)
+        self.tz = tz
+        self.elmt.attrib['Tz'] = str(tz)
+        self.rx = rx
+        self.elmt.attrib['Rx'] = str(rx)
+        self.ry = ry
+        self.elmt.attrib['Ry'] = str(ry)
+        self.rz = rz
+        self.elmt.attrib['Rz'] = str(rz)
+
+    def as_point(self, point_obj):
+        if isinstance(point_obj, OBPoint):
+            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
+            self.x = point_obj.x
+            self.y = point_obj.y
+            self.z = point_obj.z
+            # self.name=point_obj.name
+            return self
+        else:
+            print('{} is not a Point Object'.format(point_obj))
+
+
+class OBFELine(OBObjElmt):
+
+    def __init__(self, node1, node2, section, beta_angle=0, feline_name=''):
+        super(OBFELine, self).__init__('FELine', feline_name)
+        if isinstance(node1, OBFENode) and isinstance(node2, OBFENode) and isinstance(section, OBSection):
+            self.prm_refer(node1, 'Node1')
+            self.n1 = node1
+            self.prm_refer(node2, 'Node2')
+            self.n2 = node2
+            self.prm_refer(section, 'Section')
+        if beta_angle:
+            self.param('BetaAngle', beta_angle)
+
+    def as_line(self, line_obj):
+        pass
+
+    def set_node_start(self, node):
+        self.del_sub('P', N='Node1')
+        self.prm_refer(node, 'Node1')
+        self.n1 = node
+
+    def set_node_end(self, node):
+        self.del_sub('P', N='Node2')
+        self.prm_refer(node, 'Node2')
+        self.n2 = node
+
+
+class OBFESurface(OBObjElmt):
+
+    def __init__(self, node1, node2, node3, node4, thick_par, material_obj, fes_name=''):
+        super(OBFESurface, self).__init__('FESurface', fes_name)
+        self.prm_refer(node1, 'Node1')
+        self.n1 = (node1.x, node1.y, node1.z)
+        self.prm_refer(node2, 'Node2')
+        self.n2 = (node2.x, node2.y, node2.z)
+        self.prm_refer(node3, 'Node3')
+        self.n3 = (node3.x, node3.y, node3.z)
+        self.prm_refer(node4, 'Node4')
+        self.n4 = (node4.x, node4.y, node4.z)
+        self.prm_refer(thick_par, 'Thickness')
+        self.prm_refer(material_obj, 'Material')
+
+    def as_surface(self, surface_obj):
+        pass
+
+
 class OBPoint(OBObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
@@ -670,106 +771,12 @@ class OBVolume(OBObjElmt):
         self.sub(OBSurface(point1, point2, point3, point4))
 
 
-class OBFENode(OBObjElmt):
-
-    def __init__(self, x, y, z, node_name=''):
-        super(OBFENode, self).__init__('Node', node_name, X=x, Y=y, Z=z)
-        self.x = x
-        self.y = y
-        self.z = z
-        self.tx = 0
-        self.ty = 0
-        self.tz = 0
-        self.rx = 0
-        self.ry = 0
-        self.rz = 0
-
-    def coordinate(self, x, y, z):
-        self.x = x
-        self.elmt.attrib['X'] = str(x)
-        self.y = y
-        self.elmt.attrib['Y'] = str(y)
-        self.z = z
-        self.elmt.attrib['Z'] = str(z)
-
-    def fixity(self, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0):
-        self.tx = tx
-        self.elmt.attrib['Tx'] = str(tx)
-        self.ty = ty
-        self.elmt.attrib['Ty'] = str(ty)
-        self.tz = tz
-        self.elmt.attrib['Tz'] = str(tz)
-        self.rx = rx
-        self.elmt.attrib['Rx'] = str(rx)
-        self.ry = ry
-        self.elmt.attrib['Ry'] = str(ry)
-        self.rz = rz
-        self.elmt.attrib['Rz'] = str(rz)
-
-    def as_point(self, point_obj):
-        if isinstance(point_obj, OBPoint):
-            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
-            self.x = point_obj.x
-            self.y = point_obj.y
-            self.z = point_obj.z
-            # self.name=point_obj.name
-            return self
-        else:
-            print('{} is not a Point Object'.format(point_obj))
-
-
-class OBFELine(OBObjElmt):
-
-    def __init__(self, node1, node2, section, beta_angle=0, feline_name=''):
-        super(OBFELine, self).__init__('FELine', feline_name)
-        if isinstance(node1, OBFENode) and isinstance(node2, OBFENode) and isinstance(section, OBSection):
-            self.prm_refer(node1, 'Node1')
-            self.n1 = node1
-            self.prm_refer(node2, 'Node2')
-            self.n2 = node2
-            self.prm_refer(section, 'Section')
-        if beta_angle:
-            self.param('BetaAngle', beta_angle)
-
-    def as_line(self, line_obj: OBLine):
-        pass
-
-    def set_node_start(self, node):
-        self.del_sub('P', N='Node1')
-        self.prm_refer(node, 'Node1')
-        self.n1 = node
-
-    def set_node_end(self, node):
-        self.del_sub('P', N='Node2')
-        self.prm_refer(node, 'Node2')
-        self.n2 = node
-
-
 class OBText3D(OBObjElmt):
     def __init__(self, text, x, y, z, size=5):
         super(OBText3D, self).__init__('Text3D', '', Label=text, FontSize=str(size))
         self.sub(OBPoint(x, y, z))
         self.sub(OBPoint(x + 5, y, z))
         self.sub(OBPoint(x, y, z + 5))
-
-
-class OBFESurface(OBObjElmt):
-
-    def __init__(self, node1, node2, node3, node4, thick_par, material_obj, fes_name=''):
-        super(OBFESurface, self).__init__('FESurface', fes_name)
-        self.prm_refer(node1, 'Node1')
-        self.n1 = (node1.x, node1.y, node1.z)
-        self.prm_refer(node2, 'Node2')
-        self.n2 = (node2.x, node2.y, node2.z)
-        self.prm_refer(node3, 'Node3')
-        self.n3 = (node3.x, node3.y, node3.z)
-        self.prm_refer(node4, 'Node4')
-        self.n4 = (node4.x, node4.y, node4.z)
-        self.prm_refer(thick_par, 'Thickness')
-        self.prm_refer(material_obj, 'Material')
-
-    def as_surface(self, surface_obj):
-        pass
 
 
 class ShowTree(object):
@@ -864,4 +871,4 @@ class ShowTable(object):
             row.append(other[:-2])
             tb.add_row(row)
         print('\n Table of Result PARAMetER')
-        print(tb)
+        print

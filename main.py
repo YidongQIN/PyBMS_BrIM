@@ -1,9 +1,23 @@
 from BMS_BrIM import *
+import math
 
-test=PyElmt('OOne', 2)
+a=0
+print(math.acos(a))
+
+# test=PyOpenBrIMElmt('O','test name', a=666, b='madan')
+# newproj = PyOpenBrIMElmt("O",'new proj')
+# new_node = PyOpenBrIMElmt('O', 'new node1', D='~ TEST ~ ', UC='test')
+# new_node2 = PyOpenBrIMElmt('O', 'new_node2', D='~ ~ TEST ~ ~')
+# new_par = PyOpenBrIMElmt('P', '666', par_type='p_tag')
+# new_node.attach_to(newproj)
+# new_node2.attach_to(newproj)
+# newproj.attach_to(test)
+# new_par.attach_to(test)
+# ShowTree(test)
+# test.findall_by_xpath('./P')
+# test.find_by_xpath('./O')
 
 
-# print(dir())
 
 '''
 
@@ -33,9 +47,7 @@ ds201.mysql_conn(**config)
 info = ds201.mysql_read('sensorId', 'sensor', 'manufacturerName', 'modelNumber',fetch_type='one')
 
 
-proj = Project('test on PyOB')
-ppp = ProjGroups('name', 'SI')
-ShowTree(ppp)
+
 with ConnMySQL(**config) as testconn:
     testconn.query('select * from bridge_test.sensor')
     print(testconn.fetch_row())
@@ -108,38 +120,7 @@ feline.show_sub()
 
 
 
-newproj = PyOpenBrIMElmt('new proj')
-newproj.parse_xmlfile('xml_file/test.xml')
-# ShowTree(newproj)
-unit1=Unit('first unit')
-ShowTable(unit1)
-mat1=Material('C4000Psi','Deck Concrete','Concrete')
-mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
-# mat1.show_mat()
 
-
-
-ShowTree(sec1)
-# point1=Point(0,0,0,'P1')
-# point2=Point(10,0,0,'P2')
-# point3=Point(20,0,0,'P2')
-# point4=Point(30,0,0,'P2')
-# line1=Line(point1)
-# line1.attach_to(newproj)
-# sur1=Surface(point1,point2,point3,point4,50,'mat1','name of surface')
-# sur1.attach_to(newproj)
-# par1=PrmElmt('par', 'value')
-# par1.attach_to(newproj)
-# newproj.save_project()
-# ShowTree(newproj)
-
-# print('---add sub nodes test---')
-new_node = ObjElmt('Line', 'new node1', D='~ TEST ~ ', UC='test')
-new_node2 = ObjElmt('Not Line', 'new_node2', D='~ ~ TEST ~ ~')
-new_par = PrmElmt('test parameter', '666', '$$$$$$$$$$$', par_type='p_tag')
-new_node2.sub(new_par)
-newproj.sub(new_node2, new_node)
-# newproj.show_info('Y','Y')
 newproj.save_project()
 ShowTree(newproj)
 # print('---delete test---')

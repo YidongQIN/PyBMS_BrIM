@@ -155,11 +155,6 @@ class PyReal(PyElmt):
         self.alpha = 0  # the status index
         self._model_fem = None
 
-    def init_by_db(self):
-        pass
-
-    def init_by_io(self):
-        pass
 
     def set_position(self, **pos):
         for k in pos:

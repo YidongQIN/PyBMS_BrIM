@@ -767,6 +767,7 @@ class FESurface(ObjElmt):
         self.prm_refer(material_obj, 'Material')
 
     def as_surface(self, surface_obj):
+        """point is different from FENode"""
         pass
 
 
