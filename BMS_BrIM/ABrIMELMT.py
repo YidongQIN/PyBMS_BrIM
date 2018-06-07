@@ -155,7 +155,6 @@ class PyReal(PyElmt):
         self.alpha = 0  # the status index
         self._model_fem = None
 
-
     def set_position(self, **pos):
         for k in pos:
             if k not in ['x', 'y', 'z']:

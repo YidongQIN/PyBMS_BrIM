@@ -1,23 +1,18 @@
 from BMS_BrIM import *
-import math
 
-
-
-test=PyOpenBrIMElmt('O','test name', a=666, b='madan')
-newproj = PyOpenBrIMElmt("O",'new proj')
+test = PyOpenBrIMElmt('O', 'test name', a=666, b='madan')
+newproj = PyOpenBrIMElmt("O", 'new proj')
 new_node = PyOpenBrIMElmt('O', 'new node1', D='~ TEST ~ ', UC='test')
 new_node2 = PyOpenBrIMElmt('O', 'new_node2', D='~ ~ TEST ~ ~')
 new_par = PyOpenBrIMElmt('P', '666', par_type='p_tag')
-pp = OBPrmElmt('  v ',100)
-pp2 = OBPrmElmt(' a ','10.0')
+pp = OBPrmElmt('  v ', 100)
+pp2 = OBPrmElmt(' a ', '10.0')
 pp.show_info()
 pp2.show_info()
 
-mat1=OBMaterial('C4000Psi','Deck Concrete','Concrete')
+mat1 = OBMaterial('C4000Psi', 'Deck Concrete', 'Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
 mat1.show_mat_table()
-
-
 
 # pp.attach_to(new_node)
 # new_node.attach_to(newproj)
@@ -27,7 +22,6 @@ mat1.show_mat_table()
 # ShowTree(test)
 # test.findall_by_xpath('./P')
 # test.find_by_xpath('./O')
-
 
 
 '''
