@@ -17,9 +17,9 @@ class ProjGroups(OBProject, PyAbst):
         self.prm_group = OBGroup('Parameter Group')
         self.mat_group = OBGroup('Material Group')
         self.sec_group = OBGroup('Section Group')
-        self.geo_group = OBGroup('Geometry Model')
         self.fem_group = OBGroup('FEM Model')
-        self.sub(self.prm_group, self.mat_group, self.sec_group, self.geo_group, self.fem_group)
+        self.geo_group = OBGroup('Geometry Model')
+        self.sub(self.prm_group, self.mat_group, self.sec_group, self.fem_group, self.geo_group)
 
     def include(self, *members: PyElmt):
         """ add one member to the project"""
@@ -28,7 +28,7 @@ class ProjGroups(OBProject, PyAbst):
             # PyElmt may be abstract or real
             abs_dict = {'Parameter': self.prm_group,
                         'Section': self.sec_group,
-                        'Material': self.mat_group, }
+                        'Material': self.mat_group}
             try:
                 if member.type in abs_dict:
                     # abstract elements include Parameter, Section, Material
