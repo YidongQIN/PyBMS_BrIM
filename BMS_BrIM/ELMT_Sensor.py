@@ -10,7 +10,7 @@ import numpy as np
 from BMS_BrIM.ABrIMELMT import *
 
 
-class Sensor(OBObjElmt):
+class Sensor(OBObjElmt): #@TODO PyReal
     # base_node: FENode
 
     def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):

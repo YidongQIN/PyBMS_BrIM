@@ -8,6 +8,7 @@ __author__ = 'Yidong QIN'
 
 from Interfaces.BrDatabase import *
 from Interfaces.BrOpenBrIM import *
+import json
 
 
 class PyElmt(object):
@@ -33,6 +34,13 @@ class PyElmt(object):
         except KeyError as e:
             print('Missing setting for db')
             print(e)
+
+    def attr_json(self):
+        """dump all attributes into JSON, so the db_write() method can write all info into database"""
+        #@TODO JSON is str, not JSON but some dict-like
+        print("All attributes of {} are:".format(self.name))
+        # print(dir())
+        pass
 
     def _conn_mysql(self, database, user, password, host='localhost', port=3306):
         """get db config and connect to MySQL"""
