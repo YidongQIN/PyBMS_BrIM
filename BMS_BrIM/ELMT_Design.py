@@ -10,7 +10,7 @@ Python Elements for BrIM.
 from BMS_BrIM.ABrIMELMT import *
 
 
-class ProjGroups(OBProject, PyAbst):
+class ProjGroups(OBProject, AbstELMT):
 
     def __init__(self, proj_name, template='empty'):
         super(ProjGroups, self).__init__(proj_name, template)
@@ -42,13 +42,13 @@ class ProjGroups(OBProject, PyAbst):
                 print(e)
 
 
-class Parameter(PyAbst):
+class Parameter(AbstELMT):
 
     def __init__(self, prm_id, prm_name):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
 
 
-class Material(PyAbst):
+class Material(AbstELMT):
 
     def __init__(self, mat_id, mat_name):
         """Material name is mandatory. Material Type is Steel, Concrete, etc."""
@@ -59,7 +59,7 @@ class Material(PyAbst):
         super(Material, self).mongo_read('Material')
 
 
-class Beam(PyReal):
+class Beam(RealELMT):
 
     def __init__(self, beam_id, beam_name):
         # init no so many parameters, put the points and nodes to set_model() methods
@@ -107,7 +107,7 @@ class Beam(PyReal):
         self.z2 = z2
 
 
-class Plate(PyReal):
+class Plate(RealELMT):
 
     def __init__(self, plate_id):
-        super(PyReal, self).__init__('Plate', plate_id)
+        super(RealELMT, self).__init__('Plate', plate_id)

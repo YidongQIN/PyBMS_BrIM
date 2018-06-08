@@ -7,7 +7,7 @@ __author__ = 'Yidong QIN'
 """
 
 from Interfaces.BrDatabase import *
-from Interfaces.BrXML import *
+from Interfaces.BrOpenBrIM import *
 
 
 class PyElmt(object):
@@ -128,17 +128,17 @@ class PyElmt(object):
         self.des = des
 
 
-class PyAbst(PyElmt):
+class AbstELMT(PyElmt):
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """abstract elements, such as material, section, load case"""
-        super(PyAbst, self).__init__(elmt_type, elmt_id, elmt_name)
+        super(AbstELMT, self).__init__(elmt_type, elmt_id, elmt_name)
 
     def model(self):
         return self.abs_class
 
 
-class PyReal(PyElmt):
+class RealELMT(PyElmt):
     """PyReal is used to represent real members of bridges.
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
@@ -146,7 +146,7 @@ class PyReal(PyElmt):
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
-        super(PyReal, self).__init__(elmt_type, elmt_id, elmt_name)
+        super(RealELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         self.section = None
         self.material = None
         self.dimension = dict()
