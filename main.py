@@ -1,78 +1,47 @@
-from BMS_BrIM import *
 import json
-#
-# story_num = OBPrmElmt('Storey_Number', 4, role='Input')  # 4 storey means 5 plates
-# height = OBPrmElmt('Height', 300.0, des='Vertical space between two storeys', role='Input')
-# height_top = OBPrmElmt('Height_top', 270.0, 'Height of the top story', role='Input')
-# t_plate = OBPrmElmt('t', 13, 'Thickness of each plate', role='Input')
-# l_plate = OBPrmElmt('l', 405.0, 'Length of each plate', role='Input')
-# w_plate = OBPrmElmt('w', 303.0, 'Width of each plate', role='Input')
-# d_hole = OBPrmElmt('d', 6.0, 'Diameter of hols in the plate', role='Input')
-# x_clear = OBPrmElmt('x_clear', 50.0, 'x clearance from the edge to the hole', role='Input')
-# y_clear = OBPrmElmt('y_clear', 24.0, 'y clearance from the edge to the hole', role='Input')
-# x_num = OBPrmElmt('ncol', 7, 'Column Number of holes', role='Input')
-# y_num = OBPrmElmt('nrow', 11, 'Column Number of holes', role='Input')
-# t_colm = OBPrmElmt('Thick_column', 1.0, 'Thickness of each column', role='Input')
-# w_colm = OBPrmElmt('Width_column', 25.0, 'Width of each column', role='Input')
-# in_1 = OBPrmElmt('Interval_1', 36.2, 'interval from edge to the first column', role='Input')
-# in_2 = OBPrmElmt('Interval_2', 26.8, 'interval from the first column to the second column', role='Input')
-# in_3 = OBPrmElmt('Interval_3', 77.0, 'interval from the first column to the second column', role='Input')
-# # the track? maybe not
-# d_track = OBPrmElmt('TrackDiameter', 18.0)
-# h1_track = OBPrmElmt('h1_track', 23.0)
-# h2_track = OBPrmElmt('h2_track', 6.0)
-# b_track = OBPrmElmt('Width_track', 49.0)
-#
-#
-# col_rect = OBShape('rectangle',
-#                    OBPoint(-w_colm.value / 2, -t_colm.value / 2),
-#                    OBPoint(w_colm.value / 2, -t_colm.value / 2),
-#                    OBPoint(w_colm.value / 2, t_colm.value / 2),
-#                    OBPoint(-w_colm.value / 2, t_colm.value / 2))
 
-testmg=PyElmt('Beam','Beam_1_1','Column_0,48.7')
-testmg.set_database(database='fours')
-result= testmg.mongo_read('Member')
-print(result)
-print(result['Section'])
+from BMS_BrIM import *
 
-'''
+
 class combine(StrainGauge, Beam):
 
     def __init__(self, id, des, db, name):
-        super(combine, self).__init__(id,des,db)
+        super(combine, self).__init__(id, des, db)
         print(self.name)
-        self.name=name
+        self.name = name
         print('init find dir()')
         print(dir())
         print('==========')
 
     def attr_json(self):
         super(combine, self).attr_json()
-        _d={}
-        for k,v in self.__dict__.items():
-            print("  - {}: {}".format(k,v))
-            _d[k]=str(v)
-        js = json.dumps(_d,sort_keys=True, indent=4)
+        _d = {}
+        for k, v in self.__dict__.items():
+            print("  - {}: {}".format(k, v))
+            _d[k] = str(v)
+        js = json.dumps(_d, sort_keys=True, indent=4)
         return js
 
 
-
 if __name__ == '__main__':
-    config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port=3306,path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180302_141015_19')
+    config = dict(user='root', password='qyd123', host='127.0.0.1', database='bridge_test', port=3306,
+                  path='c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180302_141015_19')
     point1 = OBPoint(0, 0, 0, 'P1')
     point2 = OBPoint(10, 0, 0, 'P2')
     point3 = OBPoint(20, 0, 0, 'P2')
     point4 = OBPoint(30, 0, 0, 'P2')
-    tc = combine(202,'Test dat path',config, 'CombineClass')
+    tc = combine(202, 'Test dat path', config, 'CombineClass')
     # print(tc.x)
-    tc.coordinates(0,0,0,10,20,0)
+    tc.coordinates(0, 0, 0, 10, 20, 0)
     # print(tc.x1)
     atja = tc.attr_json()
     print(atja)
     decoded = json.loads(atja)
     dbc = decoded['dbconfig']
     print(type(dbc))
+
+'''
+
 
 
 test = PyOpenBrIMElmt('O', 'test name', a=666, b='madan')
