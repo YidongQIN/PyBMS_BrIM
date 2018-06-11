@@ -170,6 +170,7 @@ class ConnMongoDB(object):
         else:
             print(
                 "Found NO document in <{}> matched <{}>".format(collection, condition))
+        # print(type(result))
         return result
 
     def col_find_all(self, collection, condition):

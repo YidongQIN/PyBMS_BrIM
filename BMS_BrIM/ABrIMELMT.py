@@ -92,7 +92,7 @@ class PyElmt(object):
     def mongo_read(self, collection):
         try:
             with ConnMongoDB(**self.db) as _db:
-                _db.find_by_kv(collection, '_id', self.id)
+                return _db.find_by_kv(collection, '_id', self.id)
         except BaseException as e:
             print('Error when reading from MongoDB')
             raise e
