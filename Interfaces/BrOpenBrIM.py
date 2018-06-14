@@ -15,8 +15,8 @@ from Interfaces.BrParamML import *
 class CubeGeo(OBObjElmt):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
 
-    def __init__(self, length, width, thick, cube_name=''):
-        super(CubeGeo, self).__init__('Volume', cube_name)
+    def __init__(self, length, width, thick, name=''):
+        super(CubeGeo, self).__init__('Volume', name)
         self.thick = self.prm_to_value(thick)
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
@@ -41,12 +41,12 @@ class CubeGeo(OBObjElmt):
 
 class BoltedPlateGeo(OBObjElmt):
 
-    def __init__(self, plate_name,
+    def __init__(self, name,
                  thick, length, width,
                  diameter, xclearance, yclearance,
                  column, row,
                  material='steel'):
-        super(BoltedPlateGeo, self).__init__('Surface', plate_name)
+        super(BoltedPlateGeo, self).__init__('Surface', name)
         self.thick = self.prm_to_value(thick)
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
@@ -68,7 +68,7 @@ class BoltedPlateGeo(OBObjElmt):
                               OBPoint(0, self.width),
                               thick_par=self.thick,
                               material_obj=self.material,
-                              surface_name=self.name)
+                              name=self.name)
         holes = []
         for i in range(self.column):
             for j in range(self.row):
@@ -85,8 +85,8 @@ class BoltedPlateGeo(OBObjElmt):
 class PlateFEM(OBObjElmt):
     """FEM model of plate, either normal plate or bolted plate"""
 
-    def __init__(self, length, width, thick, material, plate_name):
-        super(PlateFEM, self).__init__('FESurface', plate_name)
+    def __init__(self, length, width, thick, material, name):
+        super(PlateFEM, self).__init__('FESurface', name)
         self.thick = self.prm_to_value(thick)
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
@@ -96,7 +96,7 @@ class PlateFEM(OBObjElmt):
     def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
         if nodes:
-            return OBFESurface(*nodes, thick_par=self.thick, material_obj=self.material, fes_name=self.name)
+            return OBFESurface(*nodes, thick_par=self.thick, material_obj=self.material, name=self.name)
         else:
             n1 = OBFENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
             n2 = OBFENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))
@@ -145,7 +145,7 @@ class StraightBeamFEM(OBObjElmt):
 
     def fem(self, *nodes):
         if nodes:
-            return OBFELine(*nodes, section=self.section, beta_angle=self.angle, feline_name=self.name)
+            return OBFELine(*nodes, section=self.section, beta_angle=self.angle, name=self.name)
         else:
             n1 = OBFENode(0, 0, 0)
             n2 = OBFENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])

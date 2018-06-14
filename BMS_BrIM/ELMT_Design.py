@@ -12,8 +12,8 @@ from BMS_BrIM.ABrIMELMT import *
 
 class ProjGroups(OBProject, AbstELMT):
 
-    def __init__(self, proj_name, template='empty'):
-        super(ProjGroups, self).__init__(proj_name, template)
+    def __init__(self, name, template='empty'):
+        super(ProjGroups, self).__init__(name, template)
         self.prm_group = OBGroup('Parameter Group')
         self.mat_group = OBGroup('Material Group')
         self.sec_group = OBGroup('Section Group')
@@ -33,6 +33,7 @@ class ProjGroups(OBProject, AbstELMT):
                 if member.type in abs_dict:
                     # abstract elements include Parameter, Section, Material
                     abs_dict[member.type].sub(member)
+                    # @TODO member.model?
                 else:
                     # all other elements are Real, have both fem and geo
                     self.fem_group.sub(member)
@@ -44,8 +45,9 @@ class ProjGroups(OBProject, AbstELMT):
 
 class Parameter(AbstELMT):
 
-    def __init__(self, prm_id, prm_name):
+    def __init__(self, prm_id, prm_name, prm_value):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
+        self.value = prm_value
 
 
 class Material(AbstELMT):
@@ -53,10 +55,27 @@ class Material(AbstELMT):
     def __init__(self, mat_id, mat_name):
         """Material name is mandatory. Material Type is Steel, Concrete, etc."""
         super(Material, self).__init__('Material', mat_id, mat_name)
-        print(self.name)
 
     def mongo_read(self, collection):
         super(Material, self).mongo_read('Material')
+
+    def set_property(self, **mat_dict):
+        """set the property of material. should use key in:
+        [d, E, a, Nu, Fc28, Fy, Fu]"""
+        _desdict = dict(d="Density",
+                        E="modulus of Elasticity",
+                        a="Coefficient of Thermal Expansion",
+                        Nu="Poisson's Ratio",
+                        Fc28="Concrete Compressive Strength",
+                        Fy="Steel Yield Strength",
+                        Fu="Steel Ultimate Strength")
+        print('Set {} material properties'.format(self.name))
+        for _k, _v in mat_dict.items():
+            self.__dict__[_k] = _v
+            try:
+                print(" -  {} = {}".format(_desdict[_k], _v))
+            except KeyError as e:
+                print(" -  {} = {}\t! an unfamiliar property".format(_k, _v))
 
 
 class Beam(RealELMT):

@@ -257,14 +257,14 @@ class PyOpenBrIMElmt(object):
 class OBObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
 
-    def __init__(self, object_type, obj_name='', **obj_attrib):
+    def __init__(self, type, name='', **obj_attrib):
         """create a new OBJECT in OpenBrIM ParamML.\n
         Mandatory is Type <O T= ? > such as Point, Line, Group, ...\n
         N = ? as name is recommended to be provided.\n
         attributes are in format of dict.
         """
-        super(OBObjElmt, self).__init__('O', obj_name, T=object_type, **obj_attrib)
-        self.type = object_type
+        self.type = type
+        super(OBObjElmt, self).__init__('O', name, T=type, **obj_attrib)
 
     def sub(self, *child):
         """add one or a list of child elements as sub elmt"""
@@ -289,7 +289,7 @@ class OBObjElmt(PyOpenBrIMElmt):
     def refer_elmt(self, elmt, refer_name):
         if isinstance(elmt, PyOpenBrIMElmt):
             self.sub(OBPrmElmt(refer_name, elmt.name,
-                               par_type=elmt.get_attrib('T'), role=''))
+                               type=elmt.get_attrib('T'), role=''))
 
     def move_to(self, new_x, new_y, new_z):
         self.set_attrib(X=new_x, Y=new_y, Z=new_z)
@@ -312,12 +312,12 @@ class OBObjElmt(PyOpenBrIMElmt):
 class OBPrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
 
-    def __init__(self, par_name, value, des='', role='', par_type='', ut='', uc=''):
+    def __init__(self, name, value, des='', role='', type='', ut='', uc=''):
         """create a new PARAMETER in OpenBrIM ParamML. \n
         Mandatory: name, value.\n
         D-> des is describe of the parameter.\n
         par_type is the Type of parameter, such as Material. """
-        _name = par_name.strip()
+        _name = name.strip()
         if not _name:
             print('The name of Parameter cannot be EMPTY')
             raise ValueError
@@ -327,13 +327,13 @@ class OBPrmElmt(PyOpenBrIMElmt):
                 self.value = int(self.value)
         except ValueError:
             self.value = str(value)
-        super(OBPrmElmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=par_type)
+        super(OBPrmElmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=type)
 
 
 class OBProject(OBObjElmt):
-    def __init__(self, proj_name, template='empty'):
+    def __init__(self, name, template='empty'):
         """create new project with a template"""
-        super(OBProject, self).__init__('Project', proj_name)
+        super(OBProject, self).__init__('Project', name)
         if template == 'template':
             origin_string = '<O T="Project" D="A template in OpenBrIM Library">\n</O>'
         elif template == 'SI':
@@ -363,7 +363,7 @@ class OBProject(OBObjElmt):
         else:
             origin_string = '<O T="Project">\n</O>'
         self.read_xmlstr(origin_string)
-        self.elmt.attrib['N'] = proj_name
+        self.elmt.attrib['N'] = name
 
     def save_project(self, path=''):
         """save this element as a Project in a xml_file. \n
@@ -387,12 +387,12 @@ class OBProject(OBObjElmt):
 
 
 class OBMaterial(OBObjElmt):
-    def __init__(self, mat_name, des='', mat_type='', **attrib_dict):
+    def __init__(self, name, des='', type='', **attrib_dict):
         """Material name is mandatory.\n
         Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
         there may be no other attributes.
         """
-        super(OBMaterial, self).__init__('Material', mat_name, D=des, Type=mat_type, **attrib_dict)
+        super(OBMaterial, self).__init__('Material', name, D=des, Type=type, **attrib_dict)
 
     def mat_property(self, **key_value):
         """parameters generally defined of the material, \n
@@ -430,10 +430,10 @@ class OBSection(OBObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
 
-    def __init__(self, sect_name, material, *shape_list, **property_dict):
-        super(OBSection, self).__init__('Section', sect_name)
+    def __init__(self, name, material=None, *shape_list, **property_dict):
+        super(OBSection, self).__init__('Section', name)
         if isinstance(material, OBMaterial):
-            self.sub(OBPrmElmt('Material', material.name, par_type='Material', des='Material_{}'.format(self.name)))
+            self.sub(OBPrmElmt('Material', material.name, type='Material', des='Material_{}'.format(self.name)))
         self.sub(*shape_list)
         self.sect_property(**property_dict)
 
@@ -446,8 +446,8 @@ class OBSection(OBObjElmt):
 
 class OBShape(OBObjElmt):
 
-    def __init__(self, shape_name, *obj_list):
-        super(OBShape, self).__init__('Shape', shape_name)
+    def __init__(self, name, *obj_list):
+        super(OBShape, self).__init__('Shape', name)
         self.sub(*obj_list)
 
     def is_cutout(self, y_n='Y'):
@@ -457,15 +457,15 @@ class OBShape(OBObjElmt):
 
 class OBCircle(OBObjElmt):
 
-    def __init__(self, cir_name, radius, x=0, y=0, ):
-        super(OBCircle, self).__init__('Circle', cir_name, X=str(x), Y=str(y))
+    def __init__(self, name, radius, x=0, y=0, ):
+        super(OBCircle, self).__init__('Circle', name, X=str(x), Y=str(y))
         self.radius = radius
         self.sub(OBPrmElmt('Radius', radius))
 
 
 class OBUnit(OBObjElmt):
 
-    def __init__(self, unit_name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
+    def __init__(self, name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
                  temperature_unit="Fahrenheit"):
         """units system of the project.\n
         name=Internal, Geometry, Property.\n
@@ -474,7 +474,7 @@ class OBUnit(OBObjElmt):
         length_unit=Inch, Meter\n
         temperature_unit=Fahrenheit\n
         """
-        super(OBUnit, self).__init__('Unit', unit_name,
+        super(OBUnit, self).__init__('Unit', name,
                                      angle=angle_unit,
                                      force=force_unit,
                                      length=length_unit,
@@ -492,8 +492,8 @@ class OBExtends(OBObjElmt):
 
 class OBGroup(OBObjElmt):
 
-    def __init__(self, group_name, *elmts_list):
-        super(OBGroup, self).__init__('Group', obj_name=group_name)
+    def __init__(self, name, *elmts_list):
+        super(OBGroup, self).__init__('Group', name=name)
         self.sub(*elmts_list)
 
     def regroup(self, *elmts):
@@ -503,8 +503,8 @@ class OBGroup(OBObjElmt):
 
 class OBFENode(OBObjElmt):
 
-    def __init__(self, x, y, z, node_name=''):
-        super(OBFENode, self).__init__('Node', node_name, X=x, Y=y, Z=z)
+    def __init__(self, x, y, z, name=''):
+        super(OBFENode, self).__init__('Node', name, X=x, Y=y, Z=z)
         self.x = x
         self.y = y
         self.z = z
@@ -551,8 +551,8 @@ class OBFENode(OBObjElmt):
 
 class OBFELine(OBObjElmt):
 
-    def __init__(self, node1, node2, section, beta_angle=0, feline_name=''):
-        super(OBFELine, self).__init__('FELine', feline_name)
+    def __init__(self, node1, node2, section, beta_angle=0, name=''):
+        super(OBFELine, self).__init__('FELine', name)
         if isinstance(node1, OBFENode) and isinstance(node2, OBFENode) and isinstance(section, OBSection):
             self.refer_elmt(node1, 'Node1')
             self.n1 = node1
@@ -575,8 +575,8 @@ class OBFELine(OBObjElmt):
 
 class OBFESurface(OBObjElmt):
 
-    def __init__(self, node1, node2, node3, node4, thick_par, material_obj, fes_name=''):
-        super(OBFESurface, self).__init__('FESurface', fes_name)
+    def __init__(self, node1, node2, node3, node4, thick_par, material_obj, name=''):
+        super(OBFESurface, self).__init__('FESurface', name)
         self.refer_elmt(node1, 'Node1')
         self.n1 = (node1.x, node1.y, node1.z)
         self.refer_elmt(node2, 'Node2')
@@ -593,9 +593,9 @@ class OBPoint(OBObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
 
-    def __init__(self, x, y, z=0, point_name=''):
+    def __init__(self, x, y, z=0, name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
-        super(OBPoint, self).__init__('Point', obj_name=point_name,
+        super(OBPoint, self).__init__('Point', name=name,
                                       X=str(x), Y=str(y), Z=str(z))
         self.x = x
         self.y = y
@@ -617,8 +617,8 @@ class OBPoint(OBObjElmt):
 class OBLine(OBObjElmt):
     """T=Line, Two points and one section needed"""
 
-    def __init__(self, point1, point2, section=None, line_name=''):
-        super(OBLine, self).__init__('Line', line_name)
+    def __init__(self, point1, point2, section=None, name=''):
+        super(OBLine, self).__init__('Line', name)
         self.add_point(point1)
         self.p1 = (point1.x, point1.y)
         self.add_point(point2)
@@ -660,8 +660,8 @@ class OBLine(OBObjElmt):
 
 
 class OBSurface(OBObjElmt):
-    def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, surface_name=''):
-        super(OBSurface, self).__init__('Surface', surface_name)
+    def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, name=''):
+        super(OBSurface, self).__init__('Surface', name)
         self.add_point(point1)
         self.p1 = (point1.x, point1.y, point1.z)
         self.add_point(point2)
@@ -712,13 +712,13 @@ class OBSurface(OBObjElmt):
         not mandatory"""
         if isinstance(mat_obj, OBMaterial):
             self.sub(OBPrmElmt('Material', mat_obj.elmt.attrib['N'],
-                               par_type='Material',
+                               type='Material',
                                role='',
                                des='Material_Surface_{}'.format(self.name)))
         elif isinstance(mat_obj, str):
             # print('Material of Surface <{}> is a string, please make sure'.format(self.name))
             self.sub(OBPrmElmt('Material', mat_obj,
-                               par_type='Material',
+                               type='Material',
                                role='',
                                des='Material_Surface_{}'.format(self.name)))
         else:
@@ -737,8 +737,8 @@ class OBSurface(OBObjElmt):
 
 class OBVolume(OBObjElmt):
 
-    def __init__(self, surface1, surface2, volume_name=''):
-        super(OBVolume, self).__init__('Volume', volume_name)
+    def __init__(self, surface1, surface2, name=''):
+        super(OBVolume, self).__init__('Volume', name)
         self.sub(surface1, surface2)
 
     def set_surface(self, point1, point2, point3, point4):

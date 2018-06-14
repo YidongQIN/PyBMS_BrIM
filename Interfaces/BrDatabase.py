@@ -143,13 +143,13 @@ class ConnMySQL(object):
 
 class ConnMongoDB(object):
 
-    def __init__(self, database, host='localhost', port=27017):
+    def __init__(self, database, host='localhost', port=27017, **kwargs):
         self.host = host
         self.port = port
         self.db_name = database
         self.client = mg.MongoClient(self.host, self.port)
         self.db = self.client[self.db_name]
-        print("Collections of database <{}> are:\n\t{}".format(self.db_name, self.db.collection_names(False)))
+        print("The MongoDB <{}> structure:\n\t{}".format(self.db_name, self.db.collection_names(False)))
 
     def __enter__(self):
         return self
@@ -203,11 +203,20 @@ class ConnMongoDB(object):
     def insert_elmt(self, collection, elmt):
         """elmt has __dict__"""
         try:
-            self.db[collection].insert(self.modify_field_value(elmt))
+            return self.db[collection].insert(self.modify_field_value(elmt))
         except mg.errors.DuplicateKeyError as e:
             print("This document already exists")
             print(e)
             raise
+
+    def insert_data(self, collection, **data):
+        """elmt has __dict__"""
+        try:
+            return self.db[collection].insert({**data})
+        except mg.errors.DuplicateKeyError as e:
+            print("This document already exists")
+            print(e)
+            # raise
 
     def update_elmt(self, collection, elmt):
         """first find, then update or insert"""
@@ -220,7 +229,7 @@ class ConnMongoDB(object):
         except AttributeError as e:
             print("The elmt <{}> does not have a <'id'> attribute".format(elmt.name or elmt))
             print(e)
-            raise
+
 
     def delete_elmt(self, collection, elmt):
         try:
@@ -233,9 +242,11 @@ class ConnMongoDB(object):
             print('Deleting element <{}> error'.format(elmt))
             raise
 
+    #wrong, should not be an elmt but a dict!
     @staticmethod
     def modify_field_value(elmt):
-        """change the 'id" to '_id', or should modify all PyElmt?"""
+        """transfer the element to dict of attributes.
+                        no empty attribute and change 'id' to '_id'. """
         from BMS_BrIM import ABrIMELMT
         assert isinstance(elmt, ABrIMELMT.PyElmt)
         field_value = dict()
@@ -248,4 +259,6 @@ class ConnMongoDB(object):
             field_value.pop('id')
         except KeyError:
             print("No '_id' field contained, will be assigned automatically")
+        field_value.pop('openbrim')
+        field_value.pop('db_config')
         return field_value
