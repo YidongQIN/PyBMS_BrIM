@@ -7,6 +7,7 @@ __author__ = 'Yidong QIN'
 """
 
 from Interfaces.BrDatabase import *
+from Interfaces.BrOpenBrIM import *
 
 
 class PyElmt(object):
@@ -37,7 +38,7 @@ class PyElmt(object):
 
     def set_openbrim(self, model_class, ob_class, **attrib_dict):
         """create a OpenBrim XML string"""
-        _model = ob_class(**attrib_dict)
+        _model:PyOpenBrIMElmt = ob_class(**attrib_dict)
         if model_class in ['fem', 'geo']:
             self.openbrim[model_class] = _model
             return self.openbrim[model_class]
