@@ -7,7 +7,7 @@ __author__ = 'Yidong QIN'
 new sensor class in MongoDB instead of MySQL in lab
 """
 
-from BMS_BrIM.ABrIMELMT import *
+from BMS_BrIM.PyELMT import *
 
 class Sensor(PhysicalELMT):
     pass

@@ -1,4 +1,4 @@
-from BMS_BrIM import *
+from BMS_BrIM.BrIM_ELMT import *
 
 mma = Material(1, 'ureal')
 mma.set_property(d=100, Fy=55555, E=5000, a=0.005, b=23)

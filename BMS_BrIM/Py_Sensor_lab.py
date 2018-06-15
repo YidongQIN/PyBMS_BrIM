@@ -7,7 +7,7 @@ Sensors definition in OpenBrIM
 import matplotlib.pyplot as plt
 import numpy as np
 
-from BMS_BrIM.ABrIMELMT import *
+from BMS_BrIM.PyELMT import *
 
 
 class Sensor(OBObjElmt):

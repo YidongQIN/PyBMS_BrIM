@@ -7,13 +7,12 @@ __author__ = 'Yidong QIN'
 Python Elements for BrIM. 
 """
 
-from BMS_BrIM.ABrIMELMT import *
+from BMS_BrIM.PyELMT import *
 
 
-class ProjGroups(AbstELMT,OBProject):
+class ProjGroups(AbstELMT):
 
     def __init__(self, name, template='empty'):
-        #@TODO
         super(ProjGroups, self).__init__(name, template)
         self.prm_group = OBGroup('Parameter Group')
         self.mat_group = OBGroup('Material Group')
@@ -87,15 +86,15 @@ class Section(AbstELMT):
     pass
 
 
-class Beam(PhysicalELMT):
+class BeamDesign(PhysicalELMT):
 
     def __init__(self, beam_id, beam_name):
         # init no so many parameters, put the points and nodes to set_model() methods
-        super(Beam, self).__init__('BEAM', beam_id, beam_name)
+        super(BeamDesign, self).__init__('BEAM', beam_id, beam_name)
         self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = [None] * 6
 
 
-class Plate(PhysicalELMT):
+class PlateDesign(PhysicalELMT):
 
     def __init__(self, plate_id):
         super(PhysicalELMT, self).__init__('Plate', plate_id)

@@ -4,10 +4,12 @@
 __author__ = 'Yidong QIN'
 
 """
-"""
+PyELMT gets all interfaces' methods
 
-from Interfaces.BrDatabase import *
-from Interfaces.BrOpenBrIM import *
+"""
+from Interfaces import *
+# from Interfaces.BrDatabase import *
+# from Interfaces.BrOpenBrIM import *
 
 
 class PyElmt(object):
