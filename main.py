@@ -1,5 +1,11 @@
 from BMS_BrIM.BrIM_ELMT import *
 
+t15=PhysicalELMT('PHY',3)
+t15.position=dict(x=3)
+print(t15.position['x'])
+
+'''
+# test in 0615
 mma = Material(1, 'ureal')
 mma.set_property(d=100, Fy=55555, E=5000, a=0.005, b=23)
 mma.set_dbconfig('fours', 'Material')
@@ -11,22 +17,6 @@ mma.set_property(d=666)
 xml = mma.set_openbrim()
 print(xml)
 ShowTree(xml)
-
-
-class newClass(Material, Inspection):
-    def __init__(self,id, name):
-        super(newClass, self).__init__(id, name)
-        Inspection.__init__(self)
-        # print(dir())
-        # print(self.__dict__)
-
-nna=newClass(20,'newChall')
-nna.inspected()
-
-
-
-'''
-
 
 
 test = PyOpenBrIMElmt('O', 'test name', a=666, b='madan')

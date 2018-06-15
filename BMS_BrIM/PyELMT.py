@@ -8,6 +8,8 @@ PyELMT gets all interfaces' methods
 
 """
 from Interfaces import *
+
+
 # from Interfaces.BrDatabase import *
 # from Interfaces.BrOpenBrIM import *
 
@@ -15,14 +17,18 @@ from Interfaces import *
 class PyElmt(object):
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
+        """Basic attributes for a PyELMT is type, id.
+        name is optional, as well as description.
+        Each interface has a corresponding attribute"""
         self.id = elmt_id
         self.type = elmt_type
         if elmt_name:
             self.name = elmt_name
         else:
             self.name = elmt_type + '_' + str(elmt_id)
-        self.db_config: dict = None
-        self.openbrim = dict()  # or a dict of eET.elements?
+        # two interfaces: Database and OpenBrIM
+        self.db_config: dict = None  # dict(database=, table=, user=,...)
+        self.openbrim: dict = None  # dict of eET.elements
         self.des: str = None
 
     def set_mongo_doc(self):
@@ -40,7 +46,7 @@ class PyElmt(object):
 
     def set_openbrim(self, model_class, ob_class, **attrib_dict):
         """create a OpenBrim XML string"""
-        _model:PyOpenBrIMElmt = ob_class(**attrib_dict)
+        _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
         if model_class in ['fem', 'geo']:
             self.openbrim[model_class] = _model
             return self.openbrim[model_class]
@@ -93,7 +99,7 @@ class PyElmt(object):
         self.des = des
 
     @staticmethod
-    def _attr_pop_some(elmt, *pop_list):
+    def _attr_pop(elmt, *pop_list):
         _d = dict(elmt.__dict__.items())
         for _pop in pop_list:
             try:
@@ -103,7 +109,7 @@ class PyElmt(object):
         return _d
 
     @staticmethod
-    def _attr_pick_some(elmt, *pick_list):
+    def _attr_pick(elmt, *pick_list):
         _d = dict()
         for _pick in pick_list:
             try:
@@ -116,7 +122,7 @@ class PyElmt(object):
     def _attr_to_mongo_dict(elmt):
         """dump some of the attributes to dict.
         the default pop out list is: 'openbrim','db_config'. """
-        return AbstELMT._attr_pop_some(elmt, 'id', 'openbrim', 'db_config')
+        return AbstELMT._attr_pop(elmt, 'id', 'openbrim', 'db_config')
 
     @staticmethod
     def _mongo_id_to_self_id(doc: dict):
@@ -143,20 +149,20 @@ class PhysicalELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
         super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.section = None
-        self.material = None
+        # geometry info:
+        self.position = XYZ()
+        self.direction = RXYZ()  # local coordinate system
         self.dimension = dict()
-        self.position = dict()
-        self.direction = dict()
-
+        self.section = None
+        # physical info: material
+        self.material = None
 
     # may not use the below
 
-    def set_position(self, **pos):
-        for k in pos:
-            if k not in ['x', 'y', 'z']:
-                print('= = Position of {} is recommended to be x,y,z'.format(self.name))
-        self.position = pos
+    def set_position(self, x=0, y=0, z=0):
+        self.position.x = x
+        self.position.y = y
+        self.position.z = z
 
     def set_direction(self, **drc):
         for k in drc:
@@ -169,3 +175,25 @@ class PhysicalELMT(PyElmt):
             if k not in ['length', 'width', 'thick']:
                 print('= = Dimension of {} is recommended to be length, width, thick, etc'.format(self.name))
         self.dimension = dims
+
+
+class XYZ(object):
+
+    def __init__(self, x=None, y=None, z=None):
+        #@TODO
+        for k in x,y,z:
+            try:
+                k=int(k)
+            except ValueError:
+                k = float(k)
+
+        self.x = x
+        self.y = y
+        self.z = z
+
+class RXYZ(object):
+
+    def __init__(self,rx=None, ry=None, rz=None):
+        self.rx = rx
+        self.ry = ry
+        self.rz = rz

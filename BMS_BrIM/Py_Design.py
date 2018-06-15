@@ -77,7 +77,7 @@ class Material(AbstELMT):
                 print("! UnKnown property")
 
     def set_openbrim(self, model_class='fem', ob_class=OBMaterial, **attrib_dict):
-        _mat_attr = PyElmt._attr_pick_some(self, 'name', 'des', 'id', *Material._describe_dict)
+        _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *Material._describe_dict)
         return super(Material, self).set_openbrim(model_class, ob_class, **_mat_attr)
         # return self.openbrim[model_class]
 

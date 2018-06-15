@@ -115,7 +115,7 @@ class Sensor(OBObjElmt):
     def geom(self):
         """ OpenBrIM geometry model"""
         if not (self.x, self.y, self.z):
-            print('Sensor <{}> position required'.format(self.name))
+            print('Sensor <{}> _position required'.format(self.name))
         if not (self.dx, self.dy, self.dz):
             print('Sensor <{}> direction required'.format(self.name))
 
@@ -129,7 +129,7 @@ class Sensor(OBObjElmt):
         """FEM model. For sensor, it's just a node."""
         node = OBFENode(self.x, self.y, self.z, self.name)
         # not sure if realizable?
-        # when create a FEM, cannot insert the node into this position
+        # when create a FEM, cannot insert the node into this _position
         # because it will change the node number and element
         return node
 
