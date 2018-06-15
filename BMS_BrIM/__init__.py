@@ -20,7 +20,7 @@ PyElement   PySensor  PyInspection  Py...
 
 from BMS_BrIM.ELMT_Design import *
 from BMS_BrIM.ELMT_Inspect import *
-from BMS_BrIM.ELMT_Sensor import *
+from BMS_BrIM.ELMT_Sensor_lab import *
 
 
 

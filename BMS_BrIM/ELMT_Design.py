@@ -10,9 +10,10 @@ Python Elements for BrIM.
 from BMS_BrIM.ABrIMELMT import *
 
 
-class ProjGroups(OBProject, AbstELMT):
+class ProjGroups(AbstELMT,OBProject):
 
     def __init__(self, name, template='empty'):
+        #@TODO
         super(ProjGroups, self).__init__(name, template)
         self.prm_group = OBGroup('Parameter Group')
         self.mat_group = OBGroup('Material Group')
@@ -62,7 +63,7 @@ class Material(AbstELMT):
     def __init__(self, mat_id, mat_name):
         """Material name is mandatory. Material Type is Steel, Concrete, etc."""
         super(Material, self).__init__('Material', mat_id, mat_name)
-        self.stage='Design'
+        self.stage = 'Design'
 
     def set_property(self, **mat_dict):
         """set the property of material. should use key in:
@@ -82,52 +83,16 @@ class Material(AbstELMT):
         # return self.openbrim[model_class]
 
 
+class Section(AbstELMT):
+    pass
+
+
 class Beam(PhysicalELMT):
 
     def __init__(self, beam_id, beam_name):
         # init no so many parameters, put the points and nodes to set_model() methods
         super(Beam, self).__init__('BEAM', beam_id, beam_name)
         self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = [None] * 6
-
-    def set_points(self, *points):
-        if len(points) == 2:
-            if isinstance(points[0], OBPoint) and isinstance(points[1], OBPoint):
-                self.two_point(*points)
-            elif isinstance(points[0], OBFENode) and isinstance(points[1], OBFENode):
-                self.two_node(*points)
-        elif len(points) == 6:
-            for a in points:
-                if not isinstance(a, (float, int)):
-                    print("Beam {}'s Coordinates must be numbers".format(self.id))
-            self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = points
-        # self.geo_xml(Point(self.x1, self.y1, self.z1), Point(self.x2, self.y2, self.z2), section=self.section)
-        # self.fem_xml(FENode(self.x1, self.y1, self.z1), FENode(self.x2, self.y2, self.z2), section=self.section)
-        # Line() material is included in section definition
-
-    def two_point(self, point1, point2):
-        # self.position[]
-        self.x1 = point1.x
-        self.y1 = point1.x
-        self.z1 = point1.x
-        self.x2 = point2.x
-        self.y2 = point2.x
-        self.z2 = point2.x
-
-    def two_node(self, node1, node2):
-        self.x1 = node1.x
-        self.y1 = node1.x
-        self.z1 = node1.x
-        self.x2 = node2.x
-        self.y2 = node2.x
-        self.z2 = node2.x
-
-    def coordinates(self, x1, y1, z1, x2, y2, z2):
-        self.x1 = x1
-        self.y1 = y1
-        self.z1 = z1
-        self.x2 = x2
-        self.y2 = y2
-        self.z2 = z2
 
 
 class Plate(PhysicalELMT):
