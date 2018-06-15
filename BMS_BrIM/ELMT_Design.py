@@ -51,34 +51,38 @@ class Parameter(AbstELMT):
 
 
 class Material(AbstELMT):
+    _describe_dict = dict(d="Density",
+                          E="Modulus of Elasticity",
+                          a="Coefficient of Thermal Expansion",
+                          Nu="Poisson's Ratio",
+                          Fc28="Concrete Compressive Strength",
+                          Fy="Steel Yield Strength",
+                          Fu="Steel Ultimate Strength")
 
     def __init__(self, mat_id, mat_name):
         """Material name is mandatory. Material Type is Steel, Concrete, etc."""
         super(Material, self).__init__('Material', mat_id, mat_name)
-
-    def mongo_read(self, collection):
-        super(Material, self).mongo_read('Material')
+        self.stage='Design'
 
     def set_property(self, **mat_dict):
         """set the property of material. should use key in:
         [d, E, a, Nu, Fc28, Fy, Fu]"""
-        _desdict = dict(d="Density",
-                        E="modulus of Elasticity",
-                        a="Coefficient of Thermal Expansion",
-                        Nu="Poisson's Ratio",
-                        Fc28="Concrete Compressive Strength",
-                        Fy="Steel Yield Strength",
-                        Fu="Steel Ultimate Strength")
-        print('Set {} material properties'.format(self.name))
+        print("Set Material <{}> properties to:".format(self.name))
         for _k, _v in mat_dict.items():
             self.__dict__[_k] = _v
+            print("- {}={}\t".format(_k, _v), end='')
             try:
-                print(" -  {} = {}".format(_desdict[_k], _v))
-            except KeyError as e:
-                print(" -  {} = {}\t! an unfamiliar property".format(_k, _v))
+                print('#', Material._describe_dict[_k])
+            except KeyError:
+                print("! UnKnown property")
+
+    def set_openbrim(self, model_class='fem', ob_class=OBMaterial, **attrib_dict):
+        _mat_attr = PyElmt._attr_pick_some(self, 'name', 'des', 'id', *Material._describe_dict)
+        return super(Material, self).set_openbrim(model_class, ob_class, **_mat_attr)
+        # return self.openbrim[model_class]
 
 
-class Beam(RealELMT):
+class Beam(PhysicalELMT):
 
     def __init__(self, beam_id, beam_name):
         # init no so many parameters, put the points and nodes to set_model() methods
@@ -126,7 +130,7 @@ class Beam(RealELMT):
         self.z2 = z2
 
 
-class Plate(RealELMT):
+class Plate(PhysicalELMT):
 
     def __init__(self, plate_id):
-        super(RealELMT, self).__init__('Plate', plate_id)
+        super(PhysicalELMT, self).__init__('Plate', plate_id)

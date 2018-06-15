@@ -12,7 +12,13 @@ from BMS_BrIM.ABrIMELMT import *
 
 class Inspection(object):
     def __init__(self):
-        pass
+        self.status='Commm'
+
+    def inspected(self):
+        print(self.status)
+        self.status='IIIII'
+        print(self.status)
+
 
 
 if __name__ == '__main__':

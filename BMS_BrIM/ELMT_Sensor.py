@@ -24,15 +24,55 @@ class Sensor(OBObjElmt): #@TODO PyReal
             # fileName is from the Server Setting JSON
         except KeyError:
             print('For the sensor <{}>,a "path" item is required in the config dictionary'.format(self.name))
-        self.dbconfig = _dbconfig  # user, passwd, host, database, port
+        self.db_config = _dbconfig  # user, passwd, host, database, port
         self.x, self.y, self.z, self.dx, self.dy, self.dz = self.get_install()
         self.width, self.length, self.thick = self.get_dimension()
         self.unitid, self.channel = self.get_unit_info()
         self.datpath = self.get_backup_filename()
         self.base_node = None
 
+    def mysql_read(self, id_name, table, *columns, fetch_type='ALL', with_des=False):
+        try:
+            with ConnMySQL(**self.db_config) as _db:
+                _db.select(id_name, self.id, self.db_config['database'], table, *columns)
+                _result = _db.fetch(fetch_type, with_des)
+                print("SQL result is:\n  {}".format(_result))
+                return _result
+        except TypeError as e:
+            print('<{}> Type Error\n  {}'.format(self.name, e))
+        except BaseException as e:
+            print('<{}> Error\n  {}'.format(self.name, e))
+            raise e
+
+    def mysql_write(self, id_name, table, *data):
+        if self.mysql_read(id_name, table):
+            self.mysql_update(id_name, table, *data)
+        else:
+            self.mysql_insert(table, *data)
+
+    def mysql_insert(self, table, *data):
+        """first check if exist, then update or insert"""
+        try:
+            with ConnMySQL(**self.db_config) as _db:
+                return _db.insert(table, *data)
+        except TypeError as e:
+            print('<{}> Type Error\n  {}'.format(self.name, e))
+        except BaseException as e:
+            print('<{}> Error\n  {}'.format(self.name, e))
+            raise e
+
+    def mysql_update(self, id_name, table, *data):
+        """update the records of the element"""
+        try:
+            with ConnMySQL(**self.db_config) as _db:
+                _condition = '{}={}'.format(id_name, self.id)
+                _db.update(table, *data, condition=_condition)
+                return
+        except BaseException as e:
+            raise e
+
     def read_db_one(self, tbname, *col_names):
-        db = ConnMySQL(**self.dbconfig)
+        db = ConnMySQL(**self.db_config)
         sql = 'select {} from bridge_test.{} where sensorID ={}'.format(", ".join(col_names), tbname, self.id)
         db.query(sql)
         info = db.fetch_row()

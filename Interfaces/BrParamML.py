@@ -387,12 +387,21 @@ class OBProject(OBObjElmt):
 
 
 class OBMaterial(OBObjElmt):
+    _desdict = dict(d="Density",
+                    E="modulus of Elasticity",
+                    a="Coefficient of Thermal Expansion",
+                    Nu="Poisson's Ratio",
+                    Fc28="Concrete Compressive Strength",
+                    Fy="Steel Yield Strength",
+                    Fu="Steel Ultimate Strength")
+
     def __init__(self, name, des='', type='', **attrib_dict):
         """Material name is mandatory.\n
         Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
         there may be no other attributes.
         """
-        super(OBMaterial, self).__init__('Material', name, D=des, Type=type, **attrib_dict)
+        super(OBMaterial, self).__init__('Material', name, D=des, Type=type)
+        self.mat_property(**attrib_dict)
 
     def mat_property(self, **key_value):
         """parameters generally defined of the material, \n
@@ -403,17 +412,11 @@ class OBMaterial(OBObjElmt):
         for _key, _value in key_value.items():
             self.add_mat_par(_key, _value)
 
-    def add_mat_par(self, n, v, des=''):
-        if not des:
-            _desdict = dict(d="Density",
-                            E="modulus of Elasticity",
-                            a="Coefficient of Thermal Expansion",
-                            Nu="Poisson's Ratio",
-                            Fc28="Concrete Compressive Strength",
-                            Fy="Steel Yield Strength",
-                            Fu="Steel Ultimate Strength")
-            des = _desdict.get(n)
-        self.elmt.append(eET.Element('P', N=n, V=str(v), D=des))
+    def add_mat_par(self, n, v, _des=''):
+        if not _des:
+            _des = OBMaterial._desdict.get(n)
+        self.new_parameter(n, str(v), des=_des)
+        # self.elmt.append(eET.Element('P', N=n, V=str(v), D=_des))
 
     def show_mat_table(self):
         print('{} is {} ({}):'.format(self.name, self.elmt.attrib['Type'], self.elmt.attrib['D']))

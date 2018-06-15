@@ -1,11 +1,28 @@
 from BMS_BrIM import *
 
-matt = Material(1,'ureal')
-a= matt.set_openbrim('fem', OBMaterial, d=100, E=0.2)
-matt.set_dbconfig('fours','Material')
-matt.set_database()
-matt.get_database()
-# matt.set_openbrim('fem',OBMaterial)
+mma = Material(1, 'ureal')
+mma.set_property(d=100, Fy=55555, E=5000, a=0.005, b=23)
+mma.set_dbconfig('fours', 'Material')
+mma.describe('this is  just a mt')
+mma.set_mongo_doc()
+mma.get_mongo_doc()
+print(mma.__dict__)
+mma.set_property(d=666)
+xml = mma.set_openbrim()
+print(xml)
+ShowTree(xml)
+
+
+class newClass(Material, Inspection):
+    def __init__(self,id, name):
+        super(newClass, self).__init__(id, name)
+        Inspection.__init__(self)
+        # print(dir())
+        # print(self.__dict__)
+
+nna=newClass(20,'newChall')
+nna.inspected()
+
 
 
 '''
