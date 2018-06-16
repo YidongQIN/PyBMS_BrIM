@@ -1,8 +1,11 @@
 from BMS_BrIM.BrIM_ELMT import *
 
-t15=PhysicalELMT('PHY',3)
-t15.position=dict(x=3)
-print(t15.position['x'])
+t15 = PhysicalELMT('PHY', 3)
+a= XYZ(x=3, y=0.0)
+print(a)
+t15.position=a
+print(t15.position.x)
+print(t15.position.y)
 
 '''
 # test in 0615

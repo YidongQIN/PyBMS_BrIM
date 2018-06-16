@@ -177,23 +177,51 @@ class PhysicalELMT(PyElmt):
         self.dimension = dims
 
 
+def parameter_format(k):
+    if isinstance(k, int):
+        return k
+    elif isinstance(k, float):
+        try:
+            return  int(k)
+        except ValueError:
+            return k
+    elif isinstance(k, str):
+        try:
+            return float(k)
+        except ValueError:
+            return k
+    else:
+        from BMS_BrIM.Py_Design import Parameter
+        if isinstance(k, Parameter):
+            return k.value
+        else:
+            print("Error formatting parameter")
+            print(type(k))
+            return
+
+
+class XY(object):
+    def __init__(self, x=0, y=0):
+        if x is not None:
+            self.x = parameter_format(x)
+        if y is not None:
+            self.y = parameter_format(y)
+
+
 class XYZ(object):
 
-    def __init__(self, x=None, y=None, z=None):
-        #@TODO
-        for k in x,y,z:
-            try:
-                k=int(k)
-            except ValueError:
-                k = float(k)
+    def __init__(self, x=0, y=0, z=0):
+        if x is not None:
+            self.x = parameter_format(x)
+        if y is not None:
+            self.y = parameter_format(y)
+        if z is not None:
+            self.z = parameter_format(z)
 
-        self.x = x
-        self.y = y
-        self.z = z
 
 class RXYZ(object):
 
-    def __init__(self,rx=None, ry=None, rz=None):
+    def __init__(self, rx=0, ry=0, rz=0):
         self.rx = rx
         self.ry = ry
         self.rz = rz
