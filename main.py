@@ -1,25 +1,24 @@
 from BMS_BrIM.BrIM_ELMT import *
 
-t15 = PhysicalELMT('PHY', 3)
-a= XYZ(x=3, y=0.0)
-print(a)
-t15.position=a
-print(t15.position.x)
-print(t15.position.y)
 
-'''
-# test in 0615
-mma = Material(1, 'ureal')
+# test Material
+mma = Material(2, 'ureal')
 mma.set_property(d=100, Fy=55555, E=5000, a=0.005, b=23)
 mma.set_dbconfig('fours', 'Material')
 mma.describe('this is  just a mt')
-mma.set_mongo_doc()
-mma.get_mongo_doc()
-print(mma.__dict__)
 mma.set_property(d=666)
-xml = mma.set_openbrim()
-print(xml)
-ShowTree(xml)
+mma.set_dbconfig('fours','Material')
+a= mma.get_mongo_doc()
+print("haha yes",a)
+
+#test ProjGroups
+new_proj=ProjGroups('NewProj')
+new_proj.set_dbconfig()
+new_proj.set_mongo_doc()
+
+
+'''
+
 
 
 test = PyOpenBrIMElmt('O', 'test name', a=666, b='madan')

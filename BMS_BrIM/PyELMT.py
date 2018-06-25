@@ -27,8 +27,8 @@ class PyElmt(object):
         else:
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
-        self.db_config: dict = None  # dict(database=, table=, user=,...)
-        self.openbrim: dict = None  # dict of eET.elements
+        self.db_config: dict = dict()  # dict(database=, table=, user=,...)
+        self.openbrim: dict = dict()  # dict of eET.elements
         self.des: str = None
 
     def set_mongo_doc(self):
@@ -45,17 +45,21 @@ class PyElmt(object):
             return _newattr
 
     def set_openbrim(self, model_class, ob_class, **attrib_dict):
-        """create a OpenBrim XML string"""
+        """create a OpenBrim object, in fact an eET.element"""
         _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
-        if model_class in ['fem', 'geo']:
-            self.openbrim[model_class] = _model
-            return self.openbrim[model_class]
-        else:
-            print('the Model class of {} should be FEM, GEO'.format(self.name))
-            raise ValueError
+        assert model_class in ['fem', 'geo', 'abst']
+        self.openbrim[model_class] = _model
+        return _model
 
-    def get_openbrim(self):
-        pass
+    def get_openbrim(self, model_class):
+        if not model_class:
+            return self.openbrim
+        else:
+            try:
+                return self.openbrim[model_class]
+            except KeyError:
+                print("{} has no OpenBrIM model of {}".format(self.name, model_class))
+                return
 
     def set_sap2k(self):
         pass
@@ -110,6 +114,8 @@ class PyElmt(object):
 
     @staticmethod
     def _attr_pick(elmt, *pick_list):
+        """keys are from the pick_list, and find corresponding attributes from the element__dict__.
+        return a dict"""
         _d = dict()
         for _pick in pick_list:
             try:
@@ -122,7 +128,7 @@ class PyElmt(object):
     def _attr_to_mongo_dict(elmt):
         """dump some of the attributes to dict.
         the default pop out list is: 'openbrim','db_config'. """
-        return AbstELMT._attr_pop(elmt, 'id', 'openbrim', 'db_config')
+        return AbstractELMT._attr_pop(elmt, 'id', 'openbrim', 'db_config')
 
     @staticmethod
     def _mongo_id_to_self_id(doc: dict):
@@ -133,18 +139,44 @@ class PyElmt(object):
         return _d
 
 
-class AbstELMT(PyElmt):
+class AbstractELMT(PyElmt):
+    _dict_openbrim_class = dict(Project=OBProject,
+                                Parameter=OBPrmElmt,
+                                Shape=OBShape,
+                                Section=OBSection,
+                                Group=OBGroup,
+                                Unit=OBUnit,
+                                Text=OBText3D)
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """abstract elements, such as material, section, load case"""
-        super(AbstELMT, self).__init__(elmt_type, elmt_id, elmt_name)
+        super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
+
+    def set_openbrim(self, model_class='abst', ob_class=None, **attrib_dict):
+        if not ob_class:
+            ob_class = AbstractELMT._dict_openbrim_class[self.type]
+        return super(AbstractELMT, self).set_openbrim(model_class, ob_class, **attrib_dict)
 
 
 class PhysicalELMT(PyElmt):
-    """PyReal is used to represent real members of bridges.
+    """PhysicalELMT is used to represent real members of bridges.
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
+    _dict_fem_class = dict(Node=OBFENode,
+                           Line=OBFELine,
+                           Beam=StraightBeamFEM,
+                           Truss=StraightBeamFEM,
+                           Surface=OBFESurface,
+                           BoltedPlate=OBFESurface,
+                           Volume=OBVolume)
+    _dict_geo_class = dict(Node=OBPoint,
+                           Line=OBLine,
+                           Beam=OBLine,
+                           Truss=OBLine,
+                           Surface=OBSurface,
+                           BoltedPlate=BoltedPlateGeo,
+                           Volume=OBVolume)
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
@@ -182,7 +214,7 @@ def parameter_format(k):
         return k
     elif isinstance(k, float):
         try:
-            return  int(k)
+            return int(k)
         except ValueError:
             return k
     elif isinstance(k, str):

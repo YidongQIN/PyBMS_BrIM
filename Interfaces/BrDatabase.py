@@ -153,7 +153,7 @@ class ConnMongoDB(object):
         self.db = self.client[self.db_name]
         # print("MongoDB connected.\n -  <{}> has collections of:\n\t{}".format(self.db_name, self.db.collection_names(False)))
 
-    def __enter__(self):
+    def __enter__(self, new_db_name=None):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -162,6 +162,10 @@ class ConnMongoDB(object):
             print("Mongo Error Type : {}".format(exc_type))
             print("----- Error Value: {}".format(exc_val))
             print("----- Error is at: {}".format(exc_tb))
+
+    def new_db(self,new_db_name):
+        self.db_name = new_db_name
+        self.db = self.client[self.db_name]
 
     def col_find_one(self, collection, condition):
         """ if the condition is not just one field"""
