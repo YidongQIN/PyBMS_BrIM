@@ -10,21 +10,50 @@ Python Elements for BrIM.
 from BMS_BrIM.PyELMT import *
 
 
-class ProjGroups(AbstractELMT):
+class Group(AbstractELMT):
+
+    def __init__(self, name):
+        super(Group, self).__init__('Group', None, name)
+        self.openbrim = OBGroup(name)
+        self.sub = list()
+
+    def append(self, *child):
+        for _c in child:
+            assert isinstance(_c, PyElmt)
+            self.sub.append(_c)
+            self.openbrim.sub(_c.openbrim.values())
+
+    def delete(self, *child):
+        for _c in child:
+            self.sub.pop(_c)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.sub
+
+class Group_Collection(Group):
+
+    def __init__(self, name):
+        super(Group_Collection, self).__init__(name)
+        self.collection = self.name
+
+class ProjGroups(Group, AbstractELMT):
 
     def __init__(self, name, template='empty'):
         """project is a new MongoDB, so no id"""
         super(ProjGroups, self).__init__('Project', elmt_id=0, elmt_name=name)
         self.template = template
         self.openbrim = OBProject(name, template)
-        self.openbrim.sub(*self._proj_sub_groups())
+        self.append(*self._proj_sub_groups())
 
     def _proj_sub_groups(self):
-        self.prm_group = OBGroup('Parameter Group') #@TODO use class Group
-        self.mat_group = OBGroup('Material Group')
-        self.sec_group = OBGroup('Section Group')
-        self.fem_group = OBGroup('FEM Model')
-        self.geo_group = OBGroup('Geometry Model')
+        self.prm_group = Group('Parameter Group')
+        self.mat_group = Group('Material Group')
+        self.sec_group = Group('Section Group')
+        self.fem_group = Group('FEM Model')
+        self.geo_group = Group('Geometry Model')
         return [self.prm_group, self.mat_group, self.sec_group, self.fem_group, self.geo_group]
         # self.sub(self.prm_group, self.mat_group, self.sec_group, self.fem_group, self.geo_group)
 
@@ -38,11 +67,11 @@ class ProjGroups(AbstractELMT):
         with ConnMongoDB(**self.db_config) as _db:
             self.projinfo = _db.insert_data('ProjectInfo',
                                             _id=0, OpenBrIM_Template=self.template)
-            self.prm_mongo=_db.insert_data('Parameter')
-            self.mat_mongo=_db.insert_data('Material')
-            self.sec_mongo=_db.insert_data('Section')
-            self.fem_mongo=_db.insert_data('FEM Model')
-            self.geo_mongo=_db.insert_data('Geometry Model')
+            self.prm_mongo = _db.insert_data('Parameter')
+            self.mat_mongo = _db.insert_data('Material')
+            self.sec_mongo = _db.insert_data('Section')
+            self.fem_mongo = _db.insert_data('FEM Model')
+            self.geo_mongo = _db.insert_data('Geometry Model')
 
     def include(self, *members: PyElmt):
         """ add one member to the project"""
@@ -63,14 +92,6 @@ class ProjGroups(AbstractELMT):
             except BaseException as e:
                 print('= = Some error about {} has been ignored'.format(member.name))
                 print(e)
-
-class Group(AbstractELMT):
-
-    def __init__(self, name):
-        super(Group, self).__init__('Group',None,name)
-        self.openbrim:OBGroup=None
-        self.db_config=None
-        self.table_name=self.name#@TODO
 
 
 class Parameter(AbstractELMT):
