@@ -2,25 +2,33 @@ from BMS_BrIM.BrIM_ELMT import *
 
 
 # test Material
-mma = Material(2, 'ureal')
+print("====test Material====")
+mma = Material(2, 'Test Mat')
 mma.set_property(d=100, Fy=55555, E=5000, a=0.005, b=23)
 mma.set_dbconfig('fours', 'Material')
 mma.describe('this is  just a mt')
 mma.set_property(d=666)
-mma.set_dbconfig('fours','Material')
-a= mma.get_mongo_doc()
-print("haha yes",a)
+mma.set_openbrim()
+# mma.openBrIM = eET.Element('TAG', xbb='nani')
+ShowTree(mma.openBrIM['abst'])
+
+#test Group
+print("====test Group====")
+ggg=Group('test Group')
+ggg.append(mma)
+print(ggg.openBrIM)
+ShowTree(ggg.openBrIM)
 
 #test ProjGroups
+print("====test ProjGroup====")
 new_proj=ProjGroups('NewProj')
 new_proj.set_dbconfig()
 new_proj.set_mongo_doc()
+ShowTree(new_proj.openBrIM)
+
 
 
 '''
-
-
-
 test = PyOpenBrIMElmt('O', 'test name', a=666, b='madan')
 newproj = PyOpenBrIMElmt("O", 'new proj')
 new_node = PyOpenBrIMElmt('O', 'new node1', D='~ TEST ~ ', UC='test')
@@ -38,7 +46,6 @@ mat1.show_mat_table()
 beam1.set_points(1,1,1,20,20,20)
 print(beam1.__dict__)
 print(point1.__dict__)
-
 
 
 database='bridge_test',

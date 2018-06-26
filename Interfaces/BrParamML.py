@@ -331,6 +331,8 @@ class OBPrmElmt(PyOpenBrIMElmt):
 
 
 class OBProject(OBObjElmt):
+    _REQUIRE = ['name']
+
     def __init__(self, name, template='empty'):
         """create new project with a template"""
         super(OBProject, self).__init__('Project', name)
@@ -387,7 +389,8 @@ class OBProject(OBObjElmt):
 
 
 class OBMaterial(OBObjElmt):
-    _desdict = dict(d="Density",
+    _REQUIRE = ['name', 'id', 'des']
+    _DESDICT = dict(d="Density",
                     E="modulus of Elasticity",
                     a="Coefficient of Thermal Expansion",
                     Nu="Poisson's Ratio",
@@ -414,7 +417,7 @@ class OBMaterial(OBObjElmt):
 
     def add_mat_par(self, n, v, _des=''):
         if not _des:
-            _des = OBMaterial._desdict.get(n)
+            _des = OBMaterial._DESDICT.get(n)
         self.new_parameter(n, str(v), des=_des)
         # self.elmt.append(eET.Element('P', N=n, V=str(v), D=_des))
 
@@ -432,6 +435,7 @@ class OBMaterial(OBObjElmt):
 class OBSection(OBObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
+    _REQUIRE = ['name', 'id', 'des', 'shapes']
 
     def __init__(self, name, material=None, *shape_list, **property_dict):
         super(OBSection, self).__init__('Section', name)
@@ -448,6 +452,7 @@ class OBSection(OBObjElmt):
 
 
 class OBShape(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'points', 'des', 'cutout']
 
     def __init__(self, name, *obj_list):
         super(OBShape, self).__init__('Shape', name)
@@ -459,6 +464,7 @@ class OBShape(OBObjElmt):
 
 
 class OBCircle(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'radius', 'des']
 
     def __init__(self, name, radius, x=0, y=0, ):
         super(OBCircle, self).__init__('Circle', name, X=str(x), Y=str(y))
@@ -467,6 +473,7 @@ class OBCircle(OBObjElmt):
 
 
 class OBUnit(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'des']
 
     def __init__(self, name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
                  temperature_unit="Fahrenheit"):
@@ -494,6 +501,7 @@ class OBExtends(OBObjElmt):
 
 
 class OBGroup(OBObjElmt):
+    _REQUIRE = ['name']
 
     def __init__(self, name, *elmts_list):
         super(OBGroup, self).__init__('Group', name=name)
@@ -505,6 +513,7 @@ class OBGroup(OBObjElmt):
 
 
 class OBFENode(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
 
     def __init__(self, x, y, z, name=''):
         super(OBFENode, self).__init__('Node', name, X=x, Y=y, Z=z)
@@ -553,6 +562,7 @@ class OBFENode(OBObjElmt):
 
 
 class OBFELine(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'node1', 'node2', 'section']
 
     def __init__(self, node1, node2, section, beta_angle=0, name=''):
         super(OBFELine, self).__init__('FELine', name)
@@ -577,6 +587,7 @@ class OBFELine(OBObjElmt):
 
 
 class OBFESurface(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'node1', 'node2', 'node3', 'node4', 'thick', 'material']
 
     def __init__(self, node1, node2, node3, node4, thick_par, material_obj, name=''):
         super(OBFESurface, self).__init__('FESurface', name)
@@ -595,6 +606,7 @@ class OBFESurface(OBObjElmt):
 class OBPoint(OBObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
+    _REQUIRE = ['name', 'id', 'x', 'y', 'z']
 
     def __init__(self, x, y, z=0, name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
@@ -619,6 +631,7 @@ class OBPoint(OBObjElmt):
 
 class OBLine(OBObjElmt):
     """T=Line, Two points and one section needed"""
+    _REQUIRE = ['name', 'id', 'point1', 'point2']
 
     def __init__(self, point1, point2, section=None, name=''):
         super(OBLine, self).__init__('Line', name)
@@ -663,6 +676,8 @@ class OBLine(OBObjElmt):
 
 
 class OBSurface(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'point1', 'point2', 'point3', 'point4', 'thick', 'material']
+
     def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, name=''):
         super(OBSurface, self).__init__('Surface', name)
         self.add_point(point1)
@@ -739,6 +754,7 @@ class OBSurface(OBObjElmt):
 
 
 class OBVolume(OBObjElmt):
+    _REQUIRE = ['name', 'id', 'surface1', 'surface2']
 
     def __init__(self, surface1, surface2, name=''):
         super(OBVolume, self).__init__('Volume', name)
@@ -760,9 +776,11 @@ class ShowTree(object):
     """show results in tree-like format"""
 
     def __init__(self, result):
+        print("\n|.... ElementTree Start")
         self.elmts = PyOpenBrIMElmt.to_elmt_list(result)
         for one_branch in self.elmts:
             ShowTree.branch(one_branch, 0)
+        print("|.... ElementTree End\n")
 
     @staticmethod
     def branch(elmt, level):

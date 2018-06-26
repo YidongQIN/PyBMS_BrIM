@@ -28,7 +28,7 @@ class PyElmt(object):
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
         self.db_config: dict = dict()  # dict(database=, table=, user=,...)
-        self.openbrim: dict = dict()  # dict of eET.elements
+        self.openBrIM: dict = dict()  # dict of eET.elements
         self.des: str = None
 
     def set_mongo_doc(self):
@@ -48,15 +48,15 @@ class PyElmt(object):
         """create a OpenBrim object, in fact an eET.element"""
         _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
         assert model_class in ['fem', 'geo', 'abst']
-        self.openbrim[model_class] = _model
+        self.openBrIM[model_class] = _model
         return _model
 
     def get_openbrim(self, model_class):
         if not model_class:
-            return self.openbrim
+            return self.openBrIM
         else:
             try:
-                return self.openbrim[model_class]
+                return self.openBrIM[model_class]
             except KeyError:
                 print("{} has no OpenBrIM model of {}".format(self.name, model_class))
                 return
@@ -140,7 +140,7 @@ class PyElmt(object):
 
 
 class AbstractELMT(PyElmt):
-    _dict_openbrim_class = dict(Project=OBProject,
+    _DICT_OPENBRIM_CLASS = dict(Project=OBProject,
                                 Parameter=OBPrmElmt,
                                 Shape=OBShape,
                                 Section=OBSection,
@@ -154,7 +154,7 @@ class AbstractELMT(PyElmt):
 
     def set_openbrim(self, model_class='abst', ob_class=None, **attrib_dict):
         if not ob_class:
-            ob_class = AbstractELMT._dict_openbrim_class[self.type]
+            ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
         return super(AbstractELMT, self).set_openbrim(model_class, ob_class, **attrib_dict)
 
 
@@ -163,14 +163,14 @@ class PhysicalELMT(PyElmt):
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
-    _dict_fem_class = dict(Node=OBFENode,
+    _DICT_FEM_CLASS = dict(Node=OBFENode,
                            Line=OBFELine,
                            Beam=StraightBeamFEM,
                            Truss=StraightBeamFEM,
                            Surface=OBFESurface,
                            BoltedPlate=OBFESurface,
                            Volume=OBVolume)
-    _dict_geo_class = dict(Node=OBPoint,
+    _DICT_GEO_CLASS = dict(Node=OBPoint,
                            Line=OBLine,
                            Beam=OBLine,
                            Truss=OBLine,

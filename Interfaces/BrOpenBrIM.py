@@ -14,6 +14,7 @@ from Interfaces.BrParamML import *
 
 class CubeGeo(OBObjElmt):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
+    _REQUIRE = ['name', 'id', 'length', 'width', 'thick']
 
     def __init__(self, length, width, thick, name=''):
         super(CubeGeo, self).__init__('Volume', name)
@@ -40,6 +41,9 @@ class CubeGeo(OBObjElmt):
 
 
 class BoltedPlateGeo(OBObjElmt):
+    _REQUIRE = ['name', 'length', 'width', 'thick',
+                'diameter', 'xclearance', 'yclearance',
+                'column', 'row', 'material']
 
     def __init__(self, name,
                  thick, length, width,
@@ -84,6 +88,7 @@ class BoltedPlateGeo(OBObjElmt):
 
 class PlateFEM(OBObjElmt):
     """FEM model of plate, either normal plate or bolted plate"""
+    _REQUIRE = ['name', 'length', 'width', 'thick']
 
     def __init__(self, length, width, thick, material, name):
         super(PlateFEM, self).__init__('FESurface', name)
@@ -115,6 +120,7 @@ class PlateFEM(OBObjElmt):
 
 class StraightBeamGeo(OBObjElmt):
     """beam with rectangle cross-section, accept length and 3 direction parameters instead of 2 points"""
+    _REQUIRE = ['name', 'length', 'section']
 
     def __init__(self, length, direction_x, direction_y, direction_z, section, beam_name=''):
         super(StraightBeamGeo, self).__init__('Line', beam_name)
@@ -134,6 +140,7 @@ class StraightBeamGeo(OBObjElmt):
 
 class StraightBeamFEM(OBObjElmt):
     """FEM for rectangle section beam"""
+    _REQUIRE = ['name', 'length', 'width', 'thick']
 
     def __init__(self, length, direction_x, direction_y, direction_z, section, beta_angle=0, beam_name=''):
         super(StraightBeamFEM, self).__init__('FELine', beam_name)
