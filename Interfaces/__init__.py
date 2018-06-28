@@ -8,6 +8,7 @@ __author__ = 'Yidong QIN'
 """
 
 from Interfaces.BrMongo import *
+from Interfaces.BrMySQL import *
 from Interfaces.BrOpenBrIM import *
 
 if __name__ == '__main__':
