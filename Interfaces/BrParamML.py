@@ -231,7 +231,7 @@ class PyOpenBrIMElmt(object):
         elif isinstance(elmt, PyOpenBrIMElmt):
             return elmt.elmt
         else:
-            print('{} Unacceptable type of input to be converted to OpenBrIM elements.'.format(elmt))
+            print('Type of <{}> is {}.\nUnacceptable type to be converted to OpenBrIM elements.'.format(elmt,type(elmt)))
 
     @staticmethod
     def prm_to_value(elmt):

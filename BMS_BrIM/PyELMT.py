@@ -44,12 +44,12 @@ class PyElmt(object):
             self.check_update_attr(**_newattr)
             return _newattr
 
-    def set_openbrim(self, model_class, ob_class, **attrib_dict):
-        """create a OpenBrim object, in fact an eET.element"""
-        _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
-        assert model_class in ['fem', 'geo', 'abst']
-        self.openBrIM[model_class] = _model
-        return _model
+    # def set_openbrim(self, model_class, ob_class, **attrib_dict):
+    #     """create a OpenBrim object, in fact an eET.element"""
+    #     _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
+    #     assert model_class in ['fem', 'geo']
+    #     self.openBrIM[model_class] = _model
+    #     return self.openBrIM
 
     def get_openbrim(self, model_class):
         if not model_class:
@@ -151,11 +151,20 @@ class AbstractELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.openBrIM:PyOpenBrIMElmt
 
-    def set_openbrim(self, model_class='abst', ob_class=None, **attrib_dict):
+    def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
-        return super(AbstractELMT, self).set_openbrim(model_class, ob_class, **attrib_dict)
+        self.openBrIM: PyOpenBrIMElmt= ob_class(**attrib_dict)
+        return self.openBrIM
+
+    # def set_openbrim(self, model_class, ob_class, **attrib_dict):
+    #     """create a OpenBrim object, in fact an eET.element"""
+    #     _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
+    #     assert model_class in ['fem', 'geo']
+    #     self.openBrIM[model_class] = _model
+    #     return self.openBrIM
 
 
 class PhysicalELMT(PyElmt):
@@ -207,6 +216,13 @@ class PhysicalELMT(PyElmt):
             if k not in ['length', 'width', 'thick']:
                 print('= = Dimension of {} is recommended to be length, width, thick, etc'.format(self.name))
         self.dimension = dims
+
+    def set_openbrim(self, model_class, ob_class, **attrib_dict):
+        """create a OpenBrim object, in fact an eET.element"""
+        _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
+        assert model_class in ['fem', 'geo']
+        self.openBrIM[model_class] = _model
+        return self.openBrIM
 
 
 def parameter_format(k):

@@ -13,18 +13,22 @@ from BMS_BrIM.PyELMT import *
 class Group(AbstractELMT):
     """Container of PyELMT = a OBGroup"""
 
-    def __init__(self, name):
+    def __init__(self, name, *child):
         super(Group, self).__init__('Group', None, name)
         self.openBrIM = OBGroup(name)
-        self.sub = list()
+        self.sub = list(*child)
 
     def append(self, *child):
+        """get sub nodes, both the PyELMT and the OpenBrIM"""
         for _c in child:
             assert isinstance(_c, PyElmt)
             self.sub.append(_c)
             try:
-                #@TODO
-                self.openBrIM.sub(_c.openBrIM.values())
+                if isinstance(_c, AbstractELMT):
+                    self.openBrIM.sub(_c.openBrIM)
+                elif isinstance(_c, PhysicalELMT):
+                    self.openBrIM.sub(_c.openBrIM['fem'])
+                    self.openBrIM.sub(_c.openBrIM['geo'])
             except TypeError:
                 print("! {} cannot add {}'s openBrIM Element".format(self.name, _c.name))
 
@@ -46,10 +50,24 @@ class Group(AbstractELMT):
 class GroupCollection(Group):
     """A project has 6 groups, and these 6 groups are collections(tables) in MongoDB.
     PS: not all groups will be seen in MongoDB."""
+    _DESCRIBE_DICT = {
+        'basic_info': 'Basic Information about the project',
+        'parameter': 'parameters of the model',
+        'material': 'all materials',
+        'section': 'all sections and shapes',
+        'model_fem': 'FEM model, including FENodes, FELines, FESurfaces, etc',
+        'model_geometry': 'Geometry Model',
+    }
 
-    def __init__(self, name):
+    def __init__(self, name, des=None):
         super(GroupCollection, self).__init__(name)
         self.mongoCollectionName = self.name
+        if not des:
+            try:
+                des = GroupCollection._DESCRIBE_DICT[name]
+            except KeyError:
+                des = "Unknown Group. A NEW table/Collection in MongoDB."
+        self.des = des  # description of the collection as _id=0
 
 
 class ProjGroups(AbstractELMT):
@@ -66,50 +84,32 @@ class ProjGroups(AbstractELMT):
         self._proj_sub_groups()
         # automatically set up the MongoDB config
         self.set_dbconfig()
+        self._init_mongo_doc()
 
     def _proj_sub_groups(self):
-        self.proj_info = GroupCollection('ProjectInfo')
-        self.prm_group = GroupCollection('Parameter Group')
-        self.mat_group = GroupCollection('Material Group')
-        self.sec_group = GroupCollection('Section Group')
-        self.fem_group = GroupCollection('FEM Model')
-        self.geo_group = GroupCollection('Geometry Model')
-        self.sub = [self.proj_info, self.prm_group, self.mat_group, self.sec_group, self.fem_group, self.geo_group]
+        self.proj_info = GroupCollection('basic_info')
+        self.prm_group = GroupCollection('parameter')
+        self.mat_group = GroupCollection('material')
+        self.sec_group = GroupCollection('section')
+        self.fem_group = GroupCollection('model_fem')
+        self.geo_group = GroupCollection('model_geometry')
+        self.sub = [self.proj_info, self.prm_group,
+                    self.mat_group, self.sec_group,
+                    self.fem_group, self.geo_group]
+        for _s in self.sub:
+            self.openBrIM.sub(_s.openBrIM)
         return self.sub
 
     def set_dbconfig(self, database=None, table=None, **db_config):
         super(ProjGroups, self).set_dbconfig(self.name, table=None, **db_config)
 
-    def set_mongo_doc(self):
+    def _init_mongo_doc(self):
         with ConnMongoDB(**self.db_config) as _db:
             for _col in self.sub:
-                _db.insert_data(_col.name, _id=0)
-            _db.update_data('ProjectInfo',0, OpenBrIM_Template=self.template)
+                _db.update_data(_col.name, id=0, des=_col.des)
 
-
-
-    def updateMongoDB(self):
+    def update_mongo(self):
         pass
-
-    # def include(self, *members: PyElmt):
-    #     """ add one member to the project"""
-    #     for member in members:
-    #         assert isinstance(member, PyElmt)
-    #         # PyElmt may be abstract or real
-    #         abs_dict = {'Parameter': self.prm_group,
-    #                     'Section': self.sec_group,
-    #                     'Material': self.mat_group}
-    #         try:
-    #             if member.type in abs_dict:
-    #                 # abstract elements include Parameter, Section, Material
-    #                 abs_dict[member.type].sub(member)
-    #             else:
-    #                 # all other elements are Real, have both fem and geo
-    #                 self.fem_group.sub(member)
-    #                 self.geo_group.sub(member)
-    #         except BaseException as e:
-    #             print('= = Some error about {} has been ignored'.format(member.name))
-    #             print(e)
 
 
 class Parameter(AbstractELMT):
@@ -136,18 +136,19 @@ class Material(AbstractELMT):
     def set_property(self, **mat_dict):
         """set the property of material. should use key in:
         [d, E, a, Nu, Fc28, Fy, Fu]"""
-        print("Set Material <{}> properties to:".format(self.name))
+        print("Material <{}> property setting:".format(self.name))
         for _k, _v in mat_dict.items():
             self.__dict__[_k] = _v
-            print("- {}={}\t".format(_k, _v), end='')
+            print("  - {}={}\t".format(_k, _v), end='')
             try:
                 print('#', Material._DESCRIBE_DICT[_k])
             except KeyError:
                 print("! UnKnown property")
 
-    def set_openbrim(self, model_class='abst', ob_class=OBMaterial, **attrib_dict):
+    def set_openbrim(self, ob_class=OBMaterial, **attrib_dict):
         _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *Material._DESCRIBE_DICT)
-        return super(Material, self).set_openbrim(model_class, ob_class, **_mat_attr)
+        self.openBrIM = super(Material, self).set_openbrim(ob_class, **_mat_attr)
+        return self.openBrIM
         # return self.openbrim[model_class]
 
 

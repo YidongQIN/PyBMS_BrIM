@@ -2,7 +2,7 @@ from BMS_BrIM.BrIM_ELMT import *
 
 
 # test Material
-print("====test Material====")
+print("==== test Material ====")
 mma = Material(2, 'Test Mat')
 mma.set_property(d=100, Fy=55555, E=5000, a=0.005, b=23)
 mma.set_dbconfig('fours', 'Material')
@@ -10,20 +10,20 @@ mma.describe('this is  just a mt')
 mma.set_property(d=666)
 mma.set_openbrim()
 # mma.openBrIM = eET.Element('TAG', xbb='nani')
-ShowTree(mma.openBrIM['abst'])
+ShowTree(mma.openBrIM)
 
 #test Group
-print("====test Group====")
+print("==== test Group ====")
 ggg=Group('test Group')
 ggg.append(mma)
 print(ggg.openBrIM)
 ShowTree(ggg.openBrIM)
 
 #test ProjGroups
-print("====test ProjGroup====")
+print("==== test ProjGroup ====")
 new_proj=ProjGroups('NewProj')
 new_proj.set_dbconfig()
-new_proj.set_mongo_doc()
+# new_proj._init_mongo_doc()
 ShowTree(new_proj.openBrIM)
 
 
