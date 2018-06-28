@@ -42,8 +42,7 @@ class ConnMongoDB(object):
     def col_find_one(self, collection, condition):
         """ if the condition is not just one field"""
         _result = self.db[collection].find_one(condition)
-        # _d={**_result}
-        print("Searched in <{}> where {}".format(collection, condition))
+        print("Searched Collection of <{}> where {}".format(collection, condition))
         if _result:
             for _k,_v in _result.items():
                 print(' -  ',_k, '=', _v)
@@ -96,7 +95,7 @@ class ConnMongoDB(object):
             raise
 
     # below are methods for element, should not be use.
-    # Mongo focus on the methods of CURD, not info process of element
+    # Mongo focus on the methods of CURD in Mongo, not info process of element
     '''''''''
     def update_elmt(self, collection, elmt):
         """first find, then update or insert"""
@@ -148,3 +147,7 @@ class ConnMongoDB(object):
         field_value.pop('db_config')
         return field_value
     '''''''''
+
+if __name__ =="__main__":
+    with ConnMongoDB('fours') as db:
+        db.have_a_look('Parameter')

@@ -41,7 +41,7 @@ class PyElmt(object):
         with ConnMongoDB(**self.db_config) as _db:
             _result = _db.find_by_kv(self.db_config['table'], '_id', self.id)
             _newattr = self._mongo_id_to_self_id(_result)
-            self.check_update_attr(**_newattr)
+            self.check_update_attr(_newattr)
             return _newattr
 
     # def set_openbrim(self, model_class, ob_class, **attrib_dict):
@@ -68,13 +68,14 @@ class PyElmt(object):
         pass
 
     #
-    def check_update_attr(self, **attributes_dict):
+    def check_update_attr(self, attributes_dict: dict):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('!Attribute changed! {}.{}->{}'.format(self.name, _k, _v))
+                    print('<{}> Attribute changed!'.format(self.name))
+                    print('    {} -> {}'.format(_k, _v))
             except KeyError:
-                pass
+                print("<{}> New attribute!\n  * {} -> {}".format(self.name, _k, _v))
             self.__dict__[_k] = _v
 
     def set_dbconfig(self, database, table, **db_config):
@@ -151,12 +152,12 @@ class AbstractELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM:PyOpenBrIMElmt
+        self.openBrIM: PyOpenBrIMElmt
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
-        self.openBrIM: PyOpenBrIMElmt= ob_class(**attrib_dict)
+        self.openBrIM: PyOpenBrIMElmt = ob_class(**attrib_dict)
         return self.openBrIM
 
     # def set_openbrim(self, model_class, ob_class, **attrib_dict):

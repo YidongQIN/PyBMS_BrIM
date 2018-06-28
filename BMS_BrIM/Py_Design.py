@@ -145,6 +145,11 @@ class Material(AbstractELMT):
             except KeyError:
                 print("! UnKnown property")
 
+    def show_material_property(self):
+        print('# Material Property <{}>'.format(self.name))
+        for _k,_v in self.__dict__.items():
+            print(' - ', _k, '=',_v)
+
     def set_openbrim(self, ob_class=OBMaterial, **attrib_dict):
         _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *Material._DESCRIBE_DICT)
         self.openBrIM = super(Material, self).set_openbrim(ob_class, **_mat_attr)
