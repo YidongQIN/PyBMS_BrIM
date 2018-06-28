@@ -117,6 +117,7 @@ class Parameter(AbstractELMT):
     def __init__(self, prm_id, prm_name, prm_value):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
         self.value = prm_value
+        #@TODo
 
 
 class Material(AbstractELMT):
