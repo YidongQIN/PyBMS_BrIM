@@ -117,7 +117,7 @@ class Parameter(AbstractELMT):
     def __init__(self, prm_id, prm_name, prm_value):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
         self.value = prm_value
-        #@TODo
+        # @TODO
 
 
 class Material(AbstractELMT):
@@ -148,8 +148,8 @@ class Material(AbstractELMT):
 
     def show_material_property(self):
         print('# Material Property <{}>'.format(self.name))
-        for _k,_v in self.__dict__.items():
-            print(' - ', _k, '=',_v)
+        for _k, _v in self.__dict__.items():
+            print(' - ', _k, '=', _v)
 
     def set_openbrim(self, ob_class=OBMaterial, **attrib_dict):
         _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *Material._DESCRIBE_DICT)
