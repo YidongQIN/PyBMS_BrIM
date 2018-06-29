@@ -39,15 +39,16 @@ class ConnMongoDB(object):
         self.db_name = new_db_name
         self.db = self.client[self.db_name]
 
-    def col_find_one(self, collection, condition):
+    def col_find_one(self, collection, condition, if_print):
         """ if the condition is not just one field"""
         _result = self.db[collection].find_one(condition)
-        print("Searched Collection of <{}> where {}".format(collection, condition))
-        if _result:
-            for _k,_v in _result.items():
-                print(' -  ',_k, '=', _v)
-        else:
-            print(" -  NO document")
+        if if_print:
+            print("Searched Collection of <{}> where {}".format(collection, condition))
+            if _result:
+                for _k,_v in _result.items():
+                    print(' -  ',_k, '=', _v)
+            else:
+                print(" -  NO document")
         return _result
 
     def col_find_all(self, collection, condition):
@@ -62,11 +63,11 @@ class ConnMongoDB(object):
                 print("  - {}".format(a))
         return _l
 
-    def find_by_kv(self, collection, key_field, value):
+    def find_by_kv(self, collection, key_field, value, if_print=False):
         """find one document and return a BSON"""
         _condition = {key_field: value}
         # print('find by kv',self.col_find_one(collection, _condition))
-        return self.col_find_one(collection, _condition)
+        return self.col_find_one(collection, _condition, if_print)
 
     def findall_by_kv(self, collection, key_field, value):
         """find all documents matched the condition, return a list"""

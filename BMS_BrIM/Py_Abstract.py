@@ -10,6 +10,62 @@ Python Elements for BrIM.
 from BMS_BrIM.PyELMT import *
 
 
+class Parameter(AbstractELMT):
+
+    def __init__(self, prm_id, prm_name, prm_value):
+        super(Parameter, self).__init__('Parameter', prm_id, prm_name)
+        self.value = prm_value
+
+
+class Material(AbstractELMT):
+    _DESCRIBE_DICT = dict(d="Density",
+                          E="Modulus of Elasticity",
+                          a="Coefficient of Thermal Expansion",
+                          Nu="Poisson's Ratio",
+                          Fc28="Concrete Compressive Strength",
+                          Fy="Steel Yield Strength",
+                          Fu="Steel Ultimate Strength")
+
+    def __init__(self, mat_id, mat_name, **mat_property):
+        """Material name is mandatory. Material Type is Steel, Concrete, etc."""
+        super(Material, self).__init__('Material', mat_id, mat_name)
+        # self.stage = 'Design'
+        if mat_property:
+            self.set_property(**mat_property)
+
+    def set_property(self, **mat_property):
+        """set the property of material. should use key in:
+        [d, E, a, Nu, Fc28, Fy, Fu]"""
+        print("Material <{}> property setting:".format(self.name))
+        for _k, _v in mat_property.items():
+            self.__dict__[_k] = _v
+            print("  - {}={}\t".format(_k, _v), end='')
+            try:
+                print('#', Material._DESCRIBE_DICT[_k])
+            except KeyError:
+                print("! UnKnown property")
+
+    def show_material_property(self):
+        print('# Material Property <{}>'.format(self.name))
+        for _k, _v in self.__dict__.items():
+            if _v:
+                print(' - ', _k, '=', _v)
+
+    # def set_openbrim(self, ob_class=OBMaterial, **attrib_dict):
+    #     _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *ob_class._REQUIRE)
+    #     self.openBrIM = super(Material, self).set_openbrim(ob_class, **_mat_attr)
+    #     return self.openBrIM
+    # return self.openbrim[model_class]
+
+
+class Shape(AbstractELMT):
+    pass
+
+
+class Section(AbstractELMT):
+    pass
+
+
 class Group(AbstractELMT):
     """Container of PyELMT = a OBGroup"""
 
@@ -110,67 +166,3 @@ class ProjGroups(AbstractELMT):
 
     def update_mongo(self):
         pass
-
-
-class Parameter(AbstractELMT):
-
-    def __init__(self, prm_id, prm_name, prm_value):
-        super(Parameter, self).__init__('Parameter', prm_id, prm_name)
-        self.value = prm_value
-        # @TODO
-
-
-class Material(AbstractELMT):
-    _DESCRIBE_DICT = dict(d="Density",
-                          E="Modulus of Elasticity",
-                          a="Coefficient of Thermal Expansion",
-                          Nu="Poisson's Ratio",
-                          Fc28="Concrete Compressive Strength",
-                          Fy="Steel Yield Strength",
-                          Fu="Steel Ultimate Strength")
-
-    def __init__(self, mat_id, mat_name):
-        """Material name is mandatory. Material Type is Steel, Concrete, etc."""
-        super(Material, self).__init__('Material', mat_id, mat_name)
-        self.stage = 'Design'
-
-    def set_property(self, **mat_dict):
-        """set the property of material. should use key in:
-        [d, E, a, Nu, Fc28, Fy, Fu]"""
-        print("Material <{}> property setting:".format(self.name))
-        for _k, _v in mat_dict.items():
-            self.__dict__[_k] = _v
-            print("  - {}={}\t".format(_k, _v), end='')
-            try:
-                print('#', Material._DESCRIBE_DICT[_k])
-            except KeyError:
-                print("! UnKnown property")
-
-    def show_material_property(self):
-        print('# Material Property <{}>'.format(self.name))
-        for _k, _v in self.__dict__.items():
-            print(' - ', _k, '=', _v)
-
-    def set_openbrim(self, ob_class=OBMaterial, **attrib_dict):
-        _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *Material._DESCRIBE_DICT)
-        self.openBrIM = super(Material, self).set_openbrim(ob_class, **_mat_attr)
-        return self.openBrIM
-        # return self.openbrim[model_class]
-
-
-class Section(AbstractELMT):
-    pass
-
-
-class BeamDesign(PhysicalELMT):
-
-    def __init__(self, beam_id, beam_name):
-        # init no so many parameters, put the points and nodes to set_model() methods
-        super(BeamDesign, self).__init__('BEAM', beam_id, beam_name)
-        self.x1, self.y1, self.z1, self.x2, self.y2, self.z2 = [None] * 6
-
-
-class PlateDesign(PhysicalELMT):
-
-    def __init__(self, plate_id):
-        super(PhysicalELMT, self).__init__('Plate', plate_id)

@@ -1,16 +1,37 @@
 from BMS_BrIM import *
 
-print("=== test find a doc in mongo ===")
-maa = Material(2,None)
-maa.set_dbconfig('fours','Material')
-maa.show_material_property()
-maa.get_mongo_doc()
-maa.show_material_property()
-maa.set_openbrim()
-ShowTree(maa.openBrIM)
+
+class test(object):
+    def __init__(self):
+        self.name='TTTT'
+        self._pp = [self.name, 'LIST']
+
+    @property
+    def pp(self):
+        return self._pp
+
+    @pp.setter
+    def pp(self, list):
+        for _k in list:
+            self._pp.append(_k)
+
+
+nnnn = test()
+print(nnnn.pp)
+nnnn.pp=PyOpenBrIMElmt,2,3
+print(nnnn.pp)
 
 
 '''
+print("=== test find a doc in mongo ===")
+maa = Material(2,None)
+maa.set_dbconfig('fours','Material')
+# maa.show_material_property()
+maa.get_mongo_doc()
+# maa.show_material_property()
+maa.set_openbrim()
+ShowTree(maa.openBrIM)
+
 # test Material
 print("==== test Material ====")
 mma = Material(2, 'Test Mat')

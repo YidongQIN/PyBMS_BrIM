@@ -389,7 +389,7 @@ class OBProject(OBObjElmt):
 
 
 class OBMaterial(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'des']
+
     _DESDICT = dict(d="Density",
                     E="modulus of Elasticity",
                     a="Coefficient of Thermal Expansion",
@@ -397,6 +397,7 @@ class OBMaterial(OBObjElmt):
                     Fc28="Concrete Compressive Strength",
                     Fy="Steel Yield Strength",
                     Fu="Steel Ultimate Strength")
+    _REQUIRE = ['name', 'id', 'des', *_DESDICT.keys()]
 
     def __init__(self, name, des='', type='', **attrib_dict):
         """Material name is mandatory.\n

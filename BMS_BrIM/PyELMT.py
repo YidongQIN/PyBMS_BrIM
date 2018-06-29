@@ -4,14 +4,16 @@
 __author__ = 'Yidong QIN'
 
 """
-PyELMT gets all interfaces' methods
+PyELMT gets all interfaces' methods.
+Each PyELMT has 3 kinds of attributes:
+1. distinguished naming: type+id.
+2. characteristic attr: depends on element typy. 
+    For example, Material will have E=elastic module, d=density, etc. While Parameter will only have a value.
+3. Interfaces. A OpenBrIM interface, a MongoDB interface.
+    Each Interface will have two 
 
 """
 from Interfaces import *
-
-
-# from Interfaces.BrDatabase import *
-# from Interfaces.BrOpenBrIM import *
 
 
 class PyElmt(object):
@@ -37,19 +39,12 @@ class PyElmt(object):
             _db.update_data(self.db_config['table'], self.id,
                             **self._attr_to_mongo_dict(self))
 
-    def get_mongo_doc(self):
+    def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
-            _result = _db.find_by_kv(self.db_config['table'], '_id', self.id)
+            _result = _db.find_by_kv(self.db_config['table'], '_id', self.id, if_print)
             _newattr = self._mongo_id_to_self_id(_result)
             self.check_update_attr(_newattr)
             return _newattr
-
-    # def set_openbrim(self, model_class, ob_class, **attrib_dict):
-    #     """create a OpenBrim object, in fact an eET.element"""
-    #     _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
-    #     assert model_class in ['fem', 'geo']
-    #     self.openBrIM[model_class] = _model
-    #     return self.openBrIM
 
     def get_openbrim(self, model_class):
         if not model_class:
@@ -141,11 +136,12 @@ class PyElmt(object):
 
 
 class AbstractELMT(PyElmt):
-    _DICT_OPENBRIM_CLASS = dict(Project=OBProject,
+    _DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
                                 Parameter=OBPrmElmt,
                                 Shape=OBShape,
                                 Section=OBSection,
                                 Group=OBGroup,
+                                Project=OBProject,
                                 Unit=OBUnit,
                                 Text=OBText3D)
 
@@ -154,18 +150,25 @@ class AbstractELMT(PyElmt):
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         self.openBrIM: PyOpenBrIMElmt
 
-    def set_openbrim(self, ob_class=None, **attrib_dict):
-        if not ob_class:
-            ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
-        self.openBrIM: PyOpenBrIMElmt = ob_class(**attrib_dict)
+    @property
+    def obrim(self):
         return self.openBrIM
 
-    # def set_openbrim(self, model_class, ob_class, **attrib_dict):
-    #     """create a OpenBrim object, in fact an eET.element"""
-    #     _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
-    #     assert model_class in ['fem', 'geo']
-    #     self.openBrIM[model_class] = _model
-    #     return self.openBrIM
+    @obrim.setter
+    def obrim(self, ob_class):
+        self.get_openbrim(ob_class)
+
+    def set_openbrim(self, ob_class=None, **attrib_dict):
+        # what is the OpenBrIM Element type?
+        if not ob_class:
+            ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
+        # get attributes required by the OpenBrIM type
+        _required_attr = PyElmt._attr_pick(self, *ob_class._REQUIRE)
+        # packaging the attributes for the OpenBrIM elements
+        _openbrim_attrib = {**attrib_dict, **_required_attr}
+        # openBrIM is one of the PyELMT interfaces
+        self.openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
+        return self.openBrIM
 
 
 class PhysicalELMT(PyElmt):
@@ -199,6 +202,38 @@ class PhysicalELMT(PyElmt):
         # physical info: material
         self.material = None
 
+    @property
+    def obrim(self):
+        return self.openBrIM
+
+    @obrim.setter
+    def obrim(self, ob_classes):
+        assert len(ob_classes)==2
+        if not ob_classes[0] in [OBFESurface,OBFENode,OBFELine]:
+            print("Wrong OpenBrIM FEM class")
+            raise ValueError
+        if not ob_classes[1] in #@TODO 添加类？:
+            print("Wrong OpenBrIM FEM class")
+            raise ValueError
+        self.get_openbrim(*ob_classes)
+
+    def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
+        # what is the OpenBrIM Element type?
+        if not ob_class_fem:
+            ob_class_fem = PhysicalELMT._DICT_FEM_CLASS[self.type]
+        if not ob_class_geo:
+            ob_class_geo = PhysicalELMT._DICT_FEM_CLASS[self.type]
+        _ob_model = list()
+        for _ob in ob_class_fem, ob_class_geo:
+            # get attributes required by the OpenBrIM type
+            _required_attr = PyElmt._attr_pick(self, *_ob._REQUIRE)
+            # packaging the attributes for the OpenBrIM elements
+            _openbrim_attrib = {**attrib_dict, **_required_attr}
+            # openBrIM is one of the PyELMT interfaces
+            _ob_model.append(_ob(**_openbrim_attrib))
+        self.openBrIM = dict(zip(['fem', 'geo'], _ob_model))
+        return self.openBrIM
+
     # may not use the below
 
     def set_position(self, x=0, y=0, z=0):
@@ -218,13 +253,6 @@ class PhysicalELMT(PyElmt):
                 print('= = Dimension of {} is recommended to be length, width, thick, etc'.format(self.name))
         self.dimension = dims
 
-    def set_openbrim(self, model_class, ob_class, **attrib_dict):
-        """create a OpenBrim object, in fact an eET.element"""
-        _model: PyOpenBrIMElmt = ob_class(**attrib_dict)
-        assert model_class in ['fem', 'geo']
-        self.openBrIM[model_class] = _model
-        return self.openBrIM
-
 
 def parameter_format(k):
     if isinstance(k, int):
@@ -240,7 +268,7 @@ def parameter_format(k):
         except ValueError:
             return k
     else:
-        from BMS_BrIM.Py_Design import Parameter
+        from BMS_BrIM.Py_Abstract import Parameter
         if isinstance(k, Parameter):
             return k.value
         else:
