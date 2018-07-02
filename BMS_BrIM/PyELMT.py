@@ -201,6 +201,8 @@ class PhysicalELMT(PyElmt):
         self.section = None
         # physical info: material
         self.material = None
+        #init the OpenBrIM model
+        self.openBrIM = self.set_openbrim()
 
     @property
     def obrim(self):
@@ -212,13 +214,12 @@ class PhysicalELMT(PyElmt):
         if not ob_classes[0] in [OBFESurface,OBFENode,OBFELine]:
             print("Wrong OpenBrIM FEM class")
             raise ValueError
-        if not ob_classes[1] in #@TODO 添加类？:
+        if not ob_classes[1] in [OBLine,OBSurface,OBVolume,OBCircle,OBExtends]:
             print("Wrong OpenBrIM FEM class")
             raise ValueError
         self.get_openbrim(*ob_classes)
 
     def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
-        # what is the OpenBrIM Element type?
         if not ob_class_fem:
             ob_class_fem = PhysicalELMT._DICT_FEM_CLASS[self.type]
         if not ob_class_geo:

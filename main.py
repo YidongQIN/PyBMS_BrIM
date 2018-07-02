@@ -1,25 +1,7 @@
 from BMS_BrIM import *
 
+print("=== test AbstractELMT ===")
 
-class test(object):
-    def __init__(self):
-        self.name='TTTT'
-        self._pp = [self.name, 'LIST']
-
-    @property
-    def pp(self):
-        return self._pp
-
-    @pp.setter
-    def pp(self, list):
-        for _k in list:
-            self._pp.append(_k)
-
-
-nnnn = test()
-print(nnnn.pp)
-nnnn.pp=PyOpenBrIMElmt,2,3
-print(nnnn.pp)
 
 
 '''
