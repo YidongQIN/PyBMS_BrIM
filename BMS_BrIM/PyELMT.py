@@ -11,7 +11,6 @@ Each PyELMT has 3 kinds of attributes:
     For example, Material will have E=elastic module, d=density, etc. While Parameter will only have a value.
 3. Interfaces. A OpenBrIM interface, a MongoDB interface.
     Each Interface will have two 
-
 """
 from Interfaces import *
 
