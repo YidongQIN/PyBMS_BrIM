@@ -59,6 +59,8 @@ class Material(AbstractELMT):
 
 
 class Shape(AbstractELMT):
+
+    # Shape.Circle, Shape.Rectangle... as sub class of Shape, or new class?
     pass
 
 

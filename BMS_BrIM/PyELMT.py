@@ -201,7 +201,7 @@ class PhysicalELMT(PyElmt):
         # physical info: material
         self.material = None
         #init the OpenBrIM model
-        self.openBrIM = self.set_openbrim()
+        self.openBrIM = dict() #
 
     @property
     def obrim(self):
