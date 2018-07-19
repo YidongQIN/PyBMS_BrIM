@@ -2,18 +2,6 @@ from BMS_BrIM import *
 
 print("=== test AbstractELMT ===")
 
-
-
-'''
-print("=== test find a doc in mongo ===")
-maa = Material(2,None)
-maa.set_dbconfig('fours','Material')
-# maa.show_material_property()
-maa.get_mongo_doc()
-# maa.show_material_property()
-maa.set_openbrim()
-ShowTree(maa.openBrIM)
-
 # test Material
 print("==== test Material ====")
 mma = Material(2, 'Test Mat')
@@ -38,6 +26,18 @@ new_proj=ProjGroups('NewProj')
 new_proj.set_dbconfig()
 # new_proj._init_mongo_doc()
 ShowTree(new_proj.openBrIM)
+
+'''
+print("=== test find a doc in mongo ===")
+maa = Material(2,None)
+maa.set_dbconfig('fours','Material')
+# maa.show_material_property()
+maa.get_mongo_doc()
+# maa.show_material_property()
+maa.set_openbrim()
+ShowTree(maa.openBrIM)
+
+
 
 mat1 = OBMaterial('C4000Psi', 'Deck Concrete', 'Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)

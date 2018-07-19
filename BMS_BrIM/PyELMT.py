@@ -92,6 +92,15 @@ class PyElmt(object):
             print('The table/collection name is needed')
         self.db_config['table'] = kwargs['table']
 
+    def set_openbrim(self, ob_class, **attrib_dict):
+        # get attributes required by the OpenBrIM type
+        _required_attr = PyElmt._attr_pick(self, *ob_class._REQUIRE)
+        # packaging the attributes for the OpenBrIM elements
+        _openbrim_attrib = {**attrib_dict, **_required_attr}
+        # openBrIM is one of the PyELMT interfaces
+        _openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
+        return _openBrIM
+
     def describe(self, des):
         """describe, attached documents, etc"""
         assert isinstance(des, str)
@@ -158,15 +167,9 @@ class AbstractELMT(PyElmt):
         self.get_openbrim(ob_class)
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
-        # what is the OpenBrIM Element type?
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
-        # get attributes required by the OpenBrIM type
-        _required_attr = PyElmt._attr_pick(self, *ob_class._REQUIRE)
-        # packaging the attributes for the OpenBrIM elements
-        _openbrim_attrib = {**attrib_dict, **_required_attr}
-        # openBrIM is one of the PyELMT interfaces
-        self.openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
+        self.openBrIM = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
         return self.openBrIM
 
 
@@ -200,8 +203,8 @@ class PhysicalELMT(PyElmt):
         self.section = None
         # physical info: material
         self.material = None
-        #init the OpenBrIM model
-        self.openBrIM = dict() #
+        # init the OpenBrIM model
+        self.openBrIM = dict()  #
 
     @property
     def obrim(self):
@@ -209,11 +212,11 @@ class PhysicalELMT(PyElmt):
 
     @obrim.setter
     def obrim(self, ob_classes):
-        assert len(ob_classes)==2
-        if not ob_classes[0] in [OBFESurface,OBFENode,OBFELine]:
+        assert len(ob_classes) == 2
+        if not ob_classes[0] in [OBFESurface, OBFENode, OBFELine]:
             print("Wrong OpenBrIM FEM class")
             raise ValueError
-        if not ob_classes[1] in [OBLine,OBSurface,OBVolume,OBCircle,OBExtends]:
+        if not ob_classes[1] in [OBLine, OBSurface, OBVolume, OBCircle, OBExtends]:
             print("Wrong OpenBrIM FEM class")
             raise ValueError
         self.get_openbrim(*ob_classes)
@@ -225,12 +228,8 @@ class PhysicalELMT(PyElmt):
             ob_class_geo = PhysicalELMT._DICT_FEM_CLASS[self.type]
         _ob_model = list()
         for _ob in ob_class_fem, ob_class_geo:
-            # get attributes required by the OpenBrIM type
-            _required_attr = PyElmt._attr_pick(self, *_ob._REQUIRE)
-            # packaging the attributes for the OpenBrIM elements
-            _openbrim_attrib = {**attrib_dict, **_required_attr}
             # openBrIM is one of the PyELMT interfaces
-            _ob_model.append(_ob(**_openbrim_attrib))
+            _ob_model.append(PyElmt.set_openbrim(self, _ob, **attrib_dict))
         self.openBrIM = dict(zip(['fem', 'geo'], _ob_model))
         return self.openBrIM
 
