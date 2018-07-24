@@ -15,6 +15,7 @@ class Parameter(AbstractELMT):
     def __init__(self, prm_id, prm_name, prm_value):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
         self.value = prm_value
+        self.openBrIM=self.set_openbrim()
 
 
 class Material(AbstractELMT):
@@ -74,7 +75,9 @@ class Group(AbstractELMT):
     def __init__(self, name, *child):
         super(Group, self).__init__('Group', None, name)
         self.openBrIM = OBGroup(name)
-        self.sub = list(*child)
+        self.sub = list()
+        self.append(*child)
+
 
     def append(self, *child):
         """get sub nodes, both the PyELMT and the OpenBrIM"""
@@ -87,6 +90,8 @@ class Group(AbstractELMT):
                 elif isinstance(_c, PhysicalELMT):
                     self.openBrIM.sub(_c.openBrIM['fem'])
                     self.openBrIM.sub(_c.openBrIM['geo'])
+                _c.set_dbconfig(**self.db_config)
+                _c.set_mongo_doc()
             except TypeError:
                 print("! {} cannot add {}'s openBrIM Element".format(self.name, _c.name))
 
@@ -128,6 +133,7 @@ class GroupCollection(Group):
         self.des = des  # description of the collection as _id=0
 
 
+
 class ProjGroups(AbstractELMT):
     """a BrIM Project = Mongo Database = OpenBrIM_Project.
     There should be 6 groups( = collections = tables) where all info is stored.
@@ -137,7 +143,7 @@ class ProjGroups(AbstractELMT):
         """project is a new MongoDB, so no id"""
         super(ProjGroups, self).__init__('Project', elmt_id=0, elmt_name=name)
         self.template = template
-        self.openBrIM = OBProject(name, template)
+        self.openBrIM=self.set_openbrim(None, **{'template':self.template})
         # Project cannot append sub, only its groups can
         self._proj_sub_groups()
         # automatically set up the MongoDB config
@@ -156,6 +162,7 @@ class ProjGroups(AbstractELMT):
                     self.fem_group, self.geo_group]
         for _s in self.sub:
             self.openBrIM.sub(_s.openBrIM)
+            _s.db_config=self.db_config
         return self.sub
 
     def set_dbconfig(self, database=None, table=None, **db_config):

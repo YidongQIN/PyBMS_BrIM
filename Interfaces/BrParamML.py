@@ -311,6 +311,7 @@ class OBObjElmt(PyOpenBrIMElmt):
 
 class OBPrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
+    _REQUIRE = ['name','value']
 
     def __init__(self, name, value, des='', role='', type='', ut='', uc=''):
         """create a new PARAMETER in OpenBrIM ParamML. \n
@@ -331,7 +332,7 @@ class OBPrmElmt(PyOpenBrIMElmt):
 
 
 class OBProject(OBObjElmt):
-    _REQUIRE = ['name']
+    _REQUIRE = ['name',]
 
     def __init__(self, name, template='empty'):
         """create new project with a template"""
@@ -502,7 +503,7 @@ class OBExtends(OBObjElmt):
 
 
 class OBGroup(OBObjElmt):
-    _REQUIRE = ['name']
+    _REQUIRE = ['name','id']
 
     def __init__(self, name, *elmts_list):
         super(OBGroup, self).__init__('Group', name=name)

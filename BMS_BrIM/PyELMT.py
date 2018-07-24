@@ -36,12 +36,12 @@ class PyElmt(object):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
             _db.update_data(self.db_config['table'], self.id,
-                            **self._attr_to_mongo_dict(self))
+                            **_attr_to_mongo_dict(self))
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
             _result = _db.find_by_kv(self.db_config['table'], '_id', self.id, if_print)
-            _newattr = self._mongo_id_to_self_id(_result)
+            _newattr = _mongo_id_to_self_id(_result)
             self.check_update_attr(_newattr)
             return _newattr
 
@@ -94,7 +94,7 @@ class PyElmt(object):
 
     def set_openbrim(self, ob_class, **attrib_dict):
         # get attributes required by the OpenBrIM type
-        _required_attr = PyElmt._attr_pick(self, *ob_class._REQUIRE)
+        _required_attr: dict = PyElmt._attr_pick(self, ob_class._REQUIRE)
         # packaging the attributes for the OpenBrIM elements
         _openbrim_attrib = {**attrib_dict, **_required_attr}
         # openBrIM is one of the PyELMT interfaces
@@ -107,19 +107,9 @@ class PyElmt(object):
         self.des = des
 
     @staticmethod
-    def _attr_pop(elmt, *pop_list):
-        _d = dict(elmt.__dict__.items())
-        for _pop in pop_list:
-            try:
-                _d.pop(_pop)
-            except KeyError:
-                print("No {} in the attributes of {}".format(_pop, elmt.name))
-        return _d
-
-    @staticmethod
-    def _attr_pick(elmt, *pick_list):
-        """keys are from the pick_list, and find corresponding attributes from the element__dict__.
-        return a dict"""
+    def _attr_pick(elmt, pick_list: list):
+        """keys are from the pick_list, and find corresponding attributes from the element.__dict__.
+        :rtype: dict"""
         _d = dict()
         for _pick in pick_list:
             try:
@@ -128,19 +118,32 @@ class PyElmt(object):
                 pass
         return _d
 
-    @staticmethod
-    def _attr_to_mongo_dict(elmt):
-        """dump some of the attributes to dict.
-        the default pop out list is: 'openbrim','db_config'. """
-        return AbstractELMT._attr_pop(elmt, 'id', 'openbrim', 'db_config')
 
-    @staticmethod
-    def _mongo_id_to_self_id(doc: dict):
-        """change the field(key) '_id' to 'id'. """
-        _d = {**doc}
-        _d['id'] = _d['_id']
-        _d.pop('_id')
-        return _d
+def _attr_pop(elmt, *pop_list):
+    for _k, _v in elmt.__dict__.items():
+        if not _v:
+            pop_list = [*pop_list, _k]
+    _d = dict(elmt.__dict__.items())
+    for _pop in pop_list:
+        try:
+            _d.pop(_pop)
+        except KeyError:
+            print("No {} in the attributes of {}".format(_pop, elmt.name))
+    return _d
+
+
+def _mongo_id_to_self_id(doc: dict):
+    """change the field(key) '_id' to 'id'. """
+    _d = {**doc}
+    _d['id'] = _d['_id']
+    _d.pop('_id')
+    return _d
+
+
+def _attr_to_mongo_dict(elmt: PyElmt):
+    """dump some of the attributes to dict.
+    the default pop out list is: 'openbrim','db_config'. """
+    return _attr_pop(elmt, 'id', 'openBrIM', 'db_config')
 
 
 class AbstractELMT(PyElmt):
@@ -169,6 +172,7 @@ class AbstractELMT(PyElmt):
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
+            print("OpenBrIMELMT of {} is set to {}".format(self.name, ob_class))
         self.openBrIM = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
         return self.openBrIM
 
