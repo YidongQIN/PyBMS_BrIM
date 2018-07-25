@@ -85,16 +85,12 @@ class ConnMongoDB(object):
             return self.db[collection].insert({**data})
         except mg.errors.DuplicateKeyError as e:
             print("This document already exists")
-            print(e)
 
     def update_data(self, collection, id, **data):
-        try:
+        if self.find_by_kv(collection, '_id', id):
             self.db[collection].update({'_id': id}, data, True)
-            # if self.find_by_kv(collection, '_id', data['id']):
-        except KeyError as e:
-            print(e)
-            raise
-
+        else:
+            self.insert_data(collection,**data)
     # below are methods for element, should not be use.
     # Mongo focus on the methods of CURD in Mongo, not info process of element
     '''''''''

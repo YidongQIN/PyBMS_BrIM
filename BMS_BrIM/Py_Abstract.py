@@ -15,7 +15,7 @@ class Parameter(AbstractELMT):
     def __init__(self, prm_id, prm_name, prm_value):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
         self.value = prm_value
-        self.openBrIM=self.set_openbrim()
+        self.openBrIM = self.set_openbrim()
 
 
 class Material(AbstractELMT):
@@ -31,8 +31,9 @@ class Material(AbstractELMT):
         """Material name is mandatory. Material Type is Steel, Concrete, etc."""
         super(Material, self).__init__('Material', mat_id, mat_name)
         # self.stage = 'Design'
-        if mat_property:
-            self.set_property(**mat_property)
+        # if mat_property:
+        self.set_property(**mat_property)
+        self.set_openbrim()
 
     def set_property(self, **mat_property):
         """set the property of material. should use key in:
@@ -60,10 +61,15 @@ class Material(AbstractELMT):
 
 
 class Shape(AbstractELMT):
-
     # Shape.Circle, Shape.Rectangle... as sub class of Shape, or new class?
-    pass
-
+    def __init__(self, name):
+        super(Shape, self).__init__('Shape', None, name)
+        #@TODO
+    
+class Circle(Shape):
+    
+    def __init__(self, name, radius):
+        super(Circle, self).__init__()
 
 class Section(AbstractELMT):
     pass
@@ -75,39 +81,53 @@ class Group(AbstractELMT):
     def __init__(self, name, *child):
         super(Group, self).__init__('Group', None, name)
         self.openBrIM = OBGroup(name)
-        self.sub = list()
+        self._sub = list()
         self.append(*child)
 
-
     def append(self, *child):
-        """get sub nodes, both the PyELMT and the OpenBrIM"""
+        """get sub nodes, both the PyELMT and the OpenBrIM in self._sub. """
         for _c in child:
-            assert isinstance(_c, PyElmt)
-            self.sub.append(_c)
-            try:
-                if isinstance(_c, AbstractELMT):
-                    self.openBrIM.sub(_c.openBrIM)
-                elif isinstance(_c, PhysicalELMT):
-                    self.openBrIM.sub(_c.openBrIM['fem'])
-                    self.openBrIM.sub(_c.openBrIM['geo'])
-                _c.set_dbconfig(**self.db_config)
-                _c.set_mongo_doc()
-            except TypeError:
-                print("! {} cannot add {}'s openBrIM Element".format(self.name, _c.name))
+            # 1. self._sub.append;
+            self._sub.append(_c)
+            # 2. self.openBrIM sub();
+            if isinstance(_c, AbstractELMT):
+                self.openBrIM.sub(_c.openBrIM)
+            elif isinstance(_c, PhysicalELMT):
+                self.openBrIM.sub(_c.openBrIM['fem'])
+                self.openBrIM.sub(_c.openBrIM['geo'])
+            else:
+                print("Un-acceptable class of ", _c)
+                raise TypeError
+            # 3. self.mongoDB update it.
+            _c.set_dbconfig(self.db_config['database'], self.db_config['table'])
+            _c.set_mongo_doc()
 
     def delete(self, *child):
         for _c in child:
             try:
-                self.sub.pop(_c)
+                self._sub.pop(_c)
                 self.openBrIM.del_sub(_c.openBrIM.elmt.tag, **_c.openBrIM.elmt.attrib)
             except TypeError:
                 print("! {} cannot delete {}".format(self.name, _c.name))
 
-    def __iter__(self):
-        return self
+    def __len__(self):
+        return len(self._sub)
 
-    def __next__(self):
-        return self.sub
+    def __iter__(self):
+        return iter(self._sub)
+
+    def show_structure(self):
+        def tree(elmt, level):
+            for _l in range(level):
+                print("*    ", end='')
+            print("*<{}>, _id={}".format(elmt.name,elmt._id))
+            try:
+                for _c in elmt._sub:
+                    tree(_c, level + 1)
+            except AttributeError:
+                pass
+
+        tree(self, 0)
 
 
 class GroupCollection(Group):
@@ -131,7 +151,7 @@ class GroupCollection(Group):
             except KeyError:
                 des = "Unknown Group. A NEW table/Collection in MongoDB."
         self.des = des  # description of the collection as _id=0
-
+        self.db_config['table'] = self.name
 
 
 class ProjGroups(AbstractELMT):
@@ -139,15 +159,15 @@ class ProjGroups(AbstractELMT):
     There should be 6 groups( = collections = tables) where all info is stored.
     """
 
-    def __init__(self, name, template='empty'):
+    def __init__(self, name, template='empty', **db_config):
         """project is a new MongoDB, so no id"""
         super(ProjGroups, self).__init__('Project', elmt_id=0, elmt_name=name)
-        self.template = template
-        self.openBrIM=self.set_openbrim(None, **{'template':self.template})
+        # self.template = template
+        self.openBrIM = self.set_openbrim(None, **{'template': template})
         # Project cannot append sub, only its groups can
         self._proj_sub_groups()
         # automatically set up the MongoDB config
-        self.set_dbconfig()
+        self.set_dbconfig(**db_config)
         self._init_mongo_doc()
 
     def _proj_sub_groups(self):
@@ -157,21 +177,36 @@ class ProjGroups(AbstractELMT):
         self.sec_group = GroupCollection('section')
         self.fem_group = GroupCollection('model_fem')
         self.geo_group = GroupCollection('model_geometry')
-        self.sub = [self.proj_info, self.prm_group,
-                    self.mat_group, self.sec_group,
-                    self.fem_group, self.geo_group]
-        for _s in self.sub:
+        self._sub = [self.proj_info, self.prm_group,
+                     self.mat_group, self.sec_group,
+                     self.fem_group, self.geo_group]
+        for _s in self._sub:
             self.openBrIM.sub(_s.openBrIM)
-            _s.db_config=self.db_config
-        return self.sub
+            _s.set_dbconfig(self.name, _s.name)
+        return self._sub
 
     def set_dbconfig(self, database=None, table=None, **db_config):
+        """One project = One Mongo Database"""
         super(ProjGroups, self).set_dbconfig(self.name, table=None, **db_config)
 
     def _init_mongo_doc(self):
         with ConnMongoDB(**self.db_config) as _db:
-            for _col in self.sub:
+            for _col in self._sub:
                 _db.update_data(_col.name, id=0, des=_col.des)
+
+    def sub(self, sub_group, *child):
+        """Project cannot have sub elements.
+        Project only have some tables/collections/GroupCollections.
+        Theses GroupCollections will accept docs."""
+        try:
+            _n = self._sub.index(sub_group)
+            self._sub[_n].append(*child)
+        except KeyError:
+            print("Cannot find this GroupCollection.")
+            raise
 
     def update_mongo(self):
         pass
+
+    def __iter__(self):
+        return iter(self._sub)

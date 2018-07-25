@@ -41,7 +41,7 @@ for i in range(1, 4):
     y_i = y_positions[i - 1] + y_clears[i] + w_colm.value
     y_positions.append(y_i)
 # 1. Materials
-steel = OBMaterial('Steel1', type="steel", des="steel of girder")
+steel = OBMaterial('Steel1', ob_type="steel", des="steel of girder")
 steel.mat_property(d="0", E="209", Nu="0.3", a="0.0000065", Fy="50", Fu="65")
 OBGroup('Material Group', steel).attach_to(fourstorey)
 # 2. Section

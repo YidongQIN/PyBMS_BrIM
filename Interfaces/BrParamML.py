@@ -167,6 +167,9 @@ class PyOpenBrIMElmt(object):
                 self.elmt.remove(one)
             print('Totally {} elements deleted'.format(len(elmt_to_del)))
 
+    def __len__(self):
+        return len(self.elmt)
+
     def verify_tag(self, tag):
         """verify the tag (OBJECT or PARAMETER) with the input"""
         verified = PyOpenBrIMElmt.match_tag(self.elmt, tag)
@@ -231,7 +234,8 @@ class PyOpenBrIMElmt(object):
         elif isinstance(elmt, PyOpenBrIMElmt):
             return elmt.elmt
         else:
-            print('Type of <{}> is {}.\nUnacceptable type to be converted to OpenBrIM elements.'.format(elmt,type(elmt)))
+            print(
+                'Type of <{}> is {}.\nUnacceptable type to be converted to OpenBrIM elements.'.format(elmt, type(elmt)))
 
     @staticmethod
     def prm_to_value(elmt):
@@ -257,14 +261,14 @@ class PyOpenBrIMElmt(object):
 class OBObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
 
-    def __init__(self, type, name='', **obj_attrib):
+    def __init__(self, ob_type, name='', **obj_attrib):
         """create a new OBJECT in OpenBrIM ParamML.\n
         Mandatory is Type <O T= ? > such as Point, Line, Group, ...\n
         N = ? as name is recommended to be provided.\n
         attributes are in format of dict.
         """
-        self.type = type
-        super(OBObjElmt, self).__init__('O', name, T=type, **obj_attrib)
+        self.type = ob_type
+        super(OBObjElmt, self).__init__('O', name, T=ob_type, **obj_attrib)
 
     def sub(self, *child):
         """add one or a list of child elements as sub elmt"""
@@ -311,7 +315,7 @@ class OBObjElmt(PyOpenBrIMElmt):
 
 class OBPrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
-    _REQUIRE = ['name','value']
+    _REQUIRE = ['name', 'value']
 
     def __init__(self, name, value, des='', role='', type='', ut='', uc=''):
         """create a new PARAMETER in OpenBrIM ParamML. \n
@@ -332,7 +336,7 @@ class OBPrmElmt(PyOpenBrIMElmt):
 
 
 class OBProject(OBObjElmt):
-    _REQUIRE = ['name',]
+    _REQUIRE = ['name', ]
 
     def __init__(self, name, template='empty'):
         """create new project with a template"""
@@ -390,7 +394,6 @@ class OBProject(OBObjElmt):
 
 
 class OBMaterial(OBObjElmt):
-
     _DESDICT = dict(d="Density",
                     E="modulus of Elasticity",
                     a="Coefficient of Thermal Expansion",
@@ -398,14 +401,14 @@ class OBMaterial(OBObjElmt):
                     Fc28="Concrete Compressive Strength",
                     Fy="Steel Yield Strength",
                     Fu="Steel Ultimate Strength")
-    _REQUIRE = ['name', 'id', 'des', *_DESDICT.keys()]
+    _REQUIRE = ['name', '_id', 'des', *_DESDICT.keys()]
 
-    def __init__(self, name, des='', type='', **attrib_dict):
+    def __init__(self, name, des='', ob_type='', **attrib_dict):
         """Material name is mandatory.\n
         Material Type is Steel, Concrete, etc. Type is not T as T='Material'.\n
         there may be no other attributes.
         """
-        super(OBMaterial, self).__init__('Material', name, D=des, Type=type)
+        super(OBMaterial, self).__init__('Material', name, D=des, Type=ob_type)
         self.mat_property(**attrib_dict)
 
     def mat_property(self, **key_value):
@@ -437,7 +440,7 @@ class OBMaterial(OBObjElmt):
 class OBSection(OBObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
-    _REQUIRE = ['name', 'id', 'des', 'shapes']
+    _REQUIRE = ['name', '_id', 'des', 'shapes']
 
     def __init__(self, name, material=None, *shape_list, **property_dict):
         super(OBSection, self).__init__('Section', name)
@@ -454,7 +457,7 @@ class OBSection(OBObjElmt):
 
 
 class OBShape(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'points', 'des', 'cutout']
+    _REQUIRE = ['name', '_id', 'points', 'des', 'cutout']
 
     def __init__(self, name, *obj_list):
         super(OBShape, self).__init__('Shape', name)
@@ -466,7 +469,7 @@ class OBShape(OBObjElmt):
 
 
 class OBCircle(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'radius', 'des']
+    _REQUIRE = ['name', '_id', 'radius', 'des']
 
     def __init__(self, name, radius, x=0, y=0, ):
         super(OBCircle, self).__init__('Circle', name, X=str(x), Y=str(y))
@@ -475,7 +478,7 @@ class OBCircle(OBObjElmt):
 
 
 class OBUnit(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'des']
+    _REQUIRE = ['name', '_id', 'des']
 
     def __init__(self, name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
                  temperature_unit="Fahrenheit"):
@@ -503,7 +506,7 @@ class OBExtends(OBObjElmt):
 
 
 class OBGroup(OBObjElmt):
-    _REQUIRE = ['name','id']
+    _REQUIRE = ['name', 'id']
 
     def __init__(self, name, *elmts_list):
         super(OBGroup, self).__init__('Group', name=name)
@@ -513,9 +516,12 @@ class OBGroup(OBObjElmt):
         self.del_all_sub()
         self.sub(elmts)
 
+    def __len__(self):
+        return len(self.sub)
+
 
 class OBFENode(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
+    _REQUIRE = ['name', '_id', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
 
     def __init__(self, x, y, z, name=''):
         super(OBFENode, self).__init__('Node', name, X=x, Y=y, Z=z)
@@ -564,7 +570,7 @@ class OBFENode(OBObjElmt):
 
 
 class OBFELine(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'node1', 'node2', 'section']
+    _REQUIRE = ['name', '_id', 'node1', 'node2', 'section']
 
     def __init__(self, node1, node2, section, beta_angle=0, name=''):
         super(OBFELine, self).__init__('FELine', name)
@@ -589,7 +595,7 @@ class OBFELine(OBObjElmt):
 
 
 class OBFESurface(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'node1', 'node2', 'node3', 'node4', 'thick', 'material']
+    _REQUIRE = ['name', '_id', 'node1', 'node2', 'node3', 'node4', 'thick', 'material']
 
     def __init__(self, node1, node2, node3, node4, thick_par, material_obj, name=''):
         super(OBFESurface, self).__init__('FESurface', name)
@@ -608,7 +614,7 @@ class OBFESurface(OBObjElmt):
 class OBPoint(OBObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
-    _REQUIRE = ['name', 'id', 'x', 'y', 'z']
+    _REQUIRE = ['name', '_id', 'x', 'y', 'z']
 
     def __init__(self, x, y, z=0, name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
@@ -633,7 +639,7 @@ class OBPoint(OBObjElmt):
 
 class OBLine(OBObjElmt):
     """T=Line, Two points and one section needed"""
-    _REQUIRE = ['name', 'id', 'point1', 'point2']
+    _REQUIRE = ['name', '_id', 'point1', 'point2']
 
     def __init__(self, point1, point2, section=None, name=''):
         super(OBLine, self).__init__('Line', name)
@@ -678,7 +684,7 @@ class OBLine(OBObjElmt):
 
 
 class OBSurface(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'point1', 'point2', 'point3', 'point4', 'thick', 'material']
+    _REQUIRE = ['name', '_id', 'point1', 'point2', 'point3', 'point4', 'thick', 'material']
 
     def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, name=''):
         super(OBSurface, self).__init__('Surface', name)
@@ -756,7 +762,7 @@ class OBSurface(OBObjElmt):
 
 
 class OBVolume(OBObjElmt):
-    _REQUIRE = ['name', 'id', 'surface1', 'surface2']
+    _REQUIRE = ['name', '_id', 'surface1', 'surface2']
 
     def __init__(self, surface1, surface2, name=''):
         super(OBVolume, self).__init__('Volume', name)

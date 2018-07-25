@@ -21,7 +21,7 @@ class PyElmt(object):
         """Basic attributes for a PyELMT is type, id.
         name is optional, as well as description.
         Each interface has a corresponding attribute"""
-        self.id = elmt_id
+        self._id = elmt_id
         self.type = elmt_type
         if elmt_name:
             self.name = elmt_name
@@ -35,12 +35,12 @@ class PyElmt(object):
     def set_mongo_doc(self):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
-            _db.update_data(self.db_config['table'], self.id,
+            _db.update_data(self.db_config['table'], self._id,
                             **_attr_to_mongo_dict(self))
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
-            _result = _db.find_by_kv(self.db_config['table'], '_id', self.id, if_print)
+            _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
             _newattr = _mongo_id_to_self_id(_result)
             self.check_update_attr(_newattr)
             return _newattr
@@ -115,35 +115,22 @@ class PyElmt(object):
             try:
                 _d[_pick] = elmt.__dict__[_pick]
             except KeyError:
-                pass
+                print(" :PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
         return _d
 
 
 def _attr_pop(elmt, *pop_list):
+    _d = dict()
     for _k, _v in elmt.__dict__.items():
-        if not _v:
-            pop_list = [*pop_list, _k]
-    _d = dict(elmt.__dict__.items())
-    for _pop in pop_list:
-        try:
-            _d.pop(_pop)
-        except KeyError:
-            print("No {} in the attributes of {}".format(_pop, elmt.name))
-    return _d
-
-
-def _mongo_id_to_self_id(doc: dict):
-    """change the field(key) '_id' to 'id'. """
-    _d = {**doc}
-    _d['id'] = _d['_id']
-    _d.pop('_id')
+        if (_k not in pop_list) and _v:
+            _d[_k] = _v
     return _d
 
 
 def _attr_to_mongo_dict(elmt: PyElmt):
     """dump some of the attributes to dict.
     the default pop out list is: 'openbrim','db_config'. """
-    return _attr_pop(elmt, 'id', 'openBrIM', 'db_config')
+    return _attr_pop(elmt, 'openBrIM', 'db_config')
 
 
 class AbstractELMT(PyElmt):
@@ -156,7 +143,7 @@ class AbstractELMT(PyElmt):
                                 Unit=OBUnit,
                                 Text=OBText3D)
 
-    def __init__(self, elmt_type, elmt_id, elmt_name=None):
+    def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         self.openBrIM: PyOpenBrIMElmt
@@ -172,7 +159,7 @@ class AbstractELMT(PyElmt):
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
-            print("OpenBrIMELMT of {} is set to {}".format(self.name, ob_class))
+            print("{}.openBrIM is of {}".format(self.name, ob_class))
         self.openBrIM = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
         return self.openBrIM
 
