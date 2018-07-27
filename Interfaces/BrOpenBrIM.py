@@ -4,12 +4,27 @@
 __author__ = 'Yidong QIN'
 
 '''
-
+Further development on ParamML to simplify the input of OpenBrIM/ParamML.
+Class structure is same as the BrParamML.py, the only difference is that 
+these classes are not in ParamML, but 
+1. Different shapes for section;
+2. Basic forms of members, like straight beam.
 '''
 
 import math
 
 from Interfaces.BrParamML import *
+
+
+class RectangleOBShape(OBShape):
+
+    def __init__(self, length, width, name, is_cutout=0):
+        _point_list = [OBPoint(-width / 2, -length / 2),
+                       OBPoint(width / 2, -length / 2),
+                       OBPoint(width / 2, length / 2),
+                       OBPoint(-width / 2, length / 2)]
+        super(RectangleOBShape, self).__init__(name, *_point_list)
+        self.is_cutout(is_cutout)
 
 
 class CubeGeo(OBObjElmt):
@@ -21,11 +36,11 @@ class CubeGeo(OBObjElmt):
         self.thick = self.prm_to_value(thick)
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
-        self.model = self.geom()
+        self.elmt = self.geom()
 
     def set_basepoint(self, x, y, z):
         """the base point is the center of the first Surface."""
-        self.model.move_to(x, y, z)
+        self.elmt.move_to(x, y, z)
 
     def geom(self):
         plate_geomodel = OBVolume(
@@ -62,7 +77,7 @@ class BoltedPlateGeo(OBObjElmt):
         self.material = material
         self.x_sp = (self.length - 2 * self.xclearance) / (self.column - 1)
         self.y_sp = (self.width - 2 * self.yclearance) / (self.row - 1)
-        self.model = self.geom()
+        self.elmt = self.geom()
 
     def geom(self):
         """a Surface Elmt, use real number not parameters"""
@@ -96,7 +111,7 @@ class PlateFEM(OBObjElmt):
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
         self.material = material
-        self.model = self.fem()
+        self.elmt = self.fem()
 
     def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
@@ -127,7 +142,7 @@ class StraightBeamGeo(OBObjElmt):
         self.length = self.prm_to_value(length)
         self.cos = direction_cos(direction_x, direction_y, direction_z)
         self.section = section
-        self.model = self.geom()
+        self.elmt = self.geom()
 
     def geom(self):
         line = OBLine(OBPoint(0, 0, 0),
@@ -148,7 +163,7 @@ class StraightBeamFEM(OBObjElmt):
         self.cos = direction_cos(direction_x, direction_y, direction_z)
         self.section = section
         self.angle = beta_angle
-        self.model = self.fem()
+        self.elmt = self.fem()
 
     def fem(self, *nodes):
         if nodes:

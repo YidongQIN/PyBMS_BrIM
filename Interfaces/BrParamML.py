@@ -4,7 +4,8 @@
 __author__ = 'Yidong QIN'
 
 '''
-Object-oriented programming for OpenBrIM
+Object-oriented programming for OpenBrIM.
+Directly to ParamML transfer.
 '''
 
 import re
@@ -49,6 +50,12 @@ class PyOpenBrIMElmt(object):
         print('<{}> {}'.format(self.elmt.tag, self.elmt.attrib))
         if if_sub:
             self.show_sub()
+
+    def sub(self, *child):
+        """add one or a list of child elements as sub elmt"""
+        # children=list(child)
+        for a in PyOpenBrIMElmt.to_elmt_list(*child):
+            self.elmt.append(a)
 
     def show_sub(self):
         """show all sub elements' tags and attributes"""
@@ -158,11 +165,11 @@ class PyOpenBrIMElmt(object):
             print('Confirm the Elements to be deleted')
             for one in elmt_to_del:
                 print('<{}> {}'.format(one.tag, one.attrib))
-            confirm = input('Sure to delete? Y/N:\n')
+            confirm = input('Sure to delete? True/False:\n')
         else:
             print('Find NO element to delete')
         # verify if delete or not
-        if confirm.upper() == 'Y':
+        if confirm:
             for one in elmt_to_del:
                 self.elmt.remove(one)
             print('Totally {} elements deleted'.format(len(elmt_to_del)))
@@ -270,11 +277,11 @@ class OBObjElmt(PyOpenBrIMElmt):
         self.type = ob_type
         super(OBObjElmt, self).__init__('O', name, T=ob_type, **obj_attrib)
 
-    def sub(self, *child):
-        """add one or a list of child elements as sub elmt"""
-        # children=list(child)
-        for a in PyOpenBrIMElmt.to_elmt_list(*child):
-            self.elmt.append(a)
+    # def sub(self, *child):
+    #     """add one or a list of child elements as sub elmt"""
+    #     # children=list(child)
+    #     for a in PyOpenBrIMElmt.to_elmt_list(*child):
+    #         self.elmt.append(a)
 
     def sub_new_par(self, par_name, par_value):
         self.sub(OBPrmElmt(par_name, par_value))
@@ -293,7 +300,7 @@ class OBObjElmt(PyOpenBrIMElmt):
     def refer_elmt(self, elmt, refer_name):
         if isinstance(elmt, PyOpenBrIMElmt):
             self.sub(OBPrmElmt(refer_name, elmt.name,
-                               type=elmt.get_attrib('T'), role=''))
+                               ob_type=elmt.get_attrib('T'), role=''))
 
     def move_to(self, new_x, new_y, new_z):
         self.set_attrib(X=new_x, Y=new_y, Z=new_z)
@@ -317,7 +324,7 @@ class OBPrmElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
     _REQUIRE = ['name', 'value']
 
-    def __init__(self, name, value, des='', role='', type='', ut='', uc=''):
+    def __init__(self, name, value, des='', role='', ob_type='', ut='', uc=''):
         """create a new PARAMETER in OpenBrIM ParamML. \n
         Mandatory: name, value.\n
         D-> des is describe of the parameter.\n
@@ -332,8 +339,12 @@ class OBPrmElmt(PyOpenBrIMElmt):
                 self.value = int(self.value)
         except ValueError:
             self.value = str(value)
-        super(OBPrmElmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=type)
+        super(OBPrmElmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=ob_type)
 
+    def sub(self, *child):
+        super(OBPrmElmt, self).sub()
+        print("BrParamML.OBPrmELMT cannot sub child elements.s")
+        raise TypeError
 
 class OBProject(OBObjElmt):
     _REQUIRE = ['name', ]
@@ -445,7 +456,7 @@ class OBSection(OBObjElmt):
     def __init__(self, name, material=None, *shape_list, **property_dict):
         super(OBSection, self).__init__('Section', name)
         if isinstance(material, OBMaterial):
-            self.sub(OBPrmElmt('Material', material.name, type='Material', des='Material_{}'.format(self.name)))
+            self.sub(OBPrmElmt('Material', material.name, ob_type='Material', des='Material_{}'.format(self.name)))
         self.sub(*shape_list)
         self.sect_property(**property_dict)
 
@@ -463,8 +474,8 @@ class OBShape(OBObjElmt):
         super(OBShape, self).__init__('Shape', name)
         self.sub(*obj_list)
 
-    def is_cutout(self, y_n='Y'):
-        if y_n.upper() == 'Y':
+    def is_cutout(self, y_n=True):
+        if y_n:
             self.sub(OBPrmElmt("IsCutout", "1", role="Input"))
 
 
@@ -517,7 +528,7 @@ class OBGroup(OBObjElmt):
         self.sub(elmts)
 
     def __len__(self):
-        return len(self.sub)
+        return len(self.elmt)
 
 
 class OBFENode(OBObjElmt):
@@ -539,7 +550,7 @@ class OBFENode(OBObjElmt):
         self.x = x
         self.elmt.attrib['X'] = str(x)
         self.y = y
-        self.elmt.attrib['Y'] = str(y)
+        self.elmt.attrib[True] = str(y)
         self.z = z
         self.elmt.attrib['Z'] = str(z)
 
@@ -559,7 +570,7 @@ class OBFENode(OBObjElmt):
 
     def as_point(self, point_obj):
         if isinstance(point_obj, OBPoint):
-            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
+            self.copy_attrib_from(point_obj, 'X', True, 'Z')
             self.x = point_obj.x
             self.y = point_obj.y
             self.z = point_obj.z
@@ -738,13 +749,13 @@ class OBSurface(OBObjElmt):
         not mandatory"""
         if isinstance(mat_obj, OBMaterial):
             self.sub(OBPrmElmt('Material', mat_obj.elmt.attrib['N'],
-                               type='Material',
+                               ob_type='Material',
                                role='',
                                des='Material_Surface_{}'.format(self.name)))
         elif isinstance(mat_obj, str):
             # print('Material of Surface <{}> is a string, please make sure'.format(self.name))
             self.sub(OBPrmElmt('Material', mat_obj,
-                               type='Material',
+                               ob_type='Material',
                                role='',
                                des='Material_Surface_{}'.format(self.name)))
         else:

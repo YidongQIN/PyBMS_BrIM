@@ -61,15 +61,23 @@ class Material(AbstractELMT):
 
 
 class Shape(AbstractELMT):
-    # Shape.Circle, Shape.Rectangle... as sub class of Shape, or new class?
-    def __init__(self, name):
+    """Shape is drawn by points. The basic forms are rectangle and circle.
+    Shape is stored in the Section doc in MongoDB, not independent."""
+
+    def __init__(self, name, shape_form, *args, is_cut=False):
         super(Shape, self).__init__('Shape', None, name)
-        #@TODO
-    
-class Circle(Shape):
-    
-    def __init__(self, name, radius):
-        super(Circle, self).__init__()
+        assert shape_form in [RectangleOBShape, OBCircle, OBShape]
+        if shape_form == RectangleOBShape:
+            _l = args[0]
+            _w = args[1]
+            self.openBrIM = self.set_openbrim(RectangleOBShape, name=name, length=_l, width=_w)
+        elif shape_form == OBCircle:
+            _r = args[0]
+            self.openBrIM = self.set_openbrim(OBCircle, name=name, radius=_r)
+        if is_cut:
+            self.openBrIM.sub(OBPrmElmt("IsCutout", "1"))
+            # @TODO not sure
+
 
 class Section(AbstractELMT):
     pass
@@ -120,7 +128,7 @@ class Group(AbstractELMT):
         def tree(elmt, level):
             for _l in range(level):
                 print("*    ", end='')
-            print("*<{}>, _id={}".format(elmt.name,elmt._id))
+            print("*<{}>, _id={}".format(elmt.name, elmt._id))
             try:
                 for _c in elmt._sub:
                     tree(_c, level + 1)
