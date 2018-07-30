@@ -63,7 +63,9 @@ sect_vert = Section(None, 'VerticalChord', rect_Out, rect_Ver_In)
 sect_web=Section(None, 'Web', cir_Web)
 MARC.sec_group.append(sect_bottom,sect_top,sect_vert,sect_web)
 # 3. Nodes
+
 # 4. Structure Elements = Mechanical View
+
 # 5. Equipments = Geometry View
 
 
