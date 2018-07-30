@@ -39,6 +39,22 @@ maa.get_mongo_doc()
 maa.set_openbrim()
 ShowTree(maa.openBrIM)
 
+print("Test Shapes and Sections")
+# rectangle
+trec=Shape(1, 'Test_Rectangel', RectangleOBShape, 20,20, is_cut=False)
+ShowTree(trec.openBrIM)
+# circle
+tcir=Shape(2, 'Test_Circle', OBCircle, 10,5, is_cut=True)
+ShowTree(tcir.openBrIM)
+# polygon
+tpol=Shape(3, 'Test_polygon', PolygonOBShape, (0,0),(10,0),(10,20),(0,10), is_cut=True)
+ShowTree(tpol.openBrIM)
+
+ts = Section(5,'Test', trec, tpol)
+
+MARC = ProjGroups("MARC_sensor")
+MARC.sec_group.append(trec, tcir,tpol, ts)
+
 mat1 = OBMaterial('C4000Psi', 'Deck Concrete', 'Concrete')
 mat1.mat_property(d='0.000002248', E=3604, a=0.000055, Fc28=4)
 mat1.show_mat_table()

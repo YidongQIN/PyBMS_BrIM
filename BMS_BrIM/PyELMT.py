@@ -29,7 +29,7 @@ class PyElmt(object):
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
         self.db_config: dict = dict()  # dict(database=, table=, user=,...)
-        self.openBrIM: dict = dict()  # dict of eET.elements
+        self.openBrIM: dict or PyOpenBrIMElmt # dict of eET.elements
         self.des: str = None
 
     def set_mongo_doc(self):
@@ -93,13 +93,15 @@ class PyElmt(object):
         self.db_config['table'] = kwargs['table']
 
     def set_openbrim(self, ob_class, **attrib_dict):
+        # update the __dict__ with the attrib_dict
+        self.__dict__.update(attrib_dict)
         # get attributes required by the OpenBrIM type
         _required_attr: dict = PyElmt._attr_pick(self, ob_class._REQUIRE)
         # packaging the attributes for the OpenBrIM elements
         _openbrim_attrib = {**attrib_dict, **_required_attr}
         # openBrIM is one of the PyELMT interfaces
-        _openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
-        return _openBrIM
+        self.openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
+        return self.openBrIM
 
     def describe(self, des):
         """describe, attached documents, etc"""
@@ -160,8 +162,7 @@ class AbstractELMT(PyElmt):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
             print("{}.openBrIM is of {}".format(self.name, ob_class))
-        self.openBrIM = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
-        return self.openBrIM
+        return PyElmt.set_openbrim(self, ob_class, **attrib_dict)
 
 
 class PhysicalELMT(PyElmt):

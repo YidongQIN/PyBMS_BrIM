@@ -30,7 +30,7 @@ class PyOpenBrIMElmt(object):
 
     def parse_xmlfile(self, xml_path):
         """ read a xml_file"""
-        if re.match('.*\.xml', xml_path):
+        if re.match(".*\.xml", xml_path):
             tree = eET.parse(xml_path)
             self.elmt = tree.getroot()
         else:
@@ -412,7 +412,7 @@ class OBMaterial(OBObjElmt):
                     Fc28="Concrete Compressive Strength",
                     Fy="Steel Yield Strength",
                     Fu="Steel Ultimate Strength")
-    _REQUIRE = ['name', '_id', 'des', *_DESDICT.keys()]
+    _REQUIRE = ['name', *_DESDICT.keys()]
 
     def __init__(self, name, des='', ob_type='', **attrib_dict):
         """Material name is mandatory.\n
@@ -451,14 +451,14 @@ class OBMaterial(OBObjElmt):
 class OBSection(OBObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
-    _REQUIRE = ['name', '_id', 'des', 'shapes']
+    _REQUIRE = ['name', 'shapes']
 
-    def __init__(self, name, material=None, *shape_list, **property_dict):
+    def __init__(self, name, material=None, *shapes, **property_dict):
         super(OBSection, self).__init__('Section', name)
         if isinstance(material, OBMaterial):
             self.sub(OBPrmElmt('Material', material.name, ob_type='Material', des='Material_{}'.format(self.name)))
-        self.sub(*shape_list)
-        self.sect_property(**property_dict)
+        self.sub(*shapes)
+        # self.sect_property(**property_dict)
 
     def sect_property(self, **properties):
         """parameters generally mechanical characters, \n
@@ -468,7 +468,7 @@ class OBSection(OBObjElmt):
 
 
 class OBShape(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'points', 'des', 'cutout']
+    _REQUIRE = ['name', 'points']
 
     def __init__(self, name, *obj_list):
         super(OBShape, self).__init__('Shape', name)
@@ -480,7 +480,7 @@ class OBShape(OBObjElmt):
 
 
 class OBCircle(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'radius', 'des']
+    _REQUIRE = ['name', 'radius']
 
     def __init__(self, name, radius, x=0, y=0, ):
         super(OBCircle, self).__init__('Circle', name, X=str(x), Y=str(y))
@@ -489,7 +489,7 @@ class OBCircle(OBObjElmt):
 
 
 class OBUnit(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'des']
+    _REQUIRE = ['name', 'des']
 
     def __init__(self, name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
                  temperature_unit="Fahrenheit"):
@@ -532,7 +532,7 @@ class OBGroup(OBObjElmt):
 
 
 class OBFENode(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
+    _REQUIRE = ['name', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
 
     def __init__(self, x, y, z, name=''):
         super(OBFENode, self).__init__('Node', name, X=x, Y=y, Z=z)
@@ -581,7 +581,7 @@ class OBFENode(OBObjElmt):
 
 
 class OBFELine(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'node1', 'node2', 'section']
+    _REQUIRE = ['name', 'node1', 'node2', 'section']
 
     def __init__(self, node1, node2, section, beta_angle=0, name=''):
         super(OBFELine, self).__init__('FELine', name)
@@ -606,7 +606,7 @@ class OBFELine(OBObjElmt):
 
 
 class OBFESurface(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'node1', 'node2', 'node3', 'node4', 'thick', 'material']
+    _REQUIRE = ['name', 'node1', 'node2', 'node3', 'node4', 'thick', 'material']
 
     def __init__(self, node1, node2, node3, node4, thick_par, material_obj, name=''):
         super(OBFESurface, self).__init__('FESurface', name)
@@ -625,12 +625,12 @@ class OBFESurface(OBObjElmt):
 class OBPoint(OBObjElmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
-    _REQUIRE = ['name', '_id', 'x', 'y', 'z']
+    _REQUIRE = ['name', 'x', 'y', 'z']
 
     def __init__(self, x, y, z=0, name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
         super(OBPoint, self).__init__('Point', name=name,
-                                      X=str(x), Y=str(y), Z=str(z))
+                                      X=x, Y=y, Z=z)
         self.x = x
         self.y = y
         self.z = z
@@ -650,7 +650,7 @@ class OBPoint(OBObjElmt):
 
 class OBLine(OBObjElmt):
     """T=Line, Two points and one section needed"""
-    _REQUIRE = ['name', '_id', 'point1', 'point2']
+    _REQUIRE = ['name', 'point1', 'point2']
 
     def __init__(self, point1, point2, section=None, name=''):
         super(OBLine, self).__init__('Line', name)
@@ -695,7 +695,7 @@ class OBLine(OBObjElmt):
 
 
 class OBSurface(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'point1', 'point2', 'point3', 'point4', 'thick', 'material']
+    _REQUIRE = ['name', 'point1', 'point2', 'point3', 'point4', 'thick', 'material']
 
     def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, name=''):
         super(OBSurface, self).__init__('Surface', name)
@@ -773,7 +773,7 @@ class OBSurface(OBObjElmt):
 
 
 class OBVolume(OBObjElmt):
-    _REQUIRE = ['name', '_id', 'surface1', 'surface2']
+    _REQUIRE = ['name', 'surface1', 'surface2']
 
     def __init__(self, surface1, surface2, name=''):
         super(OBVolume, self).__init__('Volume', name)

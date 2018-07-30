@@ -47,40 +47,50 @@ class Material(AbstractELMT):
             except KeyError:
                 print("! UnKnown property")
 
+    def get_property(self, property_key):
+        try:
+            return float(self.__dict__[property_key])
+        except KeyError:
+            print("{} does not have {}".format(self.name, property_key))
+            return
+
     def show_material_property(self):
         print('# Material Property <{}>'.format(self.name))
         for _k, _v in self.__dict__.items():
             if _v:
                 print(' - ', _k, '=', _v)
 
-    # def set_openbrim(self, ob_class=OBMaterial, **attrib_dict):
-    #     _mat_attr = PyElmt._attr_pick(self, 'name', 'des', 'id', *ob_class._REQUIRE)
-    #     self.openBrIM = super(Material, self).set_openbrim(ob_class, **_mat_attr)
-    #     return self.openBrIM
-    # return self.openbrim[model_class]
-
 
 class Shape(AbstractELMT):
     """Shape is drawn by points. The basic forms are rectangle and circle.
     Shape is stored in the Section doc in MongoDB, not independent."""
 
-    def __init__(self, name, shape_form, *args, is_cut=False):
-        super(Shape, self).__init__('Shape', None, name)
-        assert shape_form in [RectangleOBShape, OBCircle, OBShape]
+    def __init__(self, shape_id, name, shape_form, *args, is_cut=False):
+        super(Shape, self).__init__('Shape', shape_id, name)
+        # choose a shape form from Rectangle, Circle. Else?
         if shape_form == RectangleOBShape:
             _l = args[0]
             _w = args[1]
-            self.openBrIM = self.set_openbrim(RectangleOBShape, name=name, length=_l, width=_w)
+            self.set_openbrim(RectangleOBShape, length=_l, width=_w)
         elif shape_form == OBCircle:
             _r = args[0]
-            self.openBrIM = self.set_openbrim(OBCircle, name=name, radius=_r)
+            self.set_openbrim(OBCircle, radius=_r)
+        else:
+            # default shape is polygon, so the parameters are points coordinates.
+            self.set_openbrim(PolygonOBShape, points=args)
         if is_cut:
             self.openBrIM.sub(OBPrmElmt("IsCutout", "1"))
-            # @TODO not sure
+        self.is_cutout = is_cut
+        # self.set_mongo_doc()
 
 
 class Section(AbstractELMT):
-    pass
+
+    def __init__(self, section_id, name, *shapes:Shape):
+        super(Section, self).__init__('Section', section_id, name)
+        self.shapes=[_._id for _ in shapes]
+        print(self.shapes)
+        self.set_openbrim()
 
 
 class Group(AbstractELMT):
@@ -130,7 +140,7 @@ class Group(AbstractELMT):
                 print("*    ", end='')
             print("*<{}>, _id={}".format(elmt.name, elmt._id))
             try:
-                for _c in elmt._sub:
+                for _c in elmt:
                     tree(_c, level + 1)
             except AttributeError:
                 pass
@@ -218,3 +228,8 @@ class ProjGroups(AbstractELMT):
 
     def __iter__(self):
         return iter(self._sub)
+
+
+if __name__ == "__main__":
+    print("Test of Py_Abstract")
+    print('=====')

@@ -17,19 +17,31 @@ from Interfaces.BrParamML import *
 
 
 class RectangleOBShape(OBShape):
+    _REQUIRE = ['name', 'length', 'width']
 
-    def __init__(self, length, width, name, is_cutout=0):
+    def __init__(self, length, width, name):
         _point_list = [OBPoint(-width / 2, -length / 2),
                        OBPoint(width / 2, -length / 2),
                        OBPoint(width / 2, length / 2),
                        OBPoint(-width / 2, length / 2)]
         super(RectangleOBShape, self).__init__(name, *_point_list)
-        self.is_cutout(is_cutout)
+
+
+class PolygonOBShape(OBShape):
+    _REQUIRE = ['name', 'points']
+
+    def __init__(self, name, points):
+        _point_list = list()
+        for _p in points:
+            assert isinstance(_p, tuple) and len(_p) == 2
+            _point_list.append(OBPoint(_p[0], _p[1]))
+        self.points=points
+        super(PolygonOBShape, self).__init__(name, *_point_list)
 
 
 class CubeGeo(OBObjElmt):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
-    _REQUIRE = ['name', 'id', 'length', 'width', 'thick']
+    _REQUIRE = ['name', 'length', 'width', 'thick']
 
     def __init__(self, length, width, thick, name=''):
         super(CubeGeo, self).__init__('Volume', name)
