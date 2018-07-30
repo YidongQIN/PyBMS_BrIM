@@ -25,16 +25,12 @@ concrete = Material(2, 'Concrete', d='0.0000002248', E="3604.9965", a="0.0000055
 MARC.mat_group.append(steel, concrete)
 # 2. Sections
 # 2.0 Section Parameters
-# BottomChord_width = Parameter(11, 'BottomChord_width', 0)
-# BottomChord_depth = Parameter(12, "BottomChord_depth", 6)
 Chord_width = Parameter(14, "Chord_width", 6)
 Chord_depth = Parameter(15, "Chord_depth", 6)
 BottomChord_thickness = Parameter(13, "BottomChord_thickness", 0.375)
 TopChord_thickness = Parameter(16, "TopChord_thickness", 0.3125)
 VertiBeam_thickness = Parameter(20, "VertiBeam_thickness", 0.25)
 deck_thick = Parameter(17, "deck_thick", "5")
-# VertiBeam_width = Parameter(18, "VertiBeam_width", 6)
-# VertiBeam_depth = Parameter(19, "VertiBeam_depth", 6)
 WebRadius = Parameter(None, "WebRadius", 1)
 MARC.prm_group.append(BottomChord_thickness, TopChord_thickness,
                       deck_thick,VertiBeam_thickness, WebRadius)
@@ -69,6 +65,6 @@ MARC.sec_group.append(sect_bottom,sect_top,sect_vert,sect_web)
 # 3. Nodes
 # 4. Structure Elements = Mechanical View
 # 5. Equipments = Geometry View
-# 6.
+
 
 ShowTree(MARC.openBrIM)
