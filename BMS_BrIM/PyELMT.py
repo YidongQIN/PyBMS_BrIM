@@ -29,14 +29,18 @@ class PyElmt(object):
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
         self.db_config: dict = dict()  # dict(database=, table=, user=,...)
-        self.openBrIM: dict or PyOpenBrIMElmt # dict of eET.elements
+        self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
         self.des: str = None
 
     def set_mongo_doc(self):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
-            _db.update_data(self.db_config['table'], self._id,
-                            **_attr_to_mongo_dict(self))
+            _rid = _db.update_data(self.db_config['table'],
+                                   self._id,
+                                   **_attr_to_mongo_dict(self))
+            if not self._id:
+                self._id = _rid
+                print("{}._id is {}".format(self.name, self._id))
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
@@ -96,7 +100,7 @@ class PyElmt(object):
         # update the __dict__ with the attrib_dict
         self.__dict__.update(attrib_dict)
         # get attributes required by the OpenBrIM type
-        _required_attr: dict = PyElmt._attr_pick(self, ob_class._REQUIRE)
+        _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
         # packaging the attributes for the OpenBrIM elements
         _openbrim_attrib = {**attrib_dict, **_required_attr}
         # openBrIM is one of the PyELMT interfaces
@@ -108,17 +112,16 @@ class PyElmt(object):
         assert isinstance(des, str)
         self.des = des
 
-    @staticmethod
-    def _attr_pick(elmt, pick_list: list):
-        """keys are from the pick_list, and find corresponding attributes from the element.__dict__.
-        :rtype: dict"""
-        _d = dict()
-        for _pick in pick_list:
-            try:
-                _d[_pick] = elmt.__dict__[_pick]
-            except KeyError:
-                print(" :PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
-        return _d
+
+def _attr_pick(elmt, *pick_list):
+    """keys are from the pick_list, and find corresponding attributes from the element.__dict__."""
+    _d = dict()
+    for _pick in pick_list:
+        try:
+            _d[_pick] = elmt.__dict__[_pick]
+        except KeyError:
+            print("PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
+    return _d
 
 
 def _attr_pop(elmt, *pop_list):

@@ -349,7 +349,7 @@ class OBPrmElmt(PyOpenBrIMElmt):
 class OBProject(OBObjElmt):
     _REQUIRE = ['name', ]
 
-    def __init__(self, name, template='empty'):
+    def __init__(self, name, template='SI'):
         """create new project with a template"""
         super(OBProject, self).__init__('Project', name)
         if template == 'template':
@@ -451,14 +451,13 @@ class OBMaterial(OBObjElmt):
 class OBSection(OBObjElmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
-    _REQUIRE = ['name', 'shapes']
+    _REQUIRE = ['name']
 
-    def __init__(self, name, material=None, *shapes, **property_dict):
+    def __init__(self, name, material=None, *shapesOB):
         super(OBSection, self).__init__('Section', name)
         if isinstance(material, OBMaterial):
             self.sub(OBPrmElmt('Material', material.name, ob_type='Material', des='Material_{}'.format(self.name)))
-        self.sub(*shapes)
-        # self.sect_property(**property_dict)
+        self.sub(*shapesOB)
 
     def sect_property(self, **properties):
         """parameters generally mechanical characters, \n

@@ -11,6 +11,7 @@ and non-structural members, such as sensor, etc.
 """
 
 import pymongo as mg
+import bson
 
 
 class ConnMongoDB(object):
@@ -83,14 +84,16 @@ class ConnMongoDB(object):
     def insert_data(self, collection, **data):
         try:
             return self.db[collection].insert({**data})
-        except mg.errors.DuplicateKeyError as e:
+        except mg.errors.DuplicateKeyError:
             print("This document already exists")
+        except bson.errors.InvalidDocument:
+            print("Cannot encode object")
 
     def update_data(self, collection, id, **data):
         if self.find_by_kv(collection, '_id', id):
-            self.db[collection].update({'_id': id}, data, True)
+            return self.db[collection].update({'_id': id}, data, True)
         else:
-            self.insert_data(collection,**data)
+            return self.insert_data(collection,**data)
     # below are methods for element, should not be use.
     # Mongo focus on the methods of CURD in Mongo, not info process of element
     '''''''''

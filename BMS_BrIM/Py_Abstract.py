@@ -88,9 +88,11 @@ class Section(AbstractELMT):
 
     def __init__(self, section_id, name, *shapes:Shape):
         super(Section, self).__init__('Section', section_id, name)
-        self.shapes=[_._id for _ in shapes]
-        print(self.shapes)
-        self.set_openbrim()
+        self.sub=shapes
+        self.shapesOB=[_.openBrIM for _ in shapes]
+        self.shapesID=[_._id for _ in shapes]
+        self.set_openbrim(OBSection)
+        self.openBrIM.sub(*self.shapesOB)
 
 
 class Group(AbstractELMT):
@@ -181,7 +183,7 @@ class ProjGroups(AbstractELMT):
         """project is a new MongoDB, so no id"""
         super(ProjGroups, self).__init__('Project', elmt_id=0, elmt_name=name)
         # self.template = template
-        self.openBrIM = self.set_openbrim(None, **{'template': template})
+        self.openBrIM = self.set_openbrim(OBProject, **{'template': template})
         # Project cannot append sub, only its groups can
         self._proj_sub_groups()
         # automatically set up the MongoDB config
@@ -210,7 +212,7 @@ class ProjGroups(AbstractELMT):
     def _init_mongo_doc(self):
         with ConnMongoDB(**self.db_config) as _db:
             for _col in self._sub:
-                _db.update_data(_col.name, id=0, des=_col.des)
+                _db.insert_data(_col.name, _id='InitialCollection', des=_col.des)
 
     def sub(self, sub_group, *child):
         """Project cannot have sub elements.

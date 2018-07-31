@@ -52,15 +52,15 @@ rect_Ver_In = Shape(4, 'Rect_Ver_In 5.75*5.75', RectangleOBShape,
                     Chord_width.value-VertiBeam_thickness.value,is_cut=True)
 # circle=1
 cir_Web=Shape(5, 'CircleWeb', OBCircle, WebRadius.value)
-MARC.sec_group.append(rect_Ver_In,rect_Bot_In,rect_Out,rect_Top_In,cir_Web)
+# MARC.sec_group.append(rect_Ver_In,rect_Bot_In,rect_Out,rect_Top_In,cir_Web)
 # 2.2 bottom chord 6*6*0.375
-sect_bottom = Section(None, 'BottomChord', rect_Out, rect_Bot_In)
+sect_bottom = Section(11, 'BottomChord', rect_Out, rect_Bot_In)
 # 2.3 top chord 6*6*0.3125
-sect_top = Section(None, 'TopChord', rect_Out, rect_Top_In)
+sect_top = Section(12, 'TopChord', rect_Out, rect_Top_In)
 # 2.4 vertical chord 6*6*.025
-sect_vert = Section(None, 'VerticalChord', rect_Out, rect_Ver_In)
+sect_vert = Section(13, 'VerticalChord', rect_Out, rect_Ver_In)
 # 2.5 web radius=1
-sect_web=Section(None, 'Web', cir_Web)
+sect_web=Section(14, 'Web', cir_Web)
 MARC.sec_group.append(sect_bottom,sect_top,sect_vert,sect_web)
 # 3. Nodes
 
@@ -70,3 +70,4 @@ MARC.sec_group.append(sect_bottom,sect_top,sect_vert,sect_web)
 
 
 ShowTree(MARC.openBrIM)
+MARC.openBrIM.save_project()
