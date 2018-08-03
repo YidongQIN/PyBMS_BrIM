@@ -27,18 +27,17 @@ class Node(PhysicalELMT):
         self.rz = rz
         self.set_openbrim(OBFENode, OBPoint)
 
-
     def set_node_attr(self, node_attr, value):
-        assert node_attr in ['x', 'y', 'z','dx', 'dy', 'dz', 'rx', 'ry', 'rz']
-        self.__dict__[node_attr]=value
+        assert node_attr in ['x', 'y', 'z', 'dx', 'dy', 'dz', 'rx', 'ry', 'rz']
+        self.__dict__[node_attr] = value
+        # update the mongoDB and openbrim
         self.set_openbrim()
         self.set_mongo_doc()
 
 
 class Beam(PhysicalELMT):
 
-    def __init__(self, node1: Node, node2: Node, beam_id, section: Section, material: Material, beam_name=None):
-        # @TODO node OR node_id?
+    def __init__(self, node1: Node, node2: Node, section: Section, material: Material, beam_id=None, beam_name=None):
         self.material = material
         self.section = section
         self.nodes = [node1, node2]
@@ -47,8 +46,8 @@ class Beam(PhysicalELMT):
 
 class Deck(PhysicalELMT):
 
-    def __init__(self, node1: Node, node2: Node, node3: Node, deck_id, section: Section, material: Material,
-                 deck_name=None):
+    def __init__(self, node1: Node, node2: Node, node3: Node, section: Section, material: Material,
+                 deck_id=None, deck_name=None):
         self.material = material
         self.section = section
         self.nodes = [node1, node2, node3]
