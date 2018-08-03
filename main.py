@@ -1,8 +1,13 @@
 from BMS_BrIM import *
 
-testproj=ProjGroups('testproj')
-node1=Node(11, 22, 33)
-testproj.fem_group.append(node1)
+testproj=ProjGroups('Testproj')
+steel = Material(1, 'Steel', d="0.0000007345", E="29000")
+sect_bottom = Section(11, 'BottomChord', Shape(1, 'Rect 6*6', RectangleOBShape,6,6))
+node1=Node(1, 0, 3)
+node2=Node(10, 22, 33)
+b1=Beam(node1, node2, sect_bottom, steel, beam_id=1)
+testproj.fem_group.append(node1,node2)
+testproj.geo_group.append(b1)
 
 '''
 print("=== test AbstractELMT ===")

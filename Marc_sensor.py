@@ -74,9 +74,15 @@ for i in range(span_num.value + 1):
     nodeBR.append(Node(i * x_spacing.value, 0, 0, node_name="NodeBR_{}".format(i)))
     nodeTL.append(Node(i * x_spacing.value, y_spacing.value, z_height.value, node_name="NodeTL_{}".format(i)))
     nodeTR.append(Node(i * x_spacing.value, 0, z_height.value, node_name="NodeTR_{}".format(i)))
-MARC.fem_group.append(*nodeBL, *nodeBR, *nodeTL, *nodeTR)
+MARC.fem_group.append(*nodeBL, *nodeBR, *nodeTL[1:], *nodeTR[1:])
 # 4. Structure Elements = Mechanical View
+beamList=[]
+for i in range(span_num.value):
+    beamList.append(Beam(nodeBL[i], nodeBL[i + 1], sect_bottom, steel, beam_name="Bot_{}".format(i)))
+    beamList.append(Beam(nodeBR[i], nodeBR[i + 1], sect_bottom, steel, beam_name="Bot_{}".format(i)))
 
+beamList[1].set_openbrim()
+ShowTree(beamList[1].openBrIM['fem'])
 
 # 5. Equipments = Geometry View
 

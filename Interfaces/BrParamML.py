@@ -488,7 +488,7 @@ class OBCircle(OBObjElmt):
 
 
 class OBUnit(OBObjElmt):
-    _REQUIRE = ['name', 'des']
+    _REQUIRE = ['name']
 
     def __init__(self, name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
                  temperature_unit="Fahrenheit"):
@@ -579,16 +579,16 @@ class OBFENode(OBObjElmt):
 
 
 class OBFELine(OBObjElmt):
-    _REQUIRE = ['name', 'node1', 'node2', 'section']
+    _REQUIRE = ['name', 'node1OB', 'node2OB', 'sectionOB']
 
-    def __init__(self, node1, node2, section, beta_angle=0, name=''):
+    def __init__(self, node1OB, node2OB, sectionOB, beta_angle=0, name=''):
         super(OBFELine, self).__init__('FELine', name)
-        if isinstance(node1, OBFENode) and isinstance(node2, OBFENode) and isinstance(section, OBSection):
-            self.refer_elmt(node1, 'Node1')
-            self.n1 = node1
-            self.refer_elmt(node2, 'Node2')
-            self.n2 = node2
-            self.refer_elmt(section, 'Section')
+        if isinstance(node1OB, OBFENode) and isinstance(node2OB, OBFENode) and isinstance(sectionOB, OBSection):
+            self.refer_elmt(node1OB, 'Node1')
+            self.n1 = node1OB
+            self.refer_elmt(node2OB, 'Node2')
+            self.n2 = node2OB
+            self.refer_elmt(sectionOB, 'Section')
         if beta_angle:
             self.new_parameter('BetaAngle', beta_angle)
 
@@ -633,6 +633,9 @@ class OBPoint(OBObjElmt):
         self.y = y
         self.z = z
         # self.check_num()
+    def same_as_node(self, nodeOB):
+        #@TODO
+        pass
 
     def check_num(self):
         """typically the coordinates should be numbers.
@@ -650,13 +653,13 @@ class OBLine(OBObjElmt):
     """T=Line, Two points and one section needed"""
     _REQUIRE = ['name', 'point1', 'point2']
 
-    def __init__(self, point1, point2, section=None, name=''):
+    def __init__(self, node1OB, node2OB, sectionOB=None, name=''):
         super(OBLine, self).__init__('Line', name)
-        self.add_point(point1)
-        self.p1 = (point1.x, point1.y)
-        self.add_point(point2)
-        self.p2 = (point2.x, point2.y)
-        self.set_section(section)
+        self.add_point(node1OB)
+        self.p1 = (node1OB.x, node1OB.y)
+        self.add_point(node2OB)
+        self.p2 = (node2OB.x, node2OB.y)
+        self.set_section(sectionOB)
 
     def check_line(self):
         """should have Two Points and One Section"""
@@ -676,6 +679,8 @@ class OBLine(OBObjElmt):
     def add_point(self, point_obj):
         if isinstance(point_obj, OBPoint):
             self.elmt.append(point_obj.elmt)
+        elif isinstance(point_obj, OBFENode):
+            self.elmt.append(point_obj)
         else:
             print('Type Error: Point Object is required.')
 

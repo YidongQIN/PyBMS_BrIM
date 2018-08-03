@@ -179,7 +179,7 @@ class StraightBeamFEM(OBObjElmt):
 
     def fem(self, *nodes):
         if nodes:
-            return OBFELine(*nodes, section=self.section, beta_angle=self.angle, name=self.name)
+            return OBFELine(*nodes, sectionOB=self.section, beta_angle=self.angle, name=self.name)
         else:
             n1 = OBFENode(0, 0, 0)
             n2 = OBFENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])

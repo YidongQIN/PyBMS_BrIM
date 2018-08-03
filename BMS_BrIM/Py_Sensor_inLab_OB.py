@@ -201,7 +201,7 @@ class Displacement(Sensor):
     def geom(self):
         super(Displacement, self).geom()
         line = OBLine(OBPoint(0, 0, 0), OBPoint(self.length, 0, 0),
-                      section=OBSection('', '', OBCircle('', 1)))
+                      sectionOB=OBSection('', '', OBCircle('', 1)))
         box = CubeGeo(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = OBGroup(self.name, line, box)

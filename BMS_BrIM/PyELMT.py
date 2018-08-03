@@ -38,12 +38,11 @@ class PyElmt(object):
             _col = self.db_config['table']
             _id = self._id
             if self._id:
-                _ =_db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+                _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
                 print(_)
             else:
                 self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
-                print("{}'s ObjectID".format(self),self._id)
-
+                print("{}'s ObjectID".format(self), self._id)
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
@@ -110,11 +109,6 @@ class PyElmt(object):
         self.openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
         return self.openBrIM
 
-    # def describe(self, des):
-    #     """describe, attached documents, etc"""
-    #     assert isinstance(des, str)
-    #     self.des = des
-
 
 def _attr_pick(elmt, *pick_list):
     """keys are from the pick_list, and find corresponding attributes from the element.__dict__."""
@@ -178,7 +172,7 @@ class PhysicalELMT(PyElmt):
     later, some other methods may be added, such as SAP2K model method"""
     _DICT_FEM_CLASS = dict(Node=OBFENode,
                            Line=OBFELine,
-                           Beam=StraightBeamFEM,
+                           Beam=OBFELine,
                            Truss=StraightBeamFEM,
                            Surface=OBFESurface,
                            BoltedPlate=OBFESurface,
@@ -194,22 +188,15 @@ class PhysicalELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
         super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        # geometry info:
-        # self.position = XYZ()
-        # self.direction = RXYZ()  # local set_coordinate system
-        self.dimension = dict()
-        self.section = None
-        # physical info: material
-        self.material = None
         # init the OpenBrIM model
-        self.openBrIM = dict()  #
+        self.set_openbrim()
 
     @property
     def obrim(self):
         return self.openBrIM
 
     @obrim.setter
-    def obrim(self, ob_classes):
+    def obrim(self, *ob_classes):
         assert len(ob_classes) == 2
         if not ob_classes[0] in [OBFESurface, OBFENode, OBFELine]:
             print("Wrong OpenBrIM FEM class")
@@ -224,31 +211,13 @@ class PhysicalELMT(PyElmt):
             ob_class_fem = PhysicalELMT._DICT_FEM_CLASS[self.type]
         if not ob_class_geo:
             ob_class_geo = PhysicalELMT._DICT_FEM_CLASS[self.type]
-        _ob_model = list()
+        _ob_models = list()
         for _ob in ob_class_fem, ob_class_geo:
             # openBrIM is one of the PyELMT interfaces
-            _ob_model.append(PyElmt.set_openbrim(self, _ob, **attrib_dict))
-        self.openBrIM = dict(zip(['fem', 'geo'], _ob_model))
+            _ob_elmt = PyElmt.set_openbrim(self, _ob, **attrib_dict)
+            _ob_models.append(_ob_elmt)
+        self.openBrIM = dict(zip(['fem', 'geo'], _ob_models))
         return self.openBrIM
-
-    # may not use the below
-
-    def set_position(self, x=0, y=0, z=0):
-        self.position.x = x
-        self.position.y = y
-        self.position.z = z
-
-    def set_direction(self, **drc):
-        for k in drc:
-            if k not in ['dx', 'dy', 'dz']:
-                print('= = Direction of {} is recommended to be dx,dy,dz'.format(self.name))
-        self.direction = drc
-
-    def set_dimension(self, **dims):
-        for k in dims:
-            if k not in ['length', 'width', 'thick']:
-                print('= = Dimension of {} is recommended to be length, width, thick, etc'.format(self.name))
-        self.dimension = dims
 
 
 def parameter_format(k):
