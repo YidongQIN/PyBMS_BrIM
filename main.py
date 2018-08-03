@@ -1,6 +1,8 @@
 from BMS_BrIM import *
 
-
+testproj=ProjGroups('testproj')
+node1=Node(11, 22, 33)
+testproj.fem_group.append(node1)
 
 '''
 print("=== test AbstractELMT ===")

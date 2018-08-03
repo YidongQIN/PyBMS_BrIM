@@ -30,17 +30,20 @@ class PyElmt(object):
         # two interfaces: Database and OpenBrIM
         self.db_config: dict = dict()  # dict(database=, table=, user=,...)
         self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
-        self.des: str = None
+        # self.des: str = None
 
     def set_mongo_doc(self):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
-            _rid = _db.update_data(self.db_config['table'],
-                                   self._id,
-                                   **_attr_to_mongo_dict(self))
-            if not self._id:
-                self._id = _rid
-                print("{}._id is {}".format(self.name, self._id))
+            _col = self.db_config['table']
+            _id = self._id
+            if self._id:
+                _ =_db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+                print(_)
+            else:
+                self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
+                print("{}'s ObjectID".format(self),self._id)
+
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
@@ -98,7 +101,7 @@ class PyElmt(object):
 
     def set_openbrim(self, ob_class, **attrib_dict):
         # update the __dict__ with the attrib_dict
-        self.__dict__.update(attrib_dict)
+        self.__dict__.update(**attrib_dict)
         # get attributes required by the OpenBrIM type
         _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
         # packaging the attributes for the OpenBrIM elements
@@ -107,10 +110,10 @@ class PyElmt(object):
         self.openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
         return self.openBrIM
 
-    def describe(self, des):
-        """describe, attached documents, etc"""
-        assert isinstance(des, str)
-        self.des = des
+    # def describe(self, des):
+    #     """describe, attached documents, etc"""
+    #     assert isinstance(des, str)
+    #     self.des = des
 
 
 def _attr_pick(elmt, *pick_list):
@@ -192,8 +195,8 @@ class PhysicalELMT(PyElmt):
         """real members of structure"""
         super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         # geometry info:
-        self.position = XYZ()
-        self.direction = RXYZ()  # local set_coordinate system
+        # self.position = XYZ()
+        # self.direction = RXYZ()  # local set_coordinate system
         self.dimension = dict()
         self.section = None
         # physical info: material

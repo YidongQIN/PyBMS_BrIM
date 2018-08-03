@@ -533,17 +533,17 @@ class OBGroup(OBObjElmt):
 class OBFENode(OBObjElmt):
     _REQUIRE = ['name', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
 
-    def __init__(self, x, y, z, name=''):
+    def __init__(self, x, y, z, tx, ty, tz, rx, ry, rz, name=''):
         super(OBFENode, self).__init__('Node', name, X=x, Y=y, Z=z)
         self.x = x
         self.y = y
         self.z = z
-        self.tx = 0
-        self.ty = 0
-        self.tz = 0
-        self.rx = 0
-        self.ry = 0
-        self.rz = 0
+        self.tx = tx
+        self.ty = ty
+        self.tz = tz
+        self.rx = rx
+        self.ry = ry
+        self.rz = rz
 
     def set_coordinate(self, x, y, z):
         self.x = x

@@ -10,8 +10,8 @@ and non-structural members, such as sensor, etc.
 
 """
 
-import pymongo as mg
 import bson
+import pymongo as mg
 
 
 class ConnMongoDB(object):
@@ -36,7 +36,7 @@ class ConnMongoDB(object):
             print("----- Error Value: {}".format(exc_val))
             print("----- Error is at: {}".format(exc_tb))
 
-    def new_db(self,new_db_name):
+    def new_db(self, new_db_name):
         self.db_name = new_db_name
         self.db = self.client[self.db_name]
 
@@ -46,8 +46,8 @@ class ConnMongoDB(object):
         if if_print:
             print("Searched Collection of <{}> where {}".format(collection, condition))
             if _result:
-                for _k,_v in _result.items():
-                    print(' -  ',_k, '=', _v)
+                for _k, _v in _result.items():
+                    print(' -  ', _k, '=', _v)
             else:
                 print(" -  NO document")
         return _result
@@ -90,10 +90,15 @@ class ConnMongoDB(object):
             print("Cannot encode object")
 
     def update_data(self, collection, id, **data):
+        """equals to: return self.db[collection].update({'_id': id}, data, True)"""
         if self.find_by_kv(collection, '_id', id):
+            print('Find this doc._id = {} in MongoDB'.format(id))
+            # later, maybe use findall to check if exist doc of same content
             return self.db[collection].update({'_id': id}, data, True)
         else:
-            return self.insert_data(collection,**data)
+            print('Insert into MongoDB')
+            return self.insert_data(collection, **data)
+
     # below are methods for element, should not be use.
     # Mongo focus on the methods of CURD in Mongo, not info process of element
     '''''''''
@@ -148,6 +153,7 @@ class ConnMongoDB(object):
         return field_value
     '''''''''
 
-if __name__ =="__main__":
+
+if __name__ == "__main__":
     with ConnMongoDB('fours') as db:
         db.have_a_look('Parameter')

@@ -86,11 +86,11 @@ class Shape(AbstractELMT):
 
 class Section(AbstractELMT):
 
-    def __init__(self, section_id, name, *shapes:Shape):
+    def __init__(self, section_id, name, *shapes: Shape):
         super(Section, self).__init__('Section', section_id, name)
-        self.sub=shapes
-        self.shapesOB=[_.openBrIM for _ in shapes]
-        self.shapesID=[_._id for _ in shapes]
+        self.sub = shapes
+        self.shapesOB = [_.openBrIM for _ in shapes]
+        self.shapesID = [_._id for _ in shapes]
         self.set_openbrim(OBSection)
         self.openBrIM.sub(*self.shapesOB)
 

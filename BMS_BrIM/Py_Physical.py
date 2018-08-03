@@ -12,23 +12,23 @@ from BMS_BrIM.Py_Abstract import *
 class Node(PhysicalELMT):
 
     def __init__(self, x, y, z=0,
-                 dx=0, dy=0, dz=0,
+                 tx=0, ty=0, tz=0,
                  rx=0, ry=0, rz=0,
                  node_id=None, node_name=None):
         super(Node, self).__init__('Node', node_id, node_name)
         self.x = x
         self.y = y
         self.z = z
-        self.dx = dx
-        self.dy = dy
-        self.dz = dz
+        self.tx = tx
+        self.ty = ty
+        self.tz = tz
         self.rx = rx
         self.ry = ry
         self.rz = rz
         self.set_openbrim(OBFENode, OBPoint)
 
     def set_node_attr(self, node_attr, value):
-        assert node_attr in ['x', 'y', 'z', 'dx', 'dy', 'dz', 'rx', 'ry', 'rz']
+        assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
         self.__dict__[node_attr] = value
         # update the mongoDB and openbrim
         self.set_openbrim()
