@@ -193,7 +193,7 @@ class PhysicalELMT(PyElmt):
         super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         # geometry info:
         self.position = XYZ()
-        self.direction = RXYZ()  # local coordinate system
+        self.direction = RXYZ()  # local set_coordinate system
         self.dimension = dict()
         self.section = None
         # physical info: material

@@ -545,7 +545,7 @@ class OBFENode(OBObjElmt):
         self.ry = 0
         self.rz = 0
 
-    def coordinate(self, x, y, z):
+    def set_coordinate(self, x, y, z):
         self.x = x
         self.elmt.attrib['X'] = str(x)
         self.y = y
@@ -553,7 +553,7 @@ class OBFENode(OBObjElmt):
         self.z = z
         self.elmt.attrib['Z'] = str(z)
 
-    def fixity(self, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0):
+    def set_fixity(self, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0):
         self.tx = tx
         self.elmt.attrib['Tx'] = str(tx)
         self.ty = ty
@@ -569,11 +569,10 @@ class OBFENode(OBObjElmt):
 
     def as_point(self, point_obj):
         if isinstance(point_obj, OBPoint):
-            self.copy_attrib_from(point_obj, 'X', True, 'Z')
+            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
             self.x = point_obj.x
             self.y = point_obj.y
             self.z = point_obj.z
-            # self.name=point_obj.name
             return self
         else:
             print('{} is not a Point Object'.format(point_obj))
