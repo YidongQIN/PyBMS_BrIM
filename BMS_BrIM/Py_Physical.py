@@ -28,7 +28,13 @@ class Node(PhysicalELMT):
 
 
 class Beam(PhysicalELMT):
-    pass
+
+    def __init__(self, node1:Node, node2:Node, beam_id, section_id, material_id, beam_name):
+        #@TODO node OR node_id?
+        self.material=material_id
+        self.section=section_id
+        self.nodes=[node1, node2]
+        super(Beam, self).__init__('Beam', beam_id, beam_name)
 
 class Deck(PhysicalELMT):
     pass
