@@ -11,12 +11,12 @@ Aiming at realizing three functions:
 
 1. Creating models
 2. Mapping ParamML models to other format
-3. Querying project information
 
 basically, all these works have been done in PyOpenBrIM.py.
 
 
 ### version 2
+3. Querying project information
 
 Aiming at apply object-oriented programming in ClassPyOpenBrIM.py.
 

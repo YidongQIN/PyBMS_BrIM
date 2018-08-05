@@ -6,7 +6,9 @@ __author__ = 'Yidong QIN'
 """
 Physical Elements
 """
+
 from BMS_BrIM.Py_Abstract import *
+from Interfaces import *
 
 
 class Node(AbstractELMT):
@@ -25,7 +27,7 @@ class Node(AbstractELMT):
         self.ry = ry
         self.rz = rz
         super(Node, self).__init__('Node', node_id, node_name)
-        self.set_openbrim(OBFENode)
+        self.set_openbrim()
 
     def set_node_attr(self, node_attr, value):
         assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
@@ -44,10 +46,9 @@ class Beam(PhysicalELMT):
         self.section_id = section._id
         self.node1OB = node1.openBrIM
         self.node2OB = node2.openBrIM
-        self.sectionOB=section.openBrIM
+        self.sectionOB = section.openBrIM
         super(Beam, self).__init__('Beam', beam_id, beam_name)
-        print(self.__dict__)
-        self.openBrIM(OBFELine, OBLine)
+        self.set_openbrim(OBFELine, OBLine)
         print(self.openBrIM['fem'])
 
 

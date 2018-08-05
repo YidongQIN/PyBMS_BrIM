@@ -71,13 +71,13 @@ class PyOpenBrIMElmt(object):
         if _value:
             try:
                 _fv = float(_value)
-                print('{}.{} is a float of {}'.format(self.name, key, _fv))
+                print('# {}.{} is a float of {}'.format(self.name, key, _fv))
                 return _fv
             except ValueError:
-                print('{}.{} is not a float'.format(self.name, key))
+                print('# {}.{} is not a float'.format(self.name, key))
                 return _value
         else:
-            print('{} does not have the attribute of {}'.format(self.name, key))
+            print('! {} does not have the attribute of {}'.format(self.name, key))
             return
 
     def set_attrib(self, **attrib_dict):
@@ -345,6 +345,7 @@ class OBPrmElmt(PyOpenBrIMElmt):
         super(OBPrmElmt, self).sub()
         print("BrParamML.OBPrmELMT cannot sub child elements.s")
         raise TypeError
+
 
 class OBProject(OBObjElmt):
     _REQUIRE = ['name', ]
@@ -627,15 +628,19 @@ class OBPoint(OBObjElmt):
 
     def __init__(self, x, y, z=0, name=''):
         """coordinates x,y,z, may be parameters or real numbers."""
-        super(OBPoint, self).__init__('Point', name=name,
-                                      X=x, Y=y, Z=z)
+        super(OBPoint, self).__init__('Point', name=name, X=x, Y=y, Z=z)
         self.x = x
         self.y = y
         self.z = z
         # self.check_num()
+
     def same_as_node(self, nodeOB):
-        #@TODO
-        pass
+        assert isinstance(nodeOB, OBFENode), TypeError
+        self.copy_attrib_from(nodeOB, 'X', 'Y', 'Z')
+        self.x = nodeOB.x
+        self.y = nodeOB.y
+        self.z = nodeOB.z
+        return self.elmt
 
     def check_num(self):
         """typically the coordinates should be numbers.
@@ -653,12 +658,12 @@ class OBLine(OBObjElmt):
     """T=Line, Two points and one section needed"""
     _REQUIRE = ['name', 'point1', 'point2']
 
-    def __init__(self, node1OB, node2OB, sectionOB=None, name=''):
+    def __init__(self, point1OB, point2OB, sectionOB=None, name=''):
         super(OBLine, self).__init__('Line', name)
-        self.add_point(node1OB)
-        self.p1 = (node1OB.x, node1OB.y)
-        self.add_point(node2OB)
-        self.p2 = (node2OB.x, node2OB.y)
+        self.add_point(point1OB)
+        self.p1 = (point1OB.x, point1OB.y)
+        self.add_point(point2OB)
+        self.p2 = (point2OB.x, point2OB.y)
         self.set_section(sectionOB)
 
     def check_line(self):
@@ -680,7 +685,7 @@ class OBLine(OBObjElmt):
         if isinstance(point_obj, OBPoint):
             self.elmt.append(point_obj.elmt)
         elif isinstance(point_obj, OBFENode):
-            self.elmt.append(point_obj)
+            self.elmt.append(point_obj.elmt)
         else:
             print('Type Error: Point Object is required.')
 

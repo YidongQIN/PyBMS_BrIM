@@ -188,6 +188,8 @@ class PhysicalELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
         super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.material: Material = None
+        self.sectoin: Section = None
         # init the OpenBrIM model
         self.set_openbrim()
 
@@ -218,6 +220,10 @@ class PhysicalELMT(PyElmt):
             _ob_models.append(_ob_elmt)
         self.openBrIM = dict(zip(['fem', 'geo'], _ob_models))
         return self.openBrIM
+
+    def set_material(self, material):
+        """ openbrim & mongodb"""
+        self.material = material
 
 
 def parameter_format(k):
