@@ -36,16 +36,13 @@ class PyElmt(object):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
             _col = self.db_config['table']
-            _id = self._id
-            if self._id:
+            #@TODO
+            if not self._id:
+                self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
+            elif not _db.find_by_kv(_col, 'name', self.name):
                 _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-                # print(_)
             else:
-                _id = _db.find_by_kv(_col, 'name', self.name)
-                if _id:
-                    _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-                else: #@TODO
-                    self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
+                _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
                 print("<{}>'s ObjectID =".format(self), self._id)
 
     def get_mongo_doc(self, if_print=False):

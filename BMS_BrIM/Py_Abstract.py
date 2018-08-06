@@ -189,8 +189,8 @@ class GroupCollection(Group):
         'parameter': 'parameters of the model',
         'material': 'all materials',
         'section': 'all sections and shapes',
-        'model_fem': 'FEM model, including FENodes, FELines, FESurfaces, etc',
-        'model_geometry': 'Geometry Model',
+        'fem_node': 'Node for FEM model',
+        'model_members': 'Members of Model',
     }
 
     def __init__(self, name, des=None):
@@ -226,8 +226,8 @@ class ProjGroups(AbstractELMT):
         self.prm_group = GroupCollection('parameter')
         self.mat_group = GroupCollection('material')
         self.sec_group = GroupCollection('section')
-        self.fem_group = GroupCollection('model_fem')
-        self.geo_group = GroupCollection('model_geometry')
+        self.fem_group = GroupCollection('fem_node')
+        self.geo_group = GroupCollection('model_members')
         self._sub = [self.proj_info, self.prm_group,
                      self.mat_group, self.sec_group,
                      self.fem_group, self.geo_group]
@@ -243,7 +243,7 @@ class ProjGroups(AbstractELMT):
     def _init_mongo_doc(self):
         with ConnMongoDB(**self.db_config) as _db:
             for _col in self._sub:
-                _db.insert_data(_col.name, _id='InitialCollection', des=_col.des)
+                _db.insert_data(_col.name, _id=_col.des)
 
     def sub(self, sub_group, *child):
         """Project cannot have sub elements.

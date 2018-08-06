@@ -76,16 +76,36 @@ for i in range(span_num.value + 1):
     nodeTR.append(Node(i * x_spacing.value, 0, z_height.value, node_name="NodeTR_{}".format(i)))
 MARC.fem_group.append(*nodeBL, *nodeBR, *nodeTL[1:], *nodeTR[1:])
 # 4. Structure Elements = Mechanical View
-beamList=[]
+bottomChordList=[]
 for i in range(span_num.value):
-    beamList.append(Beam(nodeBL[i], nodeBL[i + 1], sect_bottom, steel, beam_name="Bot_{}".format(i)))
-    beamList.append(Beam(nodeBR[i], nodeBR[i + 1], sect_bottom, steel, beam_name="Bot_{}".format(i)))
-MARC.geo_group.append(*beamList)
-beamList[1].set_openbrim()
-ShowTree(beamList[1].openBrIM['fem'])
+    bottomChordList.append(Beam(nodeBL[i], nodeBL[i + 1], sect_bottom, steel,
+                         beam_name="Bot_L_{}".format(i)))
+    bottomChordList.append(Beam(nodeBR[i], nodeBR[i + 1], sect_bottom, steel,
+                         beam_name="Bot_R_{}".format(i)))
+topChordList = []
+for i in range(1, span_num.value):
+    topChordList.append(Beam(nodeTL[i], nodeTL[i + 1], sect_top, steel,
+                         beam_name="Top_L_{}".format(i)))
+    topChordList.append(Beam(nodeTR[i], nodeTR[i + 1], sect_top, steel,
+                         beam_name="Top_R_{}".format(i)))
+verChordsList = []
+for i in range(1, span_num.value + 1):
+    for (a, b) in [(nodeBL, nodeBR), (nodeTR, nodeBR), (nodeTR, nodeTL), (nodeBL, nodeTL)]:
+        verChordsList.append(Beam(a[i],b[i],sect_vert,steel,
+                                  beam_name='Ver_{}'.format(i)))
+webList = []
+for i in range(1, span_num.value):
+    for (a, b) in [(nodeBL, nodeTL), (nodeBR, nodeTR), (nodeTL, nodeTR)]:
+        webList.append(Beam(a[i], b[i + 1], sect_web, steel,
+                            beam_name='Web_LR_{}'.format(i)))
+        webList.append(Beam(a[i + 1], b[i], sect_web, steel,
+                            beam_name='Web_RL_{}'.format(i)))
+
+
+MARC.geo_group.append(*bottomChordList, *topChordList, *verChordsList, *webList)
 
 # 5. Equipments = Geometry View
 
 
 # ShowTree(MARC.openBrIM)
-# MARC.openBrIM.save_project()
+MARC.openBrIM.save_project()
