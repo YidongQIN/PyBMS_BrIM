@@ -80,7 +80,7 @@ beamList=[]
 for i in range(span_num.value):
     beamList.append(Beam(nodeBL[i], nodeBL[i + 1], sect_bottom, steel, beam_name="Bot_{}".format(i)))
     beamList.append(Beam(nodeBR[i], nodeBR[i + 1], sect_bottom, steel, beam_name="Bot_{}".format(i)))
-
+MARC.geo_group.append(*beamList)
 beamList[1].set_openbrim()
 ShowTree(beamList[1].openBrIM['fem'])
 

@@ -146,8 +146,8 @@ class Temperature(Sensor):
                        OBPoint(self.length / 2, -self.width / 2),
                        OBPoint(self.length / 2, self.width / 2),
                        OBPoint(-self.length / 2, self.width / 2),
-                       thick_par=1,
-                       material_obj='Sensor_Temperature',
+                       thick_prmOB=1,
+                       materialOB='Sensor_Temperature',
                        name=self.name)
         tp.set_attrib(Color='#DC143C')
         tp.move_to(self.x, self.y, self.z)
@@ -168,8 +168,8 @@ class StrainGauge(Sensor):
                        OBPoint(self.length / 2, -self.width / 2),
                        OBPoint(self.length / 2, self.width / 2),
                        OBPoint(-self.length / 2, self.width / 2),
-                       thick_par=1,
-                       material_obj='Sensor_StrainGauge',
+                       thick_prmOB=1,
+                       materialOB='Sensor_StrainGauge',
                        name=self.name)
         ss.set_attrib(Color='#DC143C')
         ss.move_to(self.x, self.y, self.z)

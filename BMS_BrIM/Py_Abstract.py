@@ -8,6 +8,7 @@ Python Elements for BrIM.
 """
 
 from BMS_BrIM.PyELMT import *
+from BMS_BrIM.Py_Physical import PhysicalELMT
 
 
 class AbstractELMT(PyElmt):
@@ -18,7 +19,8 @@ class AbstractELMT(PyElmt):
                                 Group=OBGroup,
                                 Project=OBProject,
                                 Unit=OBUnit,
-                                Text=OBText3D)
+                                Text=OBText3D,
+                                Node=OBFENode)
 
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
@@ -96,21 +98,20 @@ class Shape(AbstractELMT):
     Shape is stored in the Section doc in MongoDB, not independent."""
 
     def __init__(self, shape_id, name, shape_form, *args, is_cut=False):
-        super(Shape, self).__init__('Shape', shape_id, name)
         # choose a shape form from Rectangle, Circle. Else?
         if shape_form == RectangleOBShape:
-            _l = args[0]
-            _w = args[1]
-            self.set_openbrim(RectangleOBShape, length=_l, width=_w)
+            _attrib_dict=dict(length=args[0], width=args[1])
         elif shape_form == OBCircle:
-            _r = args[0]
-            self.set_openbrim(OBCircle, radius=_r)
+            _attrib_dict=dict(radius=args[0])
         else:
             # default shape is polygon, so the parameters are points coordinates.
-            self.set_openbrim(PolygonOBShape, points=args)
-        if is_cut:
-            self.openBrIM.sub(OBPrmElmt("IsCutout", "1"))
+            _attrib_dict = dict(points=args)
+        super(Shape, self).__init__('Shape', shape_id, name)
+        self.check_update_attr(_attrib_dict)
+        self.set_openbrim(shape_form, **_attrib_dict)
         self.is_cutout = is_cut
+        if self.is_cutout:
+            self.openBrIM.sub(OBPrmElmt("IsCutout", "1"))
         # self.set_mongo_doc()
 
 

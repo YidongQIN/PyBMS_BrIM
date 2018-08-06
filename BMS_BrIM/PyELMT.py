@@ -30,8 +30,8 @@ class PyElmt(object):
         # two interfaces: Database and OpenBrIM
         self.db_config: dict = dict()  # dict(database=, table=, user=,...)
         self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
-        # self.des: str = None
 
+    # MongoDB methods: setting; setter, getter;
     def set_mongo_doc(self):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
@@ -39,10 +39,14 @@ class PyElmt(object):
             _id = self._id
             if self._id:
                 _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-                print(_)
+                # print(_)
             else:
-                self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
-                print("{}'s ObjectID".format(self), self._id)
+                _id = _db.find_by_kv(_col, 'name', self.name)
+                if _id:
+                    _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+                else: #@TODO
+                    self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
+                print("<{}>'s ObjectID =".format(self), self._id)
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
@@ -51,7 +55,7 @@ class PyElmt(object):
             self.check_update_attr(_newattr)
             return _newattr
 
-    def get_openbrim(self, model_class):
+    def get_openbrim(self, model_class=None):
         if not model_class:
             return self.openBrIM
         else:
@@ -99,7 +103,8 @@ class PyElmt(object):
 
     def set_openbrim(self, ob_class, **attrib_dict):
         # update the __dict__ with the attrib_dict
-        self.__dict__.update(**attrib_dict)
+        # don't update the element.__dict__ with the attrib_dict. Because attrib_dict is used to add other redundancy info.
+        # self.__dict__.update(**attrib_dict)
         # get attributes required by the OpenBrIM type
         _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
         # packaging the attributes for the OpenBrIM elements
@@ -116,7 +121,8 @@ def _attr_pick(elmt, *pick_list):
         try:
             _d[_pick] = elmt.__dict__[_pick]
         except KeyError:
-            print("PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
+            # print("PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
+            pass
     return _d
 
 
@@ -131,9 +137,14 @@ def _attr_pop(elmt, *pop_list):
 def _attr_to_mongo_dict(elmt: PyElmt):
     """dump some of the attributes to dict.
     the default pop out list is: 'openbrim','db_config'. """
-    return _attr_pop(elmt, 'openBrIM', 'db_config')
-
-
+    return _attr_pop(elmt, 'openBrIM', 'db_config',
+                     'sectionOB', 'section',
+                     'materialOB', 'material',
+                     'node1', 'node1OB',
+                     'node2', 'node2OB',
+                     'node3', 'node3OB',
+                     'node4', 'node4OB',
+                     )
 
 
 def parameter_format(k):

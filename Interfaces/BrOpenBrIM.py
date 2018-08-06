@@ -20,6 +20,8 @@ class RectangleOBShape(OBShape):
     _REQUIRE = ['name', 'length', 'width']
 
     def __init__(self, length, width, name):
+        self.length=length
+        self.width=width
         _point_list = [OBPoint(-width / 2, -length / 2),
                        OBPoint(width / 2, -length / 2),
                        OBPoint(width / 2, length / 2),
@@ -97,8 +99,8 @@ class BoltedPlateGeo(OBObjElmt):
                               OBPoint(self.length, 0),
                               OBPoint(self.length, self.width),
                               OBPoint(0, self.width),
-                              thick_par=self.thick,
-                              material_obj=self.material,
+                              thick_prmOB=self.thick,
+                              materialOB=self.material,
                               name=self.name)
         holes = []
         for i in range(self.column):
@@ -128,7 +130,7 @@ class PlateFEM(OBObjElmt):
     def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
         if nodes:
-            return OBFESurface(*nodes, thick_par=self.thick, material_obj=self.material, name=self.name)
+            return OBFESurface(*nodes, thick_prmOB=self.thick, materialOB=self.material, name=self.name)
         else:
             n1 = OBFENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
             n2 = OBFENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))

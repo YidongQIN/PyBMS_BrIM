@@ -23,8 +23,8 @@ class PyOpenBrIMElmt(object):
         else:
             _attributes = {}
         for _k, _v in attrib_dict.items():
-            if _v:
-                _attributes[_k] = str(_v)
+            # if _v:
+            _attributes[_k] = str(_v)
         self.elmt = eET.Element(tag_o_p, **_attributes)
         self.name = name
 
@@ -71,10 +71,10 @@ class PyOpenBrIMElmt(object):
         if _value:
             try:
                 _fv = float(_value)
-                print('# {}.{} is a float of {}'.format(self.name, key, _fv))
+                # print('# {}.{} is a float of {}'.format(self.name, key, _fv))
                 return _fv
             except ValueError:
-                print('# {}.{} is not a float'.format(self.name, key))
+                # print('# {}.{} is not a float'.format(self.name, key))
                 return _value
         else:
             print('! {} does not have the attribute of {}'.format(self.name, key))
@@ -85,7 +85,7 @@ class PyOpenBrIMElmt(object):
             if self.elmt.attrib.get(_key):
                 print('Update {}.{} with new value <{}>'.format(self.name, _key, _value))
             else:
-                print('Add {} new attribute {} = {}'.format(self.name, _key, _value))
+                print('Add {} new attribute <{}> = <{}>'.format(self.name, _key, _value))
             self.elmt.set(_key, str(_value))
 
     def copy_attrib_from(self, elmt, *attrib_key_list):
@@ -98,8 +98,9 @@ class PyOpenBrIMElmt(object):
                 try:
                     self.elmt.set(_key, _temp.attrib[_key])
                 except KeyError as e:
-                    print('Element {} has no attribute {}'.format(elmt.name, _key))
-                    raise e
+                    print('Element {} has no attribute {}, so set to 0'.format(elmt.name, _key))
+                    self.elmt.set(_key, '0')
+
 
     def findall_by_xpath(self, xpath):
         """return a list of all sub elmt that matched the
@@ -454,10 +455,10 @@ class OBSection(OBObjElmt):
     use a parameter to refer to a Material element."""
     _REQUIRE = ['name']
 
-    def __init__(self, name, material=None, *shapesOB):
+    def __init__(self, name, materialOB=None, *shapesOB):
         super(OBSection, self).__init__('Section', name)
-        if isinstance(material, OBMaterial):
-            self.sub(OBPrmElmt('Material', material.name, ob_type='Material', des='Material_{}'.format(self.name)))
+        if isinstance(materialOB, OBMaterial):
+            self.sub(OBPrmElmt('Material', materialOB.name, ob_type='Material', des='Material_{}'.format(self.name)))
         self.sub(*shapesOB)
 
     def sect_property(self, **properties):
@@ -470,9 +471,9 @@ class OBSection(OBObjElmt):
 class OBShape(OBObjElmt):
     _REQUIRE = ['name', 'points']
 
-    def __init__(self, name, *obj_list):
+    def __init__(self, name, *pointOB):
         super(OBShape, self).__init__('Shape', name)
-        self.sub(*obj_list)
+        self.sub(*pointOB)
 
     def is_cutout(self, y_n=True):
         if y_n:
@@ -491,7 +492,10 @@ class OBCircle(OBObjElmt):
 class OBUnit(OBObjElmt):
     _REQUIRE = ['name']
 
-    def __init__(self, name, angle_unit="Degree", force_unit="Newton", length_unit="Meter",
+    def __init__(self, name,
+                 angle_unit="Degree",
+                 force_unit="Newton",
+                 length_unit="Meter",
                  temperature_unit="Fahrenheit"):
         """units system of the project.\n
         name=Internal, Geometry, Property.\n
@@ -509,9 +513,9 @@ class OBUnit(OBObjElmt):
 
 class OBExtends(OBObjElmt):
 
-    def __init__(self, extends_from):
-        if isinstance(extends_from, OBObjElmt):
-            super(OBExtends, self).__init__(extends_from.elmt.attrib['T'], Extends=extends_from.elmt.attrib['N'])
+    def __init__(self, extends_from_OB):
+        if isinstance(extends_from_OB, OBObjElmt):
+            super(OBExtends, self).__init__(extends_from_OB.elmt.attrib['T'], Extends=extends_from_OB.elmt.attrib['N'])
         else:
             print('Should be extended from a OBJECT')
 
@@ -519,9 +523,9 @@ class OBExtends(OBObjElmt):
 class OBGroup(OBObjElmt):
     _REQUIRE = ['name', 'id']
 
-    def __init__(self, name, *elmts_list):
+    def __init__(self, name, *elmtOB_list):
         super(OBGroup, self).__init__('Group', name=name)
-        self.sub(*elmts_list)
+        self.sub(*elmtOB_list)
 
     def regroup(self, *elmts):
         self.del_all_sub()
@@ -550,7 +554,7 @@ class OBFENode(OBObjElmt):
         self.x = x
         self.elmt.attrib['X'] = str(x)
         self.y = y
-        self.elmt.attrib[True] = str(y)
+        self.elmt.attrib['Y'] = str(y)
         self.z = z
         self.elmt.attrib['Z'] = str(z)
 
@@ -568,15 +572,15 @@ class OBFENode(OBObjElmt):
         self.rz = rz
         self.elmt.attrib['Rz'] = str(rz)
 
-    def as_point(self, point_obj):
-        if isinstance(point_obj, OBPoint):
-            self.copy_attrib_from(point_obj, 'X', 'Y', 'Z')
-            self.x = point_obj.x
-            self.y = point_obj.y
-            self.z = point_obj.z
+    def same_as_point(self, pointOB):
+        if isinstance(pointOB, OBPoint):
+            self.copy_attrib_from(pointOB, 'X', 'Y', 'Z')
+            self.x = pointOB.x
+            self.y = pointOB.y
+            self.z = pointOB.z
             return self
         else:
-            print('{} is not a Point Object'.format(point_obj))
+            print('{} is not a Point OBObject'.format(pointOB))
 
 
 class OBFELine(OBObjElmt):
@@ -605,20 +609,20 @@ class OBFELine(OBObjElmt):
 
 
 class OBFESurface(OBObjElmt):
-    _REQUIRE = ['name', 'node1', 'node2', 'node3', 'node4', 'thick', 'material']
+    _REQUIRE = ['name', 'node1', 'node2', 'node3', 'node4', 'thick_prmOB', 'materialOB']
 
-    def __init__(self, node1, node2, node3, node4, thick_par, material_obj, name=''):
+    def __init__(self, node1OB, node2OB, node3OB, node4OB, thick_prmOB, materialOB, name=''):
         super(OBFESurface, self).__init__('FESurface', name)
-        self.refer_elmt(node1, 'Node1')
-        self.n1 = (node1.x, node1.y, node1.z)
-        self.refer_elmt(node2, 'Node2')
-        self.n2 = (node2.x, node2.y, node2.z)
-        self.refer_elmt(node3, 'Node3')
-        self.n3 = (node3.x, node3.y, node3.z)
-        self.refer_elmt(node4, 'Node4')
-        self.n4 = (node4.x, node4.y, node4.z)
-        self.refer_elmt(thick_par, 'Thickness')
-        self.refer_elmt(material_obj, 'Material')
+        self.refer_elmt(node1OB, 'Node1')
+        self.n1 = (node1OB.x, node1OB.y, node1OB.z)
+        self.refer_elmt(node2OB, 'Node2')
+        self.n2 = (node2OB.x, node2OB.y, node2OB.z)
+        self.refer_elmt(node3OB, 'Node3')
+        self.n3 = (node3OB.x, node3OB.y, node3OB.z)
+        self.refer_elmt(node4OB, 'Node4')
+        self.n4 = (node4OB.x, node4OB.y, node4OB.z)
+        self.refer_elmt(thick_prmOB, 'Thickness')
+        self.refer_elmt(materialOB, 'Material')
 
 
 class OBPoint(OBObjElmt):
@@ -640,7 +644,7 @@ class OBPoint(OBObjElmt):
         self.x = nodeOB.x
         self.y = nodeOB.y
         self.z = nodeOB.z
-        return self.elmt
+        return self
 
     def check_num(self):
         """typically the coordinates should be numbers.
@@ -655,15 +659,15 @@ class OBPoint(OBObjElmt):
 
 
 class OBLine(OBObjElmt):
-    """T=Line, Two points and one section needed"""
-    _REQUIRE = ['name', 'point1', 'point2']
+    """T=Line, Two points and one section needed."""
+    _REQUIRE = ['name', 'node1OB', 'node2OB']
 
-    def __init__(self, point1OB, point2OB, sectionOB=None, name=''):
+    def __init__(self, node1OB, node2OB, sectionOB=None, name=''):
         super(OBLine, self).__init__('Line', name)
-        self.add_point(point1OB)
-        self.p1 = (point1OB.x, point1OB.y)
-        self.add_point(point2OB)
-        self.p2 = (point2OB.x, point2OB.y)
+        self.add_point(node1OB)
+        self.p1 = (node1OB.x, node1OB.y)
+        self.add_point(node2OB)
+        self.p2 = (node2OB.x, node2OB.y)
         self.set_section(sectionOB)
 
     def check_line(self):
@@ -676,16 +680,16 @@ class OBLine(OBObjElmt):
             return False
         return True
 
-    def line_update(self, point1, point2, section):
-        self.add_point(point1)
-        self.add_point(point2)
-        self.set_section(section)
+    def line_update(self, point1OB, point2OB, sectionOB):
+        self.add_point(point1OB)
+        self.add_point(point2OB)
+        self.set_section(sectionOB)
 
-    def add_point(self, point_obj):
-        if isinstance(point_obj, OBPoint):
-            self.elmt.append(point_obj.elmt)
-        elif isinstance(point_obj, OBFENode):
-            self.elmt.append(point_obj.elmt)
+    def add_point(self, pointOB):
+        if isinstance(pointOB, OBPoint):
+            self.elmt.append(pointOB.elmt)
+        elif isinstance(pointOB, OBFENode):
+            self.elmt.append(OBPoint(0,0).same_as_node(pointOB).elmt)
         else:
             print('Type Error: Point Object is required.')
 
@@ -705,20 +709,20 @@ class OBLine(OBObjElmt):
 class OBSurface(OBObjElmt):
     _REQUIRE = ['name', 'point1', 'point2', 'point3', 'point4', 'thick', 'material']
 
-    def __init__(self, point1, point2, point3, point4, thick_par=None, material_obj=None, name=''):
+    def __init__(self, point1OB, point2OB, point3OB, point4OB, thick_prmOB=None, materialOB=None, name=''):
         super(OBSurface, self).__init__('Surface', name)
-        self.add_point(point1)
-        self.p1 = (point1.x, point1.y, point1.z)
-        self.add_point(point2)
-        self.p2 = (point2.x, point2.y, point2.z)
-        self.add_point(point3)
-        self.p3 = (point3.x, point3.y, point3.z)
-        self.add_point(point4)
-        self.p4 = (point4.x, point4.y, point4.z)
-        if material_obj:
-            self.refer_mat_obj(material_obj)
-        if thick_par:
-            self.thick_par(thick_par)
+        self.add_point(point1OB)
+        self.p1 = (point1OB.x, point1OB.y, point1OB.z)
+        self.add_point(point2OB)
+        self.p2 = (point2OB.x, point2OB.y, point2OB.z)
+        self.add_point(point3OB)
+        self.p3 = (point3OB.x, point3OB.y, point3OB.z)
+        self.add_point(point4OB)
+        self.p4 = (point4OB.x, point4OB.y, point4OB.z)
+        if materialOB:
+            self.refer_mat_obj(materialOB)
+        if thick_prmOB:
+            self.thick_par(thick_prmOB)
         # self.check_surface()
 
     def check_surface(self):
