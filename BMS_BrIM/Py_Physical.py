@@ -11,30 +11,69 @@ from BMS_BrIM.Py_Abstract import *
 from Interfaces import *
 
 
-class Node(AbstractELMT):
+class PhysicalELMT(PyElmt):
+    """PhysicalELMT is used to represent real members of bridges.
+    it contains parameters of the element, by init() or reading database.
+    Thus it could exports geometry model, FEM model and database info
+    later, some other methods may be added, such as SAP2K model method"""
+    _DICT_FEM_CLASS = dict(Node=OBFENode,
+                           Line=OBFELine,
+                           Beam=OBFELine,
+                           Truss=StraightBeamFEM,
+                           Surface=OBFESurface,
+                           BoltedPlate=OBFESurface,
+                           Volume=OBVolume)
+    _DICT_GEO_CLASS = dict(Node=OBPoint,
+                           Line=OBLine,
+                           Beam=OBLine,
+                           Truss=OBLine,
+                           Surface=OBSurface,
+                           BoltedPlate=BoltedPlateGeo,
+                           Volume=OBVolume)
 
-    def __init__(self, x, y, z=0,
-                 tx=0, ty=0, tz=0,
-                 rx=0, ry=0, rz=0,
-                 node_id=None, node_name=None):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.tx = tx
-        self.ty = ty
-        self.tz = tz
-        self.rx = rx
-        self.ry = ry
-        self.rz = rz
-        super(Node, self).__init__('Node', node_id, node_name)
+    def __init__(self, elmt_type, elmt_id, elmt_name=None):
+        """real members of structure"""
+        super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.material: Material = None
+        self.sectoin: Section = None
+        # init the OpenBrIM model
         self.set_openbrim()
 
-    def set_node_attr(self, node_attr, value):
-        assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
-        self.__dict__[node_attr] = value
-        # update the mongoDB and openbrim
-        self.set_openbrim()
-        self.set_mongo_doc()
+    @property
+    def obrim(self):
+        return self.openBrIM
+
+    @obrim.setter
+    def obrim(self, *ob_classes):
+        assert len(ob_classes) == 2
+        if not ob_classes[0] in [OBFESurface, OBFENode, OBFELine]:
+            print("Wrong OpenBrIM FEM class")
+            raise ValueError
+        if not ob_classes[1] in [OBLine, OBSurface, OBVolume, OBCircle, OBExtends]:
+            print("Wrong OpenBrIM FEM class")
+            raise ValueError
+        self.get_openbrim(*ob_classes)
+
+    def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
+        if not ob_class_fem:
+            ob_class_fem = PhysicalELMT._DICT_FEM_CLASS[self.type]
+        if not ob_class_geo:
+            ob_class_geo = PhysicalELMT._DICT_FEM_CLASS[self.type]
+        _ob_models = list()
+        for _ob in ob_class_fem, ob_class_geo:
+            # openBrIM is one of the PyELMT interfaces
+            _ob_elmt = PyElmt.set_openbrim(self, _ob, **attrib_dict)
+            _ob_models.append(_ob_elmt)
+        self.openBrIM = dict(zip(['fem', 'geo'], _ob_models))
+        return self.openBrIM
+
+    def set_material(self, material):
+        """ openbrim & mongodb"""
+        self.material = material
+
+    def link_node(self, node):
+        """link to a Node"""
+
 
 
 class Beam(PhysicalELMT):
@@ -49,7 +88,6 @@ class Beam(PhysicalELMT):
         self.sectionOB = section.openBrIM
         super(Beam, self).__init__('Beam', beam_id, beam_name)
         self.set_openbrim(OBFELine, OBLine)
-        print(self.openBrIM['fem'])
 
 
 class Deck(PhysicalELMT):

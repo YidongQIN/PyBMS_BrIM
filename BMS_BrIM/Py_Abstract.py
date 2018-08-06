@@ -10,6 +10,36 @@ Python Elements for BrIM.
 from BMS_BrIM.PyELMT import *
 
 
+class AbstractELMT(PyElmt):
+    _DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
+                                Parameter=OBPrmElmt,
+                                Shape=OBShape,
+                                Section=OBSection,
+                                Group=OBGroup,
+                                Project=OBProject,
+                                Unit=OBUnit,
+                                Text=OBText3D)
+
+    def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
+        """abstract elements, such as material, section, load case"""
+        super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.openBrIM: PyOpenBrIMElmt
+
+    @property
+    def obrim(self):
+        return self.openBrIM
+
+    @obrim.setter
+    def obrim(self, ob_class):
+        self.get_openbrim(ob_class)
+
+    def set_openbrim(self, ob_class=None, **attrib_dict):
+        if not ob_class:
+            ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
+            print("{}.openBrIM is of {}".format(self.name, ob_class))
+        return PyElmt.set_openbrim(self, ob_class, **attrib_dict)
+
+
 class Parameter(AbstractELMT):
 
     def __init__(self, prm_id, prm_name, prm_value):
@@ -230,6 +260,34 @@ class ProjGroups(AbstractELMT):
 
     def __iter__(self):
         return iter(self._sub)
+
+
+
+class Node(AbstractELMT):
+
+    def __init__(self, x, y, z=0,
+                 tx=0, ty=0, tz=0,
+                 rx=0, ry=0, rz=0,
+                 node_id=None, node_name=None):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.tx = tx
+        self.ty = ty
+        self.tz = tz
+        self.rx = rx
+        self.ry = ry
+        self.rz = rz
+        super(Node, self).__init__('Node', node_id, node_name)
+        self.set_openbrim() #OBPoint is not needed
+
+    def set_node_attr(self, node_attr, value):
+        assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
+        self.__dict__[node_attr] = value
+        # update the mongoDB and openbrim
+        self.set_openbrim()
+        self.set_mongo_doc()
+
 
 
 if __name__ == "__main__":
