@@ -31,7 +31,8 @@ class AbstractELMT(PyElmt):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
             print("{}.openBrIM is of {}".format(self.name, ob_class))
-        return PyElmt.set_openbrim(self, ob_class, **attrib_dict)
+        self.openbrim = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
+        return self.openbrim
 
 
 class Parameter(AbstractELMT):
@@ -187,6 +188,7 @@ class GroupCollection(Group):
         'section': 'all sections and shapes',
         'fem_nodes': 'Node for FEM model',
         'model_members': 'Members of Model',
+        'sensor':'Monitor System'
     }
 
     def __init__(self, name, des=None):
@@ -224,9 +226,11 @@ class ProjGroups(AbstractELMT):
         self.sec_group = GroupCollection('section')
         self.fem_nodes = GroupCollection('fem_nodes')
         self.member_gp = GroupCollection('model_members')
+        self.sensor_gp = GroupCollection('sensor')
         self._sub = [self.proj_info, self.prm_group,
                      self.mat_group, self.sec_group,
-                     self.fem_nodes, self.member_gp]
+                     self.fem_nodes, self.member_gp,
+                     self.sensor_gp]
         for _s in self._sub:
             self.openBrIM.sub(_s.openBrIM)
             _s.set_dbconfig(self.name, _s.name)
@@ -281,8 +285,8 @@ class Node(AbstractELMT):
         assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
         self.__dict__[node_attr] = value
         # update the mongoDB and openbrim
-        self.set_openbrim()
-        self.set_mongo_doc()
+        self.set_openbrim(OBFENode)
+        # self.set_mongo_doc()
 
 
 if __name__ == "__main__":

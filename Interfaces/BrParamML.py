@@ -267,6 +267,7 @@ class PyOpenBrIMElmt(object):
 
 class OBObjElmt(PyOpenBrIMElmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
+    _REQUIRE=['name']
 
     def __init__(self, ob_type, name='', **obj_attrib):
         """create a new OBJECT in OpenBrIM ParamML.\n
@@ -537,17 +538,20 @@ class OBGroup(OBObjElmt):
 class OBFENode(OBObjElmt):
     _REQUIRE = ['name', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
 
-    def __init__(self, x, y, z, tx, ty, tz, rx, ry, rz, name=''):
-        super(OBFENode, self).__init__('Node', name, X=x, Y=y, Z=z)
-        self.x = x
-        self.y = y
-        self.z = z
-        self.tx = tx
-        self.ty = ty
-        self.tz = tz
-        self.rx = rx
-        self.ry = ry
-        self.rz = rz
+    def __init__(self, x, y, z, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0, name=''):
+        super(OBFENode, self).__init__('Node', name,
+                                       X=x, Y=y, Z=z,
+                                       Tx=tx, Ty=ty, Tz=tz,
+                                       Rx=rx, Ry=ry, Rz=rz)
+        # self.x = x
+        # self.y = y
+        # self.z = z
+        # self.tx = tx
+        # self.ty = ty
+        # self.tz = tz
+        # self.rx = rx
+        # self.ry = ry
+        # self.rz = rz
 
     def set_coordinate(self, x, y, z):
         self.x = x

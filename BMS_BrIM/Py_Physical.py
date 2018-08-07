@@ -37,8 +37,6 @@ class PhysicalELMT(PyElmt):
         self.section: Section = None
         self.node: list = list()
         self.openBrIM=dict(fem=None, geo=None)
-        # init the OpenBrIM model
-        self.set_openbrim()
 
 
     def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):

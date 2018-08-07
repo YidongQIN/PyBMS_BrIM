@@ -20,8 +20,8 @@ class RectangleOBShape(OBShape):
     _REQUIRE = ['name', 'length', 'width']
 
     def __init__(self, length, width, name):
-        self.length=length
-        self.width=width
+        self.length = length
+        self.width = width
         _point_list = [OBPoint(-width / 2, -length / 2),
                        OBPoint(width / 2, -length / 2),
                        OBPoint(width / 2, length / 2),
@@ -37,36 +37,35 @@ class PolygonOBShape(OBShape):
         for _p in points:
             assert isinstance(_p, tuple) and len(_p) == 2
             _point_list.append(OBPoint(_p[0], _p[1]))
-        self.points=points
+        self.points = points
         super(PolygonOBShape, self).__init__(name, *_point_list)
 
 
-class CubeGeo(OBObjElmt):
+class CubeGeo(OBVolume):
     """plate with rectangle Surfaces, accept 3 dimension parameters instead of 4 points and a thickness """
     _REQUIRE = ['name', 'length', 'width', 'thick']
 
     def __init__(self, length, width, thick, name=''):
-        super(CubeGeo, self).__init__('Volume', name)
         self.thick = self.prm_to_value(thick)
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
-        self.elmt = self.geom()
+        _surface1_ob = OBSurface(OBPoint(-self.width / 2, -self.length / 2, 0),
+                                 OBPoint(self.width / 2, -self.length / 2, 0),
+                                 OBPoint(self.width / 2, self.length / 2, 0),
+                                 OBPoint(-self.width / 2, self.length / 2, 0))
+
+        _surface2_ob = OBSurface(
+            OBPoint(-self.width / 2, -self.length / 2, self.thick),
+            OBPoint(self.width / 2, -self.length / 2, self.thick),
+            OBPoint(self.width / 2, self.length / 2, self.thick),
+            OBPoint(-self.width / 2, self.length / 2, self.thick))
+        super(CubeGeo, self).__init__(_surface1_ob ,_surface2_ob, name)
+        # self.elmt = self.geom().elmt
+
 
     def set_basepoint(self, x, y, z):
         """the base point is the center of the first Surface."""
-        self.elmt.move_to(x, y, z)
-
-    def geom(self):
-        plate_geomodel = OBVolume(
-            OBSurface(OBPoint(-self.width / 2, -self.length / 2, 0),
-                      OBPoint(self.width / 2, -self.length / 2, 0),
-                      OBPoint(self.width / 2, self.length / 2, 0),
-                      OBPoint(-self.width / 2, self.length / 2, 0)),
-            OBSurface(OBPoint(-self.width / 2, -self.length / 2, self.thick),
-                      OBPoint(self.width / 2, -self.length / 2, self.thick),
-                      OBPoint(self.width / 2, self.length / 2, self.thick),
-                      OBPoint(-self.width / 2, self.length / 2, self.thick)))
-        return plate_geomodel
+        self.move_to(x, y, z)
 
 
 class BoltedPlateGeo(OBObjElmt):
@@ -91,7 +90,7 @@ class BoltedPlateGeo(OBObjElmt):
         self.material = material
         self.x_sp = (self.length - 2 * self.xclearance) / (self.column - 1)
         self.y_sp = (self.width - 2 * self.yclearance) / (self.row - 1)
-        self.elmt = self.geom()
+        self.elmt = self.geom().elmt
 
     def geom(self):
         """a Surface Elmt, use real number not parameters"""
@@ -125,7 +124,7 @@ class PlateFEM(OBObjElmt):
         self.length = self.prm_to_value(length)
         self.width = self.prm_to_value(width)
         self.material = material
-        self.elmt = self.fem()
+        self.elmt = self.fem().elmt
 
     def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
@@ -139,13 +138,6 @@ class PlateFEM(OBObjElmt):
             fes = OBFESurface(n1, n2, n3, n4, self.thick, self.material, self.name)
             return OBGroup(self.name, n1, n2, n3, n4, fes)
 
-    # def set_node(self, x, y, z):
-    #     self.sub(FENode(x, y, z))
-
-    # def link_node(self, node: FENode):
-    # """FESurface 不能接收多余4个FENode"""
-    #     self.model.refer_elmt(node)
-
 
 class StraightBeamGeo(OBObjElmt):
     """beam with rectangle cross-section, accept length and 3 direction parameters instead of 2 points"""
@@ -156,7 +148,7 @@ class StraightBeamGeo(OBObjElmt):
         self.length = self.prm_to_value(length)
         self.cos = direction_cos(direction_x, direction_y, direction_z)
         self.section = section
-        self.elmt = self.geom()
+        self.elmt = self.geom().elmt
 
     def geom(self):
         line = OBLine(OBPoint(0, 0, 0),
@@ -177,7 +169,7 @@ class StraightBeamFEM(OBObjElmt):
         self.cos = direction_cos(direction_x, direction_y, direction_z)
         self.section = section
         self.angle = beta_angle
-        self.elmt = self.fem()
+        self.elmt = self.fem().elmt
 
     def fem(self, *nodes):
         if nodes:

@@ -47,9 +47,8 @@ class PyElmt(object):
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
             _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
-            _newattr = _mongo_id_to_self_id(_result)
-            self.check_update_attr(_newattr)
-            return _newattr
+            self.check_update_attr(_result)
+            return _result
 
     def get_openbrim(self, model_class=None):
         if not model_class:
@@ -71,10 +70,13 @@ class PyElmt(object):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('<{}> Attribute changed!'.format(self.name))
-                    print('    {} -> {}'.format(_k, _v))
+                    print("PyELMT.check_update_attr from MongoDB:")
+                    print('  <{}> Attribute changed!'.format(self.name))
+                    print('  * {} -> {}'.format(_k, _v))
             except KeyError:
-                print("<{}> New attribute!\n  * {} -> {}".format(self.name, _k, _v))
+                print("PyELMT.check_update_attr from MongoDB:")
+                print("  <{}> gets new attribute!".format(self.name))
+                print('  * {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
 
     def set_dbconfig(self, database, table, **db_config):
@@ -105,9 +107,13 @@ class PyElmt(object):
         _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
         # packaging the attributes for the OpenBrIM elements
         _openbrim_attrib = {**attrib_dict, **_required_attr}
-        # openBrIM is one of the PyELMT interfaces
-        self.openBrIM: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
-        return self.openBrIM
+        try:
+            # openBrIM is one of the PyELMT interfaces
+            _openbrim_model: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
+            return _openbrim_model
+        except TypeError as e:
+            print("<>.set_openbrim()".format(self.name), e)
+            return
 
 
 def _attr_pick(elmt, *pick_list):
