@@ -543,15 +543,15 @@ class OBFENode(OBObjElmt):
                                        X=x, Y=y, Z=z,
                                        Tx=tx, Ty=ty, Tz=tz,
                                        Rx=rx, Ry=ry, Rz=rz)
-        # self.x = x
-        # self.y = y
-        # self.z = z
-        # self.tx = tx
-        # self.ty = ty
-        # self.tz = tz
-        # self.rx = rx
-        # self.ry = ry
-        # self.rz = rz
+        self.x = x
+        self.y = y
+        self.z = z
+        self.tx = tx
+        self.ty = ty
+        self.tz = tz
+        self.rx = rx
+        self.ry = ry
+        self.rz = rz
 
     def set_coordinate(self, x, y, z):
         self.x = x

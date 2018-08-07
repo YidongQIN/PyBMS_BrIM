@@ -25,7 +25,7 @@ class AbstractELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM: PyOpenBrIMElmt
+        self.openBrIM: PyOpenBrIMElmt=self.set_openbrim()
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
@@ -60,7 +60,7 @@ class Material(AbstractELMT):
         # self.stage = 'Design'
         # if mat_property:
         self.set_property(**mat_property)
-        self.set_openbrim()
+        self.set_openbrim(OBMaterial)
 
     def set_property(self, **mat_property):
         """set the property of material. should use key in:

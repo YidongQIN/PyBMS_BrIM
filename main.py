@@ -7,6 +7,7 @@ ss=Sensor(1,'testSS','accelerometer', 10, -3, -3)
 print(ss.openBrIM)
 ShowTree(ss.openBrIM['geo'])
 
+nodeBL_0 = Node(0, 81, 0, node_name="NodeBL_{}".format(i))
 
 '''
 # test Surface
