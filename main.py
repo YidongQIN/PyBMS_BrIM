@@ -1,14 +1,19 @@
 from BMS_BrIM import *
 
 testproj = ProjGroups('Testproj')
+# ttt = Parameter(66, 'ThickNess', 20)
 steel = Material(1, 'Steel', d="0.0000007345", E="29000")
-sect_bottom = Section(11, 'BottomChord', Shape(1, 'Rect 6*6', RectangleOBShape, 6, 6))
+testproj.mat_group.append(steel)
+rec1=Shape(1, 'Rect 6*6', RectangleOBShape, 6, 6)
+rec2=Shape(2, 'Rect 6*6', RectangleOBShape, 6, 6, is_cut=True)
+sect = Section(11, 'BottomChord', rec1, rec2, material=steel)
+ttt=Parameter(13, 'DeckThickness', 4, 'Thickness')
+testproj.sec_group.append(rec1,rec2, sect)
 node1 = Node(1, 0, 3, node_id=100)
 node2 = Node(10, 22, 33, node_id=200)
-b1 = Beam(node1, node2, sect_bottom, steel, beam_id=1)
-testproj.fem_group.append(node1, node2)
-testproj.geo_group.append(b1)
-
+deck = Surface(node1, node2, node1, node2, ttt, steel, 20, 'TestDeck')
+ShowTree(ttt.openBrIM)
+print(ttt.ob_type)
 '''
 print("=== test AbstractELMT ===")
 

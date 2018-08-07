@@ -36,14 +36,13 @@ class PyElmt(object):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
             _col = self.db_config['table']
-            #@TODO
             if not self._id:
                 self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
             elif not _db.find_by_kv(_col, 'name', self.name):
                 _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
             else:
                 _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-                print("<{}>'s ObjectID =".format(self), self._id)
+                print("<{}> is in <{}>, ObjectID={}".format(self.name, _col, self._id))
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
@@ -135,12 +134,14 @@ def _attr_to_mongo_dict(elmt: PyElmt):
     """dump some of the attributes to dict.
     the default pop out list is: 'openbrim','db_config'. """
     return _attr_pop(elmt, 'openBrIM', 'db_config',
-                     'sectionOB', 'section',
-                     'materialOB', 'material',
-                     'node1', 'node1OB',
-                     'node2', 'node2OB',
-                     'node3', 'node3OB',
-                     'node4', 'node4OB',
+                     'section_ob', 'section',
+                     'material_ob', 'material',
+                     'thick_prm_ob', 'thick_prm',
+                     'shape', 'shape_ob',
+                     'node1', 'node1_ob',
+                     'node2', 'node2_ob',
+                     'node3', 'node3_ob',
+                     'node4', 'node4_ob',
                      )
 
 

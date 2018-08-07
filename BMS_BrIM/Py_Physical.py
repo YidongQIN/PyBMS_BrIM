@@ -58,18 +58,23 @@ class PhysicalELMT(PyElmt):
     def set_material(self, material):
         """ openbrim & mongodb"""
         self.material = material
-        self.materialOB = material.openBrIM
+        self.material_ob = material.openBrIM
         self.material_id = material._id
 
     def set_section(self, section):
         self.section = section
-        self.sectionOB = section.openBrIM
+        self.section_ob = section.openBrIM
         self.section_id = section._id
+
+    def set_parameter(self, p_name, parameter):
+        self.__dict__[p_name]=parameter
+        self.__dict__["{}_ob".format(p_name)]=parameter.openBrIM
+        self.__dict__["{}_id".format(p_name)]=parameter._id
 
     def link_node(self, node, node_num):
         """link to a Node"""
         self.__dict__["node{}".format(node_num)]=node
-        self.__dict__["node{}OB".format(node_num)]=node.openBrIM
+        self.__dict__["node{}_ob".format(node_num)]=node.openBrIM
         self.__dict__["node{}_id".format(node_num)]=node._id
         # self.nodeOB.append(node.openBrIM)
 
@@ -87,18 +92,20 @@ class Beam(PhysicalELMT):
         self.set_openbrim(OBFELine, OBLine)
 
 
-class Deck(PhysicalELMT):
+class Surface(PhysicalELMT):
 
     def __init__(self, node1, node2, node3, node4,
-                 section, material,
+                 thick_prm, material,
                  deck_id=None, deck_name=None):
         self.set_material(material)
-        self.set_section(section)
+        # self.set_section(section)
+        self.set_parameter('thick_prm', thick_prm)
         self.link_node(node1, 1)
         self.link_node(node2, 2)
         self.link_node(node3, 3)
         self.link_node(node4, 4)
-        super(Deck, self).__init__('Deck', deck_id, deck_name)
+        super(Surface, self).__init__('Surface', deck_id, deck_name)
+        self.set_openbrim(OBFESurface, OBSurface)
 
 
 if __name__ == '__main__':

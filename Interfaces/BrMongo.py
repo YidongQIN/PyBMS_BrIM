@@ -85,18 +85,20 @@ class ConnMongoDB(object):
         try:
             return self.db[collection].insert({**data})
         except mg.errors.DuplicateKeyError:
-            print("This document already exists")
+            print("This document in {} already exists".format(collection))
+            print(" -", data)
         except bson.errors.InvalidDocument:
-            print("Cannot encode object")
+            print("Cannot encode object to {}".format(collection))
+            print(" -", data)
 
     def update_data(self, collection, id, **data):
         """equals to: return self.db[collection].update({'_id': id}, data, True)"""
         if self.find_by_kv(collection, '_id', id):
-            print('Find this doc._id = {} in MongoDB'.format(id))
+            print('Find in {}, _id = {} in MongoDB'.format(collection, id))
             # later, maybe use findall to check if exist doc of same content
             return self.db[collection].update({'_id': id}, data, True)
         else:
-            print('Insert into MongoDB')
+            print('Insert into MongoDB: <{}>._id={}'.format(collection, id))
             return self.insert_data(collection, **data)
 
     # below are methods for element, should not be use.

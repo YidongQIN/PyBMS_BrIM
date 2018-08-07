@@ -27,14 +27,6 @@ class AbstractELMT(PyElmt):
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         self.openBrIM: PyOpenBrIMElmt
 
-    @property
-    def obrim(self):
-        return self.openBrIM
-
-    @obrim.setter
-    def obrim(self, ob_class):
-        self.get_openbrim(ob_class)
-
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
@@ -44,9 +36,11 @@ class AbstractELMT(PyElmt):
 
 class Parameter(AbstractELMT):
 
-    def __init__(self, prm_id, prm_name, prm_value):
+    def __init__(self, prm_id, prm_name, prm_value, ob_type=None):
         super(Parameter, self).__init__('Parameter', prm_id, prm_name)
         self.value = prm_value
+        if ob_type:
+            self.ob_type = ob_type
         self.openBrIM = self.set_openbrim()
 
 
@@ -100,9 +94,9 @@ class Shape(AbstractELMT):
     def __init__(self, shape_id, name, shape_form, *args, is_cut=False):
         # choose a shape form from Rectangle, Circle. Else?
         if shape_form == RectangleOBShape:
-            _attrib_dict=dict(length=args[0], width=args[1])
+            _attrib_dict = dict(length=args[0], width=args[1])
         elif shape_form == OBCircle:
-            _attrib_dict=dict(radius=args[0])
+            _attrib_dict = dict(radius=args[0])
         else:
             # default shape is polygon, so the parameters are points coordinates.
             _attrib_dict = dict(points=args)
@@ -117,13 +111,15 @@ class Shape(AbstractELMT):
 
 class Section(AbstractELMT):
 
-    def __init__(self, section_id, name, *shapes: Shape):
+    def __init__(self, section_id, name, *shapes: Shape, material=None):
         super(Section, self).__init__('Section', section_id, name)
-        self.sub = shapes
-        self.shapesOB = [_.openBrIM for _ in shapes]
-        self.shapesID = [_._id for _ in shapes]
+        self.shape = shapes
+        self.shape_ob = [_.openBrIM for _ in shapes]
+        self.shape_id = [_._id for _ in shapes]
+        self.material_id = material._id
+        self.material_ob = material.openBrIM
         self.set_openbrim(OBSection)
-        self.openBrIM.sub(*self.shapesOB)
+        self.openBrIM.sub(*self.shape_ob)
 
 
 class Group(AbstractELMT):
@@ -189,7 +185,7 @@ class GroupCollection(Group):
         'parameter': 'parameters of the model',
         'material': 'all materials',
         'section': 'all sections and shapes',
-        'fem_node': 'Node for FEM model',
+        'fem_nodes': 'Node for FEM model',
         'model_members': 'Members of Model',
     }
 
@@ -226,11 +222,11 @@ class ProjGroups(AbstractELMT):
         self.prm_group = GroupCollection('parameter')
         self.mat_group = GroupCollection('material')
         self.sec_group = GroupCollection('section')
-        self.fem_group = GroupCollection('fem_node')
-        self.geo_group = GroupCollection('model_members')
+        self.fem_nodes = GroupCollection('fem_nodes')
+        self.member_gp = GroupCollection('model_members')
         self._sub = [self.proj_info, self.prm_group,
                      self.mat_group, self.sec_group,
-                     self.fem_group, self.geo_group]
+                     self.fem_nodes, self.member_gp]
         for _s in self._sub:
             self.openBrIM.sub(_s.openBrIM)
             _s.set_dbconfig(self.name, _s.name)
@@ -263,7 +259,6 @@ class ProjGroups(AbstractELMT):
         return iter(self._sub)
 
 
-
 class Node(AbstractELMT):
 
     def __init__(self, x, y, z=0,
@@ -280,7 +275,7 @@ class Node(AbstractELMT):
         self.ry = ry
         self.rz = rz
         super(Node, self).__init__('Node', node_id, node_name)
-        self.set_openbrim() #OBPoint is not needed
+        self.set_openbrim(OBFENode)  # OBPoint is not needed
 
     def set_node_attr(self, node_attr, value):
         assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
@@ -288,7 +283,6 @@ class Node(AbstractELMT):
         # update the mongoDB and openbrim
         self.set_openbrim()
         self.set_mongo_doc()
-
 
 
 if __name__ == "__main__":

@@ -146,8 +146,8 @@ class Temperature(Sensor):
                        OBPoint(self.length / 2, -self.width / 2),
                        OBPoint(self.length / 2, self.width / 2),
                        OBPoint(-self.length / 2, self.width / 2),
-                       thick_prmOB=1,
-                       materialOB='Sensor_Temperature',
+                       thick_prm_ob=1,
+                       material_ob='Sensor_Temperature',
                        name=self.name)
         tp.set_attrib(Color='#DC143C')
         tp.move_to(self.x, self.y, self.z)
@@ -168,8 +168,8 @@ class StrainGauge(Sensor):
                        OBPoint(self.length / 2, -self.width / 2),
                        OBPoint(self.length / 2, self.width / 2),
                        OBPoint(-self.length / 2, self.width / 2),
-                       thick_prmOB=1,
-                       materialOB='Sensor_StrainGauge',
+                       thick_prm_ob=1,
+                       material_ob='Sensor_StrainGauge',
                        name=self.name)
         ss.set_attrib(Color='#DC143C')
         ss.move_to(self.x, self.y, self.z)
@@ -201,7 +201,7 @@ class Displacement(Sensor):
     def geom(self):
         super(Displacement, self).geom()
         line = OBLine(OBPoint(0, 0, 0), OBPoint(self.length, 0, 0),
-                      sectionOB=OBSection('', '', OBCircle('', 1)))
+                      section_ob=OBSection('', '', OBCircle('', 1)))
         box = CubeGeo(self.width, self.width, self.thick)
         box.move_to(self.length / 2, 0, -self.thick / 2)
         ds = OBGroup(self.name, line, box)

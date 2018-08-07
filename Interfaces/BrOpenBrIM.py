@@ -99,8 +99,8 @@ class BoltedPlateGeo(OBObjElmt):
                               OBPoint(self.length, 0),
                               OBPoint(self.length, self.width),
                               OBPoint(0, self.width),
-                              thick_prmOB=self.thick,
-                              materialOB=self.material,
+                              thick_prm_ob=self.thick,
+                              material_ob=self.material,
                               name=self.name)
         holes = []
         for i in range(self.column):
@@ -130,7 +130,7 @@ class PlateFEM(OBObjElmt):
     def fem(self, *nodes):
         """4 FENodes and then the FESurface"""
         if nodes:
-            return OBFESurface(*nodes, thick_prmOB=self.thick, materialOB=self.material, name=self.name)
+            return OBFESurface(*nodes, thick_prm_ob=self.thick, material_ob=self.material, name=self.name)
         else:
             n1 = OBFENode(-self.width / 2, -self.length / 2, 0, 'N1P_{}'.format(self.name))
             n2 = OBFENode(self.width / 2, -self.length / 2, 0, 'N2P_{}'.format(self.name))
@@ -181,7 +181,7 @@ class StraightBeamFEM(OBObjElmt):
 
     def fem(self, *nodes):
         if nodes:
-            return OBFELine(*nodes, sectionOB=self.section, beta_angle=self.angle, name=self.name)
+            return OBFELine(*nodes, section_ob=self.section, beta_angle=self.angle, name=self.name)
         else:
             n1 = OBFENode(0, 0, 0)
             n2 = OBFENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])
