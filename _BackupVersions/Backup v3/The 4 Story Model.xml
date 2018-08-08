@@ -1,0 +1,1777 @@
+<?xml version='1.0' encoding='utf-8'?>
+<O N="The 4 Story Model" T="Project">
+    <O N="Material Group" T="Group">
+        <O D="steel of girder" N="Steel1" T="Material" Type="steel">
+            <P D="Density" N="d" V="0"/>
+            <P D="modulus of Elasticity" N="E" V="209"/>
+            <P D="Poisson's Ratio" N="Nu" V="0.3"/>
+            <P D="Coefficient of Thermal Expansion" N="a" V="0.0000065"/>
+            <P D="Steel Yield Strength" N="Fy" V="50"/>
+            <P D="Steel Ultimate Strength" N="Fu" V="65"/>
+        </O>
+    </O>
+    <O N="Column" T="Section">
+        <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+        <O N="rectangle" T="Shape">
+            <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+            <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+            <O T="Point" X="12.5" Y="0.5" Z="0"/>
+            <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+        </O>
+    </O>
+    <O N="Plate0" T="Surface" Z="0">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="303" Z="0"/>
+        <O T="Point" X="0" Y="303" Z="0"/>
+        <P D="Material_Surface_Plate0" N="Material" T="Material" V="Steel1"/>
+        <P N="Thickness" V="13"/>
+        <O N="hole_0_0" T="Circle" X="50.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_1" T="Circle" X="50.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_2" T="Circle" X="50.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_3" T="Circle" X="50.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_4" T="Circle" X="50.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_5" T="Circle" X="50.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_6" T="Circle" X="50.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_7" T="Circle" X="50.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_8" T="Circle" X="50.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_9" T="Circle" X="50.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_10" T="Circle" X="50.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_0" T="Circle" X="100.83333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_1" T="Circle" X="100.83333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_2" T="Circle" X="100.83333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_3" T="Circle" X="100.83333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_4" T="Circle" X="100.83333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_5" T="Circle" X="100.83333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_6" T="Circle" X="100.83333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_7" T="Circle" X="100.83333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_8" T="Circle" X="100.83333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_9" T="Circle" X="100.83333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_10" T="Circle" X="100.83333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_0" T="Circle" X="151.66666666666669" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_1" T="Circle" X="151.66666666666669" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_2" T="Circle" X="151.66666666666669" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_3" T="Circle" X="151.66666666666669" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_4" T="Circle" X="151.66666666666669" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_5" T="Circle" X="151.66666666666669" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_6" T="Circle" X="151.66666666666669" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_7" T="Circle" X="151.66666666666669" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_8" T="Circle" X="151.66666666666669" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_9" T="Circle" X="151.66666666666669" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_10" T="Circle" X="151.66666666666669" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_0" T="Circle" X="202.5" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_1" T="Circle" X="202.5" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_2" T="Circle" X="202.5" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_3" T="Circle" X="202.5" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_4" T="Circle" X="202.5" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_5" T="Circle" X="202.5" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_6" T="Circle" X="202.5" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_7" T="Circle" X="202.5" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_8" T="Circle" X="202.5" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_9" T="Circle" X="202.5" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_10" T="Circle" X="202.5" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_0" T="Circle" X="253.33333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_1" T="Circle" X="253.33333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_2" T="Circle" X="253.33333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_3" T="Circle" X="253.33333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_4" T="Circle" X="253.33333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_5" T="Circle" X="253.33333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_6" T="Circle" X="253.33333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_7" T="Circle" X="253.33333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_8" T="Circle" X="253.33333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_9" T="Circle" X="253.33333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_10" T="Circle" X="253.33333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_0" T="Circle" X="304.1666666666667" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_1" T="Circle" X="304.1666666666667" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_2" T="Circle" X="304.1666666666667" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_3" T="Circle" X="304.1666666666667" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_4" T="Circle" X="304.1666666666667" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_5" T="Circle" X="304.1666666666667" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_6" T="Circle" X="304.1666666666667" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_7" T="Circle" X="304.1666666666667" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_8" T="Circle" X="304.1666666666667" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_9" T="Circle" X="304.1666666666667" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_10" T="Circle" X="304.1666666666667" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_0" T="Circle" X="355.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_1" T="Circle" X="355.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_2" T="Circle" X="355.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_3" T="Circle" X="355.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_4" T="Circle" X="355.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_5" T="Circle" X="355.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_6" T="Circle" X="355.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_7" T="Circle" X="355.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_8" T="Circle" X="355.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_9" T="Circle" X="355.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_10" T="Circle" X="355.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+    </O>
+    <O N="Plate1" T="Surface" Z="300">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="303" Z="0"/>
+        <O T="Point" X="0" Y="303" Z="0"/>
+        <P D="Material_Surface_Plate1" N="Material" T="Material" V="Steel1"/>
+        <P N="Thickness" V="13"/>
+        <O N="hole_0_0" T="Circle" X="50.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_1" T="Circle" X="50.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_2" T="Circle" X="50.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_3" T="Circle" X="50.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_4" T="Circle" X="50.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_5" T="Circle" X="50.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_6" T="Circle" X="50.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_7" T="Circle" X="50.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_8" T="Circle" X="50.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_9" T="Circle" X="50.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_10" T="Circle" X="50.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_0" T="Circle" X="100.83333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_1" T="Circle" X="100.83333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_2" T="Circle" X="100.83333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_3" T="Circle" X="100.83333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_4" T="Circle" X="100.83333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_5" T="Circle" X="100.83333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_6" T="Circle" X="100.83333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_7" T="Circle" X="100.83333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_8" T="Circle" X="100.83333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_9" T="Circle" X="100.83333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_10" T="Circle" X="100.83333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_0" T="Circle" X="151.66666666666669" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_1" T="Circle" X="151.66666666666669" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_2" T="Circle" X="151.66666666666669" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_3" T="Circle" X="151.66666666666669" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_4" T="Circle" X="151.66666666666669" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_5" T="Circle" X="151.66666666666669" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_6" T="Circle" X="151.66666666666669" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_7" T="Circle" X="151.66666666666669" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_8" T="Circle" X="151.66666666666669" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_9" T="Circle" X="151.66666666666669" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_10" T="Circle" X="151.66666666666669" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_0" T="Circle" X="202.5" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_1" T="Circle" X="202.5" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_2" T="Circle" X="202.5" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_3" T="Circle" X="202.5" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_4" T="Circle" X="202.5" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_5" T="Circle" X="202.5" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_6" T="Circle" X="202.5" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_7" T="Circle" X="202.5" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_8" T="Circle" X="202.5" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_9" T="Circle" X="202.5" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_10" T="Circle" X="202.5" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_0" T="Circle" X="253.33333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_1" T="Circle" X="253.33333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_2" T="Circle" X="253.33333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_3" T="Circle" X="253.33333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_4" T="Circle" X="253.33333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_5" T="Circle" X="253.33333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_6" T="Circle" X="253.33333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_7" T="Circle" X="253.33333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_8" T="Circle" X="253.33333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_9" T="Circle" X="253.33333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_10" T="Circle" X="253.33333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_0" T="Circle" X="304.1666666666667" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_1" T="Circle" X="304.1666666666667" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_2" T="Circle" X="304.1666666666667" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_3" T="Circle" X="304.1666666666667" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_4" T="Circle" X="304.1666666666667" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_5" T="Circle" X="304.1666666666667" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_6" T="Circle" X="304.1666666666667" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_7" T="Circle" X="304.1666666666667" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_8" T="Circle" X="304.1666666666667" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_9" T="Circle" X="304.1666666666667" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_10" T="Circle" X="304.1666666666667" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_0" T="Circle" X="355.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_1" T="Circle" X="355.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_2" T="Circle" X="355.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_3" T="Circle" X="355.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_4" T="Circle" X="355.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_5" T="Circle" X="355.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_6" T="Circle" X="355.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_7" T="Circle" X="355.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_8" T="Circle" X="355.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_9" T="Circle" X="355.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_10" T="Circle" X="355.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+    </O>
+    <O N="Plate2" T="Surface" Z="600">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="303" Z="0"/>
+        <O T="Point" X="0" Y="303" Z="0"/>
+        <P D="Material_Surface_Plate2" N="Material" T="Material" V="Steel1"/>
+        <P N="Thickness" V="13"/>
+        <O N="hole_0_0" T="Circle" X="50.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_1" T="Circle" X="50.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_2" T="Circle" X="50.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_3" T="Circle" X="50.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_4" T="Circle" X="50.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_5" T="Circle" X="50.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_6" T="Circle" X="50.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_7" T="Circle" X="50.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_8" T="Circle" X="50.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_9" T="Circle" X="50.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_10" T="Circle" X="50.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_0" T="Circle" X="100.83333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_1" T="Circle" X="100.83333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_2" T="Circle" X="100.83333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_3" T="Circle" X="100.83333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_4" T="Circle" X="100.83333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_5" T="Circle" X="100.83333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_6" T="Circle" X="100.83333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_7" T="Circle" X="100.83333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_8" T="Circle" X="100.83333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_9" T="Circle" X="100.83333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_10" T="Circle" X="100.83333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_0" T="Circle" X="151.66666666666669" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_1" T="Circle" X="151.66666666666669" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_2" T="Circle" X="151.66666666666669" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_3" T="Circle" X="151.66666666666669" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_4" T="Circle" X="151.66666666666669" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_5" T="Circle" X="151.66666666666669" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_6" T="Circle" X="151.66666666666669" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_7" T="Circle" X="151.66666666666669" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_8" T="Circle" X="151.66666666666669" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_9" T="Circle" X="151.66666666666669" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_10" T="Circle" X="151.66666666666669" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_0" T="Circle" X="202.5" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_1" T="Circle" X="202.5" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_2" T="Circle" X="202.5" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_3" T="Circle" X="202.5" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_4" T="Circle" X="202.5" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_5" T="Circle" X="202.5" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_6" T="Circle" X="202.5" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_7" T="Circle" X="202.5" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_8" T="Circle" X="202.5" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_9" T="Circle" X="202.5" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_10" T="Circle" X="202.5" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_0" T="Circle" X="253.33333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_1" T="Circle" X="253.33333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_2" T="Circle" X="253.33333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_3" T="Circle" X="253.33333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_4" T="Circle" X="253.33333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_5" T="Circle" X="253.33333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_6" T="Circle" X="253.33333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_7" T="Circle" X="253.33333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_8" T="Circle" X="253.33333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_9" T="Circle" X="253.33333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_10" T="Circle" X="253.33333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_0" T="Circle" X="304.1666666666667" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_1" T="Circle" X="304.1666666666667" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_2" T="Circle" X="304.1666666666667" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_3" T="Circle" X="304.1666666666667" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_4" T="Circle" X="304.1666666666667" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_5" T="Circle" X="304.1666666666667" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_6" T="Circle" X="304.1666666666667" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_7" T="Circle" X="304.1666666666667" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_8" T="Circle" X="304.1666666666667" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_9" T="Circle" X="304.1666666666667" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_10" T="Circle" X="304.1666666666667" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_0" T="Circle" X="355.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_1" T="Circle" X="355.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_2" T="Circle" X="355.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_3" T="Circle" X="355.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_4" T="Circle" X="355.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_5" T="Circle" X="355.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_6" T="Circle" X="355.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_7" T="Circle" X="355.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_8" T="Circle" X="355.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_9" T="Circle" X="355.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_10" T="Circle" X="355.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+    </O>
+    <O N="Plate3" T="Surface" Z="900">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="303" Z="0"/>
+        <O T="Point" X="0" Y="303" Z="0"/>
+        <P D="Material_Surface_Plate3" N="Material" T="Material" V="Steel1"/>
+        <P N="Thickness" V="13"/>
+        <O N="hole_0_0" T="Circle" X="50.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_1" T="Circle" X="50.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_2" T="Circle" X="50.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_3" T="Circle" X="50.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_4" T="Circle" X="50.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_5" T="Circle" X="50.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_6" T="Circle" X="50.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_7" T="Circle" X="50.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_8" T="Circle" X="50.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_9" T="Circle" X="50.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_10" T="Circle" X="50.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_0" T="Circle" X="100.83333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_1" T="Circle" X="100.83333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_2" T="Circle" X="100.83333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_3" T="Circle" X="100.83333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_4" T="Circle" X="100.83333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_5" T="Circle" X="100.83333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_6" T="Circle" X="100.83333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_7" T="Circle" X="100.83333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_8" T="Circle" X="100.83333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_9" T="Circle" X="100.83333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_10" T="Circle" X="100.83333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_0" T="Circle" X="151.66666666666669" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_1" T="Circle" X="151.66666666666669" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_2" T="Circle" X="151.66666666666669" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_3" T="Circle" X="151.66666666666669" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_4" T="Circle" X="151.66666666666669" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_5" T="Circle" X="151.66666666666669" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_6" T="Circle" X="151.66666666666669" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_7" T="Circle" X="151.66666666666669" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_8" T="Circle" X="151.66666666666669" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_9" T="Circle" X="151.66666666666669" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_10" T="Circle" X="151.66666666666669" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_0" T="Circle" X="202.5" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_1" T="Circle" X="202.5" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_2" T="Circle" X="202.5" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_3" T="Circle" X="202.5" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_4" T="Circle" X="202.5" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_5" T="Circle" X="202.5" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_6" T="Circle" X="202.5" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_7" T="Circle" X="202.5" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_8" T="Circle" X="202.5" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_9" T="Circle" X="202.5" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_10" T="Circle" X="202.5" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_0" T="Circle" X="253.33333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_1" T="Circle" X="253.33333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_2" T="Circle" X="253.33333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_3" T="Circle" X="253.33333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_4" T="Circle" X="253.33333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_5" T="Circle" X="253.33333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_6" T="Circle" X="253.33333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_7" T="Circle" X="253.33333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_8" T="Circle" X="253.33333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_9" T="Circle" X="253.33333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_10" T="Circle" X="253.33333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_0" T="Circle" X="304.1666666666667" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_1" T="Circle" X="304.1666666666667" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_2" T="Circle" X="304.1666666666667" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_3" T="Circle" X="304.1666666666667" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_4" T="Circle" X="304.1666666666667" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_5" T="Circle" X="304.1666666666667" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_6" T="Circle" X="304.1666666666667" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_7" T="Circle" X="304.1666666666667" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_8" T="Circle" X="304.1666666666667" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_9" T="Circle" X="304.1666666666667" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_10" T="Circle" X="304.1666666666667" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_0" T="Circle" X="355.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_1" T="Circle" X="355.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_2" T="Circle" X="355.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_3" T="Circle" X="355.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_4" T="Circle" X="355.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_5" T="Circle" X="355.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_6" T="Circle" X="355.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_7" T="Circle" X="355.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_8" T="Circle" X="355.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_9" T="Circle" X="355.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_10" T="Circle" X="355.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+    </O>
+    <O N="Plate4" T="Surface" Z="1200">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="0" Z="0"/>
+        <O T="Point" X="405" Y="303" Z="0"/>
+        <O T="Point" X="0" Y="303" Z="0"/>
+        <P D="Material_Surface_Plate4" N="Material" T="Material" V="Steel1"/>
+        <P N="Thickness" V="13"/>
+        <O N="hole_0_0" T="Circle" X="50.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_1" T="Circle" X="50.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_2" T="Circle" X="50.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_3" T="Circle" X="50.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_4" T="Circle" X="50.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_5" T="Circle" X="50.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_6" T="Circle" X="50.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_7" T="Circle" X="50.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_8" T="Circle" X="50.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_9" T="Circle" X="50.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_0_10" T="Circle" X="50.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_0" T="Circle" X="100.83333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_1" T="Circle" X="100.83333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_2" T="Circle" X="100.83333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_3" T="Circle" X="100.83333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_4" T="Circle" X="100.83333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_5" T="Circle" X="100.83333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_6" T="Circle" X="100.83333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_7" T="Circle" X="100.83333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_8" T="Circle" X="100.83333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_9" T="Circle" X="100.83333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_1_10" T="Circle" X="100.83333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_0" T="Circle" X="151.66666666666669" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_1" T="Circle" X="151.66666666666669" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_2" T="Circle" X="151.66666666666669" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_3" T="Circle" X="151.66666666666669" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_4" T="Circle" X="151.66666666666669" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_5" T="Circle" X="151.66666666666669" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_6" T="Circle" X="151.66666666666669" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_7" T="Circle" X="151.66666666666669" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_8" T="Circle" X="151.66666666666669" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_9" T="Circle" X="151.66666666666669" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_2_10" T="Circle" X="151.66666666666669" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_0" T="Circle" X="202.5" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_1" T="Circle" X="202.5" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_2" T="Circle" X="202.5" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_3" T="Circle" X="202.5" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_4" T="Circle" X="202.5" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_5" T="Circle" X="202.5" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_6" T="Circle" X="202.5" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_7" T="Circle" X="202.5" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_8" T="Circle" X="202.5" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_9" T="Circle" X="202.5" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_3_10" T="Circle" X="202.5" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_0" T="Circle" X="253.33333333333334" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_1" T="Circle" X="253.33333333333334" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_2" T="Circle" X="253.33333333333334" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_3" T="Circle" X="253.33333333333334" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_4" T="Circle" X="253.33333333333334" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_5" T="Circle" X="253.33333333333334" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_6" T="Circle" X="253.33333333333334" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_7" T="Circle" X="253.33333333333334" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_8" T="Circle" X="253.33333333333334" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_9" T="Circle" X="253.33333333333334" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_4_10" T="Circle" X="253.33333333333334" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_0" T="Circle" X="304.1666666666667" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_1" T="Circle" X="304.1666666666667" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_2" T="Circle" X="304.1666666666667" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_3" T="Circle" X="304.1666666666667" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_4" T="Circle" X="304.1666666666667" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_5" T="Circle" X="304.1666666666667" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_6" T="Circle" X="304.1666666666667" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_7" T="Circle" X="304.1666666666667" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_8" T="Circle" X="304.1666666666667" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_9" T="Circle" X="304.1666666666667" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_5_10" T="Circle" X="304.1666666666667" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_0" T="Circle" X="355.0" Y="24.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_1" T="Circle" X="355.0" Y="49.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_2" T="Circle" X="355.0" Y="75.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_3" T="Circle" X="355.0" Y="100.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_4" T="Circle" X="355.0" Y="126.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_5" T="Circle" X="355.0" Y="151.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_6" T="Circle" X="355.0" Y="177.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_7" T="Circle" X="355.0" Y="202.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_8" T="Circle" X="355.0" Y="228.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_9" T="Circle" X="355.0" Y="253.5">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+        <O N="hole_6_10" T="Circle" X="355.0" Y="279.0">
+            <P N="Radius" V="3.0"/>
+            <P N="IsCutout" V="1"/>
+        </O>
+    </O>
+    <O N="Column@0,48.7" T="Line" X="0" Y="48.7">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@0,100.5" T="Line" X="0" Y="100.5">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@0,202.5" T="Line" X="0" Y="202.5">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@0,254.3" T="Line" X="0" Y="254.3">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@405,48.7" T="Line" X="405" Y="48.7">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@405,100.5" T="Line" X="405" Y="100.5">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@405,202.5" T="Line" X="405" Y="202.5">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O N="Column@405,254.3" T="Line" X="405" Y="254.3">
+        <O T="Point" X="0" Y="0" Z="0"/>
+        <O T="Point" X="0" Y="0" Z="1232"/>
+        <O N="Column" T="Section">
+            <P D="Material_Column" N="Material" T="Material" V="Steel1"/>
+            <O N="rectangle" T="Shape">
+                <O T="Point" X="-12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="-0.5" Z="0"/>
+                <O T="Point" X="12.5" Y="0.5" Z="0"/>
+                <O T="Point" X="-12.5" Y="0.5" Z="0"/>
+            </O>
+        </O>
+    </O>
+    <O Color="#DC143C" N="DS201" T="Group" X="405.0" Y="303.0" Z="0.0">
+        <O T="Line">
+            <O T="Point" X="0" Y="0" Z="0"/>
+            <O T="Point" X="50.0" Y="0" Z="0"/>
+            <O T="Section">
+                <O T="Circle" X="0" Y="0">
+                    <P N="Radius" V="1"/>
+                </O>
+            </O>
+        </O>
+        <O T="Volume" X="25.0" Y="0" Z="-5.0">
+            <O T="Surface">
+                <O T="Point" X="-5.0" Y="-5.0" Z="0"/>
+                <O T="Point" X="5.0" Y="-5.0" Z="0"/>
+                <O T="Point" X="5.0" Y="5.0" Z="0"/>
+                <O T="Point" X="-5.0" Y="5.0" Z="0"/>
+            </O>
+            <O T="Surface">
+                <O T="Point" X="-5.0" Y="-5.0" Z="10.0"/>
+                <O T="Point" X="5.0" Y="-5.0" Z="10.0"/>
+                <O T="Point" X="5.0" Y="5.0" Z="10.0"/>
+                <O T="Point" X="-5.0" Y="5.0" Z="10.0"/>
+            </O>
+        </O>
+    </O>
+    <O Color="#DC143C" T="Volume" X="202.5" Y="151.5" Z="13.0">
+        <O T="Surface">
+            <O T="Point" X="-7.5" Y="-7.5" Z="0"/>
+            <O T="Point" X="7.5" Y="-7.5" Z="0"/>
+            <O T="Point" X="7.5" Y="7.5" Z="0"/>
+            <O T="Point" X="-7.5" Y="7.5" Z="0"/>
+        </O>
+        <O T="Surface">
+            <O T="Point" X="-7.5" Y="-7.5" Z="15.0"/>
+            <O T="Point" X="7.5" Y="-7.5" Z="15.0"/>
+            <O T="Point" X="7.5" Y="7.5" Z="15.0"/>
+            <O T="Point" X="-7.5" Y="7.5" Z="15.0"/>
+        </O>
+    </O>
+    <O Color="#DC143C" N="strainGauge_207" RY="PI/2" T="Surface" X="0.0" Y="202.5" Z="20.0">
+        <O T="Point" X="-5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="1.0" Z="0"/>
+        <O T="Point" X="-5.0" Y="1.0" Z="0"/>
+        <P D="Material_Surface_strainGauge_207" N="Material" T="Material" V="Sensor_StrainGauge"/>
+        <P N="Thickness" V="1"/>
+    </O>
+    <O Color="#DC143C" N="strainGauge_208" RY="PI/2" T="Surface" X="0.0" Y="202.5" Z="280.0">
+        <O T="Point" X="-5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="1.0" Z="0"/>
+        <O T="Point" X="-5.0" Y="1.0" Z="0"/>
+        <P D="Material_Surface_strainGauge_208" N="Material" T="Material" V="Sensor_StrainGauge"/>
+        <P N="Thickness" V="1"/>
+    </O>
+    <O Color="#DC143C" N="strainGauge_209" RY="PI/2" T="Surface" X="0.0" Y="202.5" Z="343.0">
+        <O T="Point" X="-5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="1.0" Z="0"/>
+        <O T="Point" X="-5.0" Y="1.0" Z="0"/>
+        <P D="Material_Surface_strainGauge_209" N="Material" T="Material" V="Sensor_StrainGauge"/>
+        <P N="Thickness" V="1"/>
+    </O>
+    <O Color="#DC143C" N="strainGauge_210" RY="PI/2" T="Surface" X="0.0" Y="202.5" Z="586.0">
+        <O T="Point" X="-5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="-1.0" Z="0"/>
+        <O T="Point" X="5.0" Y="1.0" Z="0"/>
+        <O T="Point" X="-5.0" Y="1.0" Z="0"/>
+        <P D="Material_Surface_strainGauge_210" N="Material" T="Material" V="Sensor_StrainGauge"/>
+        <P N="Thickness" V="1"/>
+    </O>
+</O>
