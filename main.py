@@ -1,15 +1,24 @@
 from BMS_BrIM import *
 
-testproj = ProjGroups('Testproj')
+# testproj = ProjGroups('Testproj')
 node1 = Node(1, 0, 3, node_id=100)
-node2 = Node(10, 22, 33, node_id=200)
+# node2 = Node(10, 22, 33, node_id=200)
+# print(node1.__dict__)
+# ShowTable(node1.openBrIM)
+print(node1.openBrIM)
+node1.set_node_attr('tx', -1)
+print(node1.openBrIM)
+# ShowTable(node1.openBrIM)
+# print(node1.__dict__)
+
+
+
+'''
 ss=Sensor(1,'testSS','accelerometer', 10, -3, -3)
 print(ss.openBrIM)
 ShowTree(ss.openBrIM['geo'])
 
-nodeBL_0 = Node(0, 81, 0, node_name="NodeBL_{}".format(i))
-
-'''
+print(ss.__dict__)
 # test Surface
 
 # steel = Material(1, 'Steel', d="0.0000007345", E="29000")

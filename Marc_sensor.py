@@ -10,7 +10,7 @@ Input all data into MongoDB.
 
 from BMS_BrIM import *
 
-marc = ProjGroups("marc_design")
+marc = ProjGroups("marc_sensor")
 # 0. Parameter
 # 0.1 Structural parameter
 span_num = Parameter(1, "span_num", 11)
@@ -74,11 +74,11 @@ for i in range(span_num.value + 1):
     nodeBR.append(Node(i * x_spacing.value, 0, 0, node_name="NodeBR_{}".format(i)))
     nodeTL.append(Node(i * x_spacing.value, y_spacing.value, z_height.value, node_name="NodeTL_{}".format(i)))
     nodeTR.append(Node(i * x_spacing.value, 0, z_height.value, node_name="NodeTR_{}".format(i)))
-nodeBR[0].set_node_attr('tz', -1)
 nodeBL[0].set_node_attr('tz', -1)
-nodeBR[0].set_node_attr('tx', -1)
 nodeBL[0].set_node_attr('tx', -1)
-nodeBR[span_num.value].set_node_attr('tz', -1)
+nodeBR[0].set_node_attr('tz', -1)
+nodeBR[0].set_node_attr('tx', -1)
+nodeBL[span_num.value].set_node_attr('tz', -1)
 nodeBL[span_num.value].set_node_attr('tz', -1)
 marc.fem_nodes.append(*nodeBL, *nodeBR, *nodeTL[1:], *nodeTR[1:])
 # 4. Structure Elements = Mechanical View
@@ -128,7 +128,6 @@ for i in range(span_num.value):
 marc.member_gp.append(*bottomChordList, *topChordList, *verChordsList, *webList, *z_beams, *first_seg, *decks)
 
 # 5. Equipments = Geometry View
-sensors=[]
 
 
 ShowTree(marc.openBrIM)

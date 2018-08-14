@@ -25,14 +25,14 @@ class AbstractELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM: PyOpenBrIMElmt=self.set_openbrim()
+        self.openBrIM: PyOpenBrIMElmt = self.set_openbrim()
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
             ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
             print("{}.openBrIM is of {}".format(self.name, ob_class))
-        self.openbrim = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
-        return self.openbrim
+        _openbrim = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
+        return _openbrim
 
 
 class Parameter(AbstractELMT):
@@ -60,7 +60,7 @@ class Material(AbstractELMT):
         # self.stage = 'Design'
         # if mat_property:
         self.set_property(**mat_property)
-        self.set_openbrim(OBMaterial)
+        self.openBrIM = self.set_openbrim(OBMaterial)
 
     def set_property(self, **mat_property):
         """set the property of material. should use key in:
@@ -188,7 +188,7 @@ class GroupCollection(Group):
         'section': 'all sections and shapes',
         'fem_nodes': 'Node for FEM model',
         'model_members': 'Members of Model',
-        'sensor':'Monitor System'
+        'sensor': 'Monitor System'
     }
 
     def __init__(self, name, des=None):
@@ -279,13 +279,13 @@ class Node(AbstractELMT):
         self.ry = ry
         self.rz = rz
         super(Node, self).__init__('Node', node_id, node_name)
-        self.set_openbrim(OBFENode)  # OBPoint is not needed
+        # self.openBrIM = self.set_openbrim(OBFENode)  # OBPoint is not needed
 
     def set_node_attr(self, node_attr, value):
         assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
         self.__dict__[node_attr] = value
         # update the mongoDB and openbrim
-        self.set_openbrim(OBFENode)
+        self.openBrIM = self.set_openbrim(OBFENode)
         # self.set_mongo_doc()
 
 

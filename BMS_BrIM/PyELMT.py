@@ -50,6 +50,22 @@ class PyElmt(object):
             self.check_update_attr(_result)
             return _result
 
+    def set_openbrim(self, ob_class, **attrib_dict):
+        # update the __dict__ with the attrib_dict
+        # don't update the element.__dict__ with the attrib_dict. Because attrib_dict is used to add other redundancy info.
+        # self.__dict__.update(**attrib_dict)
+        # get attributes required by the OpenBrIM type
+        _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
+        # packaging the attributes for the OpenBrIM elements
+        _openbrim_attrib = {**attrib_dict, **_required_attr}
+        try:
+            # openBrIM is one of the PyELMT interfaces
+            _openbrim_model: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
+            return _openbrim_model
+        except TypeError as e:
+            print("<>.set_openbrim()".format(self.name), e)
+            return
+
     def get_openbrim(self, model_class=None):
         if not model_class:
             return self.openBrIM
@@ -98,22 +114,6 @@ class PyElmt(object):
         if 'table' not in kwargs.keys():
             print('The table/collection name is needed')
         self.db_config['table'] = kwargs['table']
-
-    def set_openbrim(self, ob_class, **attrib_dict):
-        # update the __dict__ with the attrib_dict
-        # don't update the element.__dict__ with the attrib_dict. Because attrib_dict is used to add other redundancy info.
-        # self.__dict__.update(**attrib_dict)
-        # get attributes required by the OpenBrIM type
-        _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
-        # packaging the attributes for the OpenBrIM elements
-        _openbrim_attrib = {**attrib_dict, **_required_attr}
-        try:
-            # openBrIM is one of the PyELMT interfaces
-            _openbrim_model: PyOpenBrIMElmt = ob_class(**_openbrim_attrib)
-            return _openbrim_model
-        except TypeError as e:
-            print("<>.set_openbrim()".format(self.name), e)
-            return
 
 
 def _attr_pick(elmt, *pick_list):
