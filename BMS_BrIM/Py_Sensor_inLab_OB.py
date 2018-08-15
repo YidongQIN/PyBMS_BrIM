@@ -2,7 +2,7 @@ __author__ = 'Yidong QIN'
 
 '''
 Sensors definition in OpenBrIM
-The sensors' data are in the PC in Mason's Lab, in MySQL.
+The sensors' _data are in the PC in Mason's Lab, in MySQL.
 I am thinking to use MongoDB to replace it.
 '''
 

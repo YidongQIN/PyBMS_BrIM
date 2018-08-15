@@ -92,7 +92,7 @@ class ConnMongoDB(object):
             print(" -", data)
 
     def update_data(self, collection, id, **data):
-        """equals to: return self.db[collection].update({'_id': id}, data, True)"""
+        """equals to: return self.db[collection].update({'_id': id}, _data, True)"""
         if self.find_by_kv(collection, '_id', id):
             print('Find in {}, _id = {} in MongoDB'.format(collection, id))
             # later, maybe use findall to check if exist doc of same content

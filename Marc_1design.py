@@ -5,7 +5,7 @@ __author__ = 'Yidong QIN'
 
 """
 MARC Bridge with sensors.
-Input all data into MongoDB.
+Input all _data into MongoDB.
 """
 
 from BMS_BrIM import *
@@ -120,9 +120,6 @@ for i in range(span_num.value):
                 deck_thick, concrete, deck_name='concrete deck'))
 
 marc.member_gp.append(*bottomChordList, *topChordList, *verChordsList, *webList, *z_beams, *first_seg, *decks)
-
-# 5. Equipments = Geometry View
-
 
 ShowTree(marc.openBrIM)
 marc.openBrIM.save_project()
