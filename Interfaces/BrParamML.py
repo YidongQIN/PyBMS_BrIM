@@ -23,8 +23,8 @@ class PyOpenBrIMElmt(object):
         else:
             _attributes = {}
         for _k, _v in attrib_dict.items():
-            # if _v:
-            _attributes[_k] = str(_v)
+            if _v !="":
+                _attributes[_k] = str(_v)
         self.elmt = eET.Element(tag_o_p, **_attributes)
         self.name = name
 

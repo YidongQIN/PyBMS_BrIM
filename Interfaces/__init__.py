@@ -9,7 +9,7 @@ __author__ = 'Yidong QIN'
 
 from Interfaces.BrMongo import *
 from Interfaces.BrMySQL import *
-from Interfaces.BrOpenBrIM import *
+from Interfaces.BrParamML_Extended import *
 
 if __name__ == '__main__':
     print(dir())
