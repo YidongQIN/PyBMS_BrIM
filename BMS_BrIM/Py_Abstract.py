@@ -284,8 +284,7 @@ class Node(AbstractELMT):
         self.ry = ry
         self.rz = rz
         super(Node, self).__init__('Node', node_id, node_name)
-        self.openBrIM = self.set_openbrim()
-        # self.openBrIM = self.set_openbrim(OBFENode)  # OBPoint is not needed
+        self.openBrIM = self.set_openbrim(OBFENode)  # OBPoint is not needed
 
     def set_node_attr(self, node_attr, value):
         assert node_attr in ['x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz']
