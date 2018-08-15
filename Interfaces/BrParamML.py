@@ -536,7 +536,9 @@ class OBGroup(OBObjElmt):
 
 
 class OBFENode(OBObjElmt):
-    _REQUIRE = ['name', 'x', 'y', 'z', 'tx', 'ty', 'tz', 'rx', 'ry', 'rz', 'Tx', 'Ty', 'Tz', 'Rx', 'Ry', 'Rz']
+    _REQUIRE = ['name', 'x', 'y', 'z',
+                'tx', 'ty', 'tz',
+                'rx', 'ry', 'rz']
 
     def __init__(self, x, y, z, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0, name=''):
         super(OBFENode, self).__init__('Node', name,

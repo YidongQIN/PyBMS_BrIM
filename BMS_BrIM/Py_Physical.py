@@ -9,26 +9,27 @@ Physical Elements
 
 from BMS_BrIM.Py_Abstract import *
 
+_DICT_FEM_CLASS = dict(Node=OBFENode,
+                       Line=OBFELine,
+                       Beam=OBFELine,
+                       Truss=StraightBeamFEM,
+                       Surface=OBFESurface,
+                       BoltedPlate=OBFESurface,
+                       Volume=OBVolume)
+_DICT_GEO_CLASS = dict(Node=OBPoint,
+                       Line=OBLine,
+                       Beam=OBLine,
+                       Truss=OBLine,
+                       Surface=OBSurface,
+                       BoltedPlate=BoltedPlateGeo,
+                       Volume=OBVolume)
 
 class PhysicalELMT(PyElmt):
     """PhysicalELMT is used to represent real members of bridges.
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
-    _DICT_FEM_CLASS = dict(Node=OBFENode,
-                           Line=OBFELine,
-                           Beam=OBFELine,
-                           Truss=StraightBeamFEM,
-                           Surface=OBFESurface,
-                           BoltedPlate=OBFESurface,
-                           Volume=OBVolume)
-    _DICT_GEO_CLASS = dict(Node=OBPoint,
-                           Line=OBLine,
-                           Beam=OBLine,
-                           Truss=OBLine,
-                           Surface=OBSurface,
-                           BoltedPlate=BoltedPlateGeo,
-                           Volume=OBVolume)
+
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
@@ -41,9 +42,9 @@ class PhysicalELMT(PyElmt):
 
     def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
         if not ob_class_fem:
-            ob_class_fem = PhysicalELMT._DICT_FEM_CLASS[self.type]
+            ob_class_fem = _DICT_FEM_CLASS[self.type]
         if not ob_class_geo:
-            ob_class_geo = PhysicalELMT._DICT_FEM_CLASS[self.type]
+            ob_class_geo = _DICT_FEM_CLASS[self.type]
         # set fem openbrim model
         _ob_models = list()
         for _ob in ob_class_fem, ob_class_geo:
@@ -55,9 +56,13 @@ class PhysicalELMT(PyElmt):
 
     def set_material(self, material):
         """ openbrim & mongodb"""
-        self.material = material
-        self.material_ob = material.openBrIM
-        self.material_id = material._id
+        if material:
+            self.material = material
+            self.material_ob = material.openBrIM
+            self.material_id = material._id
+        else:
+            self.material_ob = self.section.material_ob
+            self.material_id = self.section.material_id
 
     def set_section(self, section):
         self.section = section
@@ -80,12 +85,12 @@ class PhysicalELMT(PyElmt):
 class Beam(PhysicalELMT):
 
     def __init__(self, node1, node2,
-                 section, material,
+                 section, material=None,
                  beam_id=None, beam_name=None):
-        self.set_material(material)
-        self.set_section(section)
         self.link_node(node1,1)
         self.link_node(node2,2)
+        self.set_section(section)
+        self.set_material(material)
         super(Beam, self).__init__('Beam', beam_id, beam_name)
         self.set_openbrim(OBFELine, OBLine)
 

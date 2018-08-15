@@ -10,17 +10,18 @@ Python Elements for BrIM.
 from BMS_BrIM.PyELMT import *
 from BMS_BrIM.Py_Physical import PhysicalELMT
 
+_DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
+                            Parameter=OBPrmElmt,
+                            Shape=OBShape,
+                            Section=OBSection,
+                            Group=OBGroup,
+                            Project=OBProject,
+                            Unit=OBUnit,
+                            Text=OBText3D,
+                            Node=OBFENode)
+
 
 class AbstractELMT(PyElmt):
-    _DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
-                                Parameter=OBPrmElmt,
-                                Shape=OBShape,
-                                Section=OBSection,
-                                Group=OBGroup,
-                                Project=OBProject,
-                                Unit=OBUnit,
-                                Text=OBText3D,
-                                Node=OBFENode)
 
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
@@ -29,7 +30,7 @@ class AbstractELMT(PyElmt):
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
-            ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
+            ob_class = _DICT_OPENBRIM_CLASS[self.type]
             print("{}.openBrIM is of {}".format(self.name, ob_class))
         _openbrim = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
         return _openbrim
@@ -103,7 +104,7 @@ class Shape(AbstractELMT):
             _attrib_dict = dict(points=args)
         super(Shape, self).__init__('Shape', shape_id, name)
         self.check_update_attr(_attrib_dict)
-        self.set_openbrim(shape_form, **_attrib_dict)
+        self.openBrIM = self.set_openbrim(shape_form, **_attrib_dict)
         self.is_cutout = is_cut
         if self.is_cutout:
             self.openBrIM.sub(OBPrmElmt("IsCutout", "1"))
@@ -117,10 +118,14 @@ class Section(AbstractELMT):
         self.shape = shapes
         self.shape_ob = [_.openBrIM for _ in shapes]
         self.shape_id = [_._id for _ in shapes]
+        self.set_material(material)
+        self.openBrIM = self.set_openbrim(OBSection)
+        self.openBrIM.sub(*self.shape_ob)
+
+    def set_material(self, material):
+        self.material = material
         self.material_id = material._id
         self.material_ob = material.openBrIM
-        self.set_openbrim(OBSection)
-        self.openBrIM.sub(*self.shape_ob)
 
 
 class Group(AbstractELMT):
@@ -279,6 +284,7 @@ class Node(AbstractELMT):
         self.ry = ry
         self.rz = rz
         super(Node, self).__init__('Node', node_id, node_name)
+        self.openBrIM = self.set_openbrim()
         # self.openBrIM = self.set_openbrim(OBFENode)  # OBPoint is not needed
 
     def set_node_attr(self, node_attr, value):
