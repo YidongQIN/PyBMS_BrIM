@@ -59,9 +59,8 @@ class CubeGeo(OBVolume):
             OBPoint(self.width / 2, -self.length / 2, self.thick),
             OBPoint(self.width / 2, self.length / 2, self.thick),
             OBPoint(-self.width / 2, self.length / 2, self.thick))
-        super(CubeGeo, self).__init__(_surface1_ob ,_surface2_ob, name)
+        super(CubeGeo, self).__init__(_surface1_ob, _surface2_ob, name)
         # self.elmt = self.geom().elmt
-
 
     def set_basepoint(self, x, y, z):
         """the base point is the center of the first Surface."""
@@ -179,6 +178,17 @@ class StraightBeamFEM(OBObjElmt):
             n2 = OBFENode(self.length * self.cos[0], self.length * self.cos[1], self.length * self.cos[2])
             fel = OBFELine(n1, n2, self.section, self.angle, self.name)
             return OBGroup(n1, n2, fel)
+
+
+class LineCubeOB(OBGroup):
+
+    def __init__(self, line_length, line_radius,
+                 cube_length, cube_width, cube_thick, name=''):
+        _line = OBLine(OBPoint(-line_length, 0, 0), OBPoint(line_length, 0, 0),
+                       section_ob=OBSection('Line', '', OBCircle('', line_radius)))
+        _box = CubeGeo(cube_length, cube_width, cube_thick)
+        _box.move_to(0, 0, -cube_thick / 2)
+        super(LineCubeOB, self).__init__(name, _line, _box)
 
 
 def direction_cos(x, y, z) -> tuple:

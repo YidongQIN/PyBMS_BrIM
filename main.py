@@ -1,22 +1,21 @@
 from BMS_BrIM import *
 
-# testproj = ProjGroups('Testproj')
-node1 = Node(1, 0, 3, node_id=100)
-# node2 = Node(10, 22, 33, node_id=200)
-# print(node1.__dict__)
-# ShowTable(node1.openBrIM)
-print(node1.openBrIM)
-node1.set_node_attr('tx', -1)
-print(node1.openBrIM)
-# ShowTable(node1.openBrIM)
-# print(node1.__dict__)
 
+ss=Sensor(1,'testSS','accelerometer', 10, -3, -3)
+print(ss.x)
+ss.install_at(0,1,1)
+print(ss.x)
 
 
 '''
-ss=Sensor(1,'testSS','accelerometer', 10, -3, -3)
-print(ss.openBrIM)
-ShowTree(ss.openBrIM['geo'])
+print("test LineCube")
+proj=OBProject('testLineCube')
+lc=LineCubeOB(40,1,18,12,8, 'DisplacementSensor')
+ShowTree(lc.elmt)
+proj.sub(lc)
+proj.save_project()
+
+
 
 print(ss.__dict__)
 # test Surface
