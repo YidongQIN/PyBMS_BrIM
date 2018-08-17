@@ -1,7 +1,7 @@
 from BMS_BrIM import *
 
 
-ss=Sensor(1,'testSS','accelerometer', 10, -3, -3)
+ss=Sensor(1, 'testSS', 'accelerometer', 10, -3, -3)
 print(ss.x)
 ss.install_at(0,1,1)
 print(ss.x)
@@ -14,7 +14,6 @@ lc=LineCubeOB(40,1,18,12,8, 'DisplacementSensor')
 ShowTree(lc.elmt)
 proj.sub(lc)
 proj.save_project()
-
 
 
 print(ss.__dict__)

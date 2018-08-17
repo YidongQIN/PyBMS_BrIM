@@ -8,8 +8,7 @@ Python Elements for BrIM.
 """
 
 from BMS_BrIM.PyELMT import *
-
-# from BMS_BrIM.Py_Physical import PhysicalELMT
+from BMS_BrIM.Py_Physical import PhysicalELMT
 
 _DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
                             Parameter=OBPrmElmt,
@@ -119,9 +118,6 @@ class Section(AbstractELMT):
         self.shape = shapes
         self.shape_ob = [_.openBrIM for _ in shapes]
         self.shape_id = [_._id for _ in shapes]
-        self.material = None
-        self.material_id = ""
-        self.material_ob: PyOpenBrIMElmt = None
         self.set_material(material)
         self.openBrIM = self.set_openbrim(OBSection)
         self.openBrIM.sub(*self.shape_ob)
@@ -147,7 +143,6 @@ class Group(AbstractELMT):
             # 1. self._sub.append;
             self._sub.append(_c)
             # 2. self.openBrIM sub();
-            from BMS_BrIM.Py_Physical import PhysicalELMT
             if isinstance(_c, AbstractELMT):
                 self.openBrIM.sub(_c.openBrIM)
             elif isinstance(_c, PhysicalELMT):
@@ -273,7 +268,7 @@ class ProjGroups(AbstractELMT):
         return iter(self._sub)
 
 
-class FENode(AbstractELMT):
+class Node(AbstractELMT):
 
     def __init__(self, x, y, z=0,
                  tx=0, ty=0, tz=0,
@@ -288,7 +283,7 @@ class FENode(AbstractELMT):
         self.rx = rx
         self.ry = ry
         self.rz = rz
-        super(FENode, self).__init__('Node', node_id, node_name)
+        super(Node, self).__init__('Node', node_id, node_name)
         self.openBrIM = self.set_openbrim(OBFENode)  # OBPoint is not needed
 
     def set_node_attr(self, node_attr, value):

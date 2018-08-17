@@ -71,14 +71,14 @@ nodeTL = []
 nodeTR = []
 for i in range(span_num.value + 1):
     nodeBL.append(
-        Node(i * x_spacing.value,
-             y_spacing.value,
-             0,
-             node_name="NodeBL_{}".format(i))
+        FENode(i * x_spacing.value,
+               y_spacing.value,
+               0,
+               node_name="NodeBL_{}".format(i))
     )
-    nodeBR.append(Node(i * x_spacing.value, 0, 0, node_name="NodeBR_{}".format(i)))
-    nodeTL.append(Node(i * x_spacing.value, y_spacing.value, z_height.value, node_name="NodeTL_{}".format(i)))
-    nodeTR.append(Node(i * x_spacing.value, 0, z_height.value, node_name="NodeTR_{}".format(i)))
+    nodeBR.append(FENode(i * x_spacing.value, 0, 0, node_name="NodeBR_{}".format(i)))
+    nodeTL.append(FENode(i * x_spacing.value, y_spacing.value, z_height.value, node_name="NodeTL_{}".format(i)))
+    nodeTR.append(FENode(i * x_spacing.value, 0, z_height.value, node_name="NodeTR_{}".format(i)))
 nodeBL[0].set_node_attr('tz', -1)
 nodeBL[0].set_node_attr('tx', -1)
 nodeBR[0].set_node_attr('tz', -1)
