@@ -701,8 +701,10 @@ class OBLine(OBObjElmt):
     def set_section(self, section_ob):
         """section has attribute of material. default is <O Extends=>"""
         if isinstance(section_ob, OBSection):
-            self.sub(OBExtends(section_ob))
-            # self.sub(section_obj)
+            # self.sub(OBExtends(section_ob))
+            self.sub(section_ob)
+        elif isinstance(section_ob, OBExtends):
+            self.sub(section_ob)
         elif isinstance(section_ob, str):
             print('{} section is not a SECTION object'.format(self.name))
             self.sub(OBPrmElmt('Section', section_ob))
