@@ -2,5 +2,4 @@
 venv/
 *.sublime-*
 .gitattributes
-new.xml
 __pycache__
