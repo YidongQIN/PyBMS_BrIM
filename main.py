@@ -1,10 +1,8 @@
 from BMS_BrIM import *
 
 
-ss=Sensor(1, 'testSS', 'accelerometer', 10, -3, -3)
-print(ss.x)
-ss.install_at(0,1,1)
-print(ss.x)
+# dataplt=DatProc('Test Data Plot', "c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\U113_ADC_A2.dat")
+
 
 
 '''
@@ -13,8 +11,11 @@ proj=OBProject('testLineCube')
 lc=LineCubeOB(40,1,18,12,8, 'DisplacementSensor')
 ShowTree(lc.elmt)
 proj.sub(lc)
-proj.save_project()
 
+ss=Sensor(1, 'testSS', 'accelerometer', 10, -3, -3)
+print(ss.x)
+ss.install_at(0,1,1)
+print(ss.x)
 
 print(ss.__dict__)
 # test Surface
