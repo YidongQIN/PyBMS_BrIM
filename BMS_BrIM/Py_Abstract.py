@@ -8,6 +8,7 @@ Python Elements for BrIM.
 """
 
 from BMS_BrIM.PyELMT import *
+from Interfaces.BrParamMLEx import *
 
 # from BMS_BrIM.Py_Physical import PhysicalELMT
 
@@ -27,7 +28,7 @@ class AbstractELMT(PyElmt):
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM: PyOpenBrIMElmt = self.set_openbrim()
+        # self.openBrIM: PyOpenBrIMElmt = self.set_openbrim()
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
@@ -40,11 +41,11 @@ class AbstractELMT(PyElmt):
 class Parameter(AbstractELMT):
 
     def __init__(self, prm_id, prm_name, prm_value, ob_type=None):
-        super(Parameter, self).__init__('Parameter', prm_id, prm_name)
         self.value = prm_value
         if ob_type:
             self.ob_type = ob_type
-        self.openBrIM = self.set_openbrim()
+        super(Parameter, self).__init__('Parameter', prm_id, prm_name)
+        self.openBrIM = self.set_openbrim(OBPrmElmt)
 
 
 class Material(AbstractELMT):
@@ -104,8 +105,8 @@ class Shape(AbstractELMT):
             # default shape is polygon, so the parameters are points coordinates.
             _attrib_dict = dict(points=args)
         super(Shape, self).__init__('Shape', shape_id, name)
-        self.check_update_attr(_attrib_dict)
-        self.openBrIM = self.set_openbrim(shape_form, **_attrib_dict)
+        self.check_attr(_attrib_dict)
+        self.openBrIM = self.set_openbrim(shape_form)
         self.is_cutout = is_cut
         if self.is_cutout:
             self.openBrIM.sub(OBPrmElmt("IsCutout", "1"))

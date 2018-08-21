@@ -103,7 +103,7 @@ class Shape(AbstractELMT):
             # default shape is polygon, so the parameters are points coordinates.
             _attrib_dict = dict(points=args)
         super(Shape, self).__init__('Shape', shape_id, name)
-        self.check_update_attr(_attrib_dict)
+        self.check_attr(_attrib_dict)
         self.openBrIM = self.set_openbrim(shape_form, **_attrib_dict)
         self.is_cutout = is_cut
         if self.is_cutout:

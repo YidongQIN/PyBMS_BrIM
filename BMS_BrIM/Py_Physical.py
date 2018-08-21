@@ -24,12 +24,12 @@ _DICT_GEO_CLASS = dict(Node=OBPoint,
                        BoltedPlate=BoltedPlateGeo,
                        Volume=OBVolume)
 
+
 class PhysicalELMT(PyElmt):
     """PhysicalELMT is used to represent real members of bridges.
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
     later, some other methods may be added, such as SAP2K model method"""
-
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """real members of structure"""
@@ -37,8 +37,7 @@ class PhysicalELMT(PyElmt):
         self.material: Material = None
         self.section: Section = None
         self.node: list = list()
-        self.openBrIM=dict(fem=None, geo=None)
-
+        self.openBrIM = dict(fem=None, geo=None)
 
     def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
         if not ob_class_fem:
@@ -70,15 +69,15 @@ class PhysicalELMT(PyElmt):
         self.section_id = section._id
 
     def set_parameter(self, p_name, parameter):
-        self.__dict__[p_name]=parameter
-        self.__dict__["{}_ob".format(p_name)]=parameter.openBrIM
-        self.__dict__["{}_id".format(p_name)]=parameter._id
+        self.__dict__[p_name] = parameter
+        self.__dict__["{}_ob".format(p_name)] = parameter.openBrIM
+        self.__dict__["{}_id".format(p_name)] = parameter._id
 
     def link_node(self, node, node_num):
         """link to a Node"""
-        self.__dict__["node{}".format(node_num)]=node
-        self.__dict__["node{}_ob".format(node_num)]=node.openBrIM
-        self.__dict__["node{}_id".format(node_num)]=node._id
+        self.__dict__["node{}".format(node_num)] = node
+        self.__dict__["node{}_ob".format(node_num)] = node.openBrIM
+        self.__dict__["node{}_id".format(node_num)] = node._id
         # self.nodeOB.append(node.openBrIM)
 
 
@@ -87,8 +86,8 @@ class Beam(PhysicalELMT):
     def __init__(self, node1, node2,
                  section, material=None,
                  beam_id=None, beam_name=None):
-        self.link_node(node1,1)
-        self.link_node(node2,2)
+        self.link_node(node1, 1)
+        self.link_node(node2, 2)
         self.set_section(section)
         self.set_material(material)
         super(Beam, self).__init__('Beam', beam_id, beam_name)

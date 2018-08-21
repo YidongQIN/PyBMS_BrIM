@@ -6,10 +6,31 @@ __author__ = 'Yidong QIN'
 """
 new sensor class in MongoDB instead of MySQL in lab
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from BMS_BrIM.Py_Physical import *
+
+
+
+
+class MonitorExperiment(Document):
+
+    def __init__(self, ext_id, bridge, datetime, des):
+        super(MonitorExperiment, self).__init__('{}_{}'.format(bridge,datetime), ext_id,des)
+
+
+class NetworkUnit(PhysicalELMT):
+
+    def __init__(self, unit_id, experiment, **channel_sensor):
+        super(NetworkUnit, self).__init__('UnitClient', unit_id, 'Unit_{}'.format(experiment))
+        self.experiment = experiment
+        self.experiment_id = experiment._id
+        self.channel_sensor: dict
+        for _c, _s in channel_sensor.items():
+            assert isinstance(_c, str) and isinstance(_s, Sensor), TypeError
+            self.channel_sensor[_c] = _s._id
 
 
 class Sensor(PhysicalELMT):
@@ -24,7 +45,7 @@ class Sensor(PhysicalELMT):
         self.datapath = datapath
         self.unit, self.channel = unit, channel
         self.des = arg
-        self.check_update_attr(**kwargs)
+        self.check_attr(**kwargs)
 
     def install_at(self, *position):
         if isinstance(position[0], FENode):
@@ -34,19 +55,6 @@ class Sensor(PhysicalELMT):
             assert isinstance(self.x, (float, int))
             assert isinstance(self.y, (float, int))
             assert isinstance(self.z, (float, int))
-
-
-class NetworkUnit(PhysicalELMT):
-
-    def __init__(self, unit_id, experiment_id):
-        super(NetworkUnit, self).__init__('UnitClient', unit_id, 'Unit_{}'.format(experiment_id))
-
-
-class MonitorExperiment(object):
-
-    def __init__(self, ext_id, bridge_id):
-        self._id = ext_id
-        self.bridge_id = bridge_id
 
 
 class DatProc(object):
@@ -61,7 +69,7 @@ class DatProc(object):
         except OSError as e:
             print(e)
         plt.figure()
-        plt.title(self.title+"and its FFT")
+        plt.title(self.title + "and its FFT")
 
         self.plot()
         self.fourier()
@@ -73,7 +81,7 @@ class DatProc(object):
         plt.plot(self.data)
         plt.xlabel('Sampling Point')
         plt.ylabel('Sensor Data Value')
-        plt.title("Sensor Data Plot of "+self.title)
+        plt.title("Sensor Data Plot of " + self.title)
 
     def fourier(self):
         sp = np.fft.fft(self.data)
