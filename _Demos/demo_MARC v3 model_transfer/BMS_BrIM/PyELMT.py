@@ -86,11 +86,11 @@ class PyElmt(object):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print("PyELMT.check_attr from MongoDB:")
+                    print("PyELMT.update_attr from MongoDB:")
                     print('  <{}> Attribute changed!'.format(self.name))
                     print('  * {} -> {}'.format(_k, _v))
             except KeyError:
-                print("PyELMT.check_attr from MongoDB:")
+                print("PyELMT.update_attr from MongoDB:")
                 print("  <{}> gets new attribute!".format(self.name))
                 print('  * {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v

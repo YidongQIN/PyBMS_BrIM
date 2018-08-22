@@ -1,11 +1,20 @@
 from BMS_BrIM import *
 
-
 # dataplt=DatProc('Test Data Plot', "c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\U113_ADC_A2.dat")
-
-
+exp=MonitorExperiment(2,'MARC',201808221323, 201809221700, "The first Experiment is imaginary")
+uuu =NetworkUnit(3,exp, adc=None, b2=None)
+ss=Sensor(1)
+ss.install_at(2,3,4)
+print(ss.__dict__)
+ss.conn_unit(uuu, 'acd')
 
 '''
+doc = Document('TestDoc', 1, 'Description of DOc')
+doc.update_attr(att1="the first attrib", update=True, datetime=20180822)
+doc.set_file(None)
+
+
+
 print("test LineCube")
 proj=OBProject('testLineCube')
 lc=LineCubeOB(40,1,18,12,8, 'DisplacementSensor')

@@ -80,6 +80,9 @@ class PhysicalELMT(PyElmt):
         self.__dict__["node{}_id".format(node_num)] = node._id
         # self.nodeOB.append(node.openBrIM)
 
+    def link_elmt(self, attrib, elmt:PyElmt):
+        #@TODO
+        self.__dict__[attrib]=elmt
 
 class Beam(PhysicalELMT):
 

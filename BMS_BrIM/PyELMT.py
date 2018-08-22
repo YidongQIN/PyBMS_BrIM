@@ -13,6 +13,8 @@ Each PyELMT has 3 kinds of attributes:
 3. Interfaces, including a OpenBrIM interface, a MongoDB interface so far.
     Each Interface will be a combination of setter() and getter().
 """
+import json
+
 from Interfaces import *
 
 
@@ -47,7 +49,7 @@ class PyElmt(object):
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
             _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
-            self.check_attr(_result)
+            self.update_attr(_result)
             return _result
 
     def set_openbrim(self, ob_class: (OBPrmElmt, OBObjElmt), **attrib_dict: dict):
@@ -78,14 +80,14 @@ class PyElmt(object):
     def get_sap2k(self):
         pass
 
-    def check_attr(self, attributes_dict: dict):
+    def update_attr(self, **attributes_dict: dict):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('<{}> changed by check_attr()'.format(self.name))
+                    print('<{}> changed by update_attr()'.format(self.name))
                     print('* {} -> {}'.format(_k, _v))
             except KeyError:
-                print("<{}> new attribute by check_attr()".format(self.name))
+                print("<{}> new attribute by update_attr()".format(self.name))
                 print('* {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
 
@@ -120,7 +122,6 @@ class Document(object):
         if des:
             self.des = des
 
-    # MongoDB methods: setting; setter, getter;
     def set_mongo_doc(self):
         """write info into the mongo.collection.document"""
         with ConnMongoDB(**self.db_config) as _db:
@@ -136,22 +137,32 @@ class Document(object):
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
             _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
-            self.check_update_attr(_result)
+            self.update_attr(_result)
             return _result
 
-    def check_update_attr(self, attributes_dict: dict):
+    def set_file(self, file_path=None):
+        """write the attributes into JSON"""
+        _j = json.dumps(self.__dict__, indent=2)
+        if not file_path:
+            file_path = "{}.json".format(self.name)
+        with open(file_path, 'w') as _f:
+            _f.write(_j)
+        print("<{}> data stored in {}".format(self.name, file_path))
+
+    def update_attr(self, **attributes_dict):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('<{}> changed by check_attr()'.format(self.name))
-                    print('* {} -> {}'.format(_k, _v))
+                    print('<{}> changed by update_attr()'.format(self.name))
+                    print(' .{} -> {}'.format(_k, _v))
             except KeyError:
-                print("<{}> new attribute by check_attr()".format(self.name))
-                print('* {} -> {}'.format(_k, _v))
+                print("<{}> new attribute by update_attr()".format(self.name))
+                print(' .{} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
 
     def set_dbconfig(self, database, table, host='localhost', port=27017):
-        self.db_config = {'host': host, 'port': port, 'database': database, 'table': table}
+        self.db_config = {'host': host, 'port': port,
+                          'database': database, 'table': table}
 
 
 def _attr_pick(elmt, *pick_list):

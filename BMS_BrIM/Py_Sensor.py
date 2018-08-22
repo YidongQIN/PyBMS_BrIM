@@ -7,26 +7,51 @@ __author__ = 'Yidong QIN'
 new sensor class in MongoDB instead of MySQL in lab
 """
 
+import datetime as dt
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from BMS_BrIM.Py_Physical import *
 
 
-
-
 class MonitorExperiment(Document):
 
-    def __init__(self, ext_id, bridge, datetime, des):
-        super(MonitorExperiment, self).__init__('{}_{}'.format(bridge,datetime), ext_id,des)
+    def __init__(self, ext_id, bridge, startDateTime, endDateTime, des=None):
+        _name = 'Experiment_{}'.format(bridge)
+        self.bridge = bridge
+        self.start = dt.datetime(*self._prc_dt(startDateTime))
+        self.end = dt.datetime(*self._prc_dt(endDateTime))
+        super(MonitorExperiment, self).__init__(_name, ext_id, des)
+
+    @property
+    def experiment_period(self):
+        print("Monitor Experiment <{}>".format(self.name))
+        print(" * Start: {}".format(self.start))
+        print(" * until: {}".format(self.end))
+        return self.end - self.start
+
+    def _prc_dt(self, datetime):
+        """process of DateTime int transferred to to a list of dt objects,
+        such as 201801010203 (AM 2:03, Jan 1st, 2018) to 2018,01,01,02,03.
+        :returns:
+        (_year, _month, _day, _hour, _minute)
+        """
+        _dt = str(datetime)
+        assert len(_dt) == 12
+        return list(map(int, [_dt[0:4], _dt[4:6], _dt[6:8], _dt[8:10], _dt[10:12]]))
 
 
 class NetworkUnit(PhysicalELMT):
 
-    def __init__(self, unit_id, experiment, **channel_sensor):
-        super(NetworkUnit, self).__init__('UnitClient', unit_id, 'Unit_{}'.format(experiment))
-        self.experiment = experiment
-        self.experiment_id = experiment._id
+    def __init__(self, unit_id, *channel):
+        super(NetworkUnit, self).__init__('UnitClient', unit_id)
+
+    experiment: MonitorExperiment,
+    self.experiment = experiment
+    self.experiment_id = experiment._id
+    #@TODO
+    def channel_install(self):
         self.channel_sensor: dict
         for _c, _s in channel_sensor.items():
             assert isinstance(_c, str) and isinstance(_s, Sensor), TypeError
@@ -37,24 +62,33 @@ class Sensor(PhysicalELMT):
 
     def __init__(self, sensor_id, sensor_type='Sensor',
                  x=0, y=0, z=0, direction=None,
-                 datapath=None, unit=None, channel=None,
-                 *arg, **kwargs):
+                 unit: NetworkUnit = None, channel: str = None,
+                 manufactureModel=None,
+                 datapath: str = None, *arg, **kwargs):
         super(Sensor, self).__init__(sensor_type, sensor_id)
         self.x, self.y, self.z = x, y, z
         self.direction = direction
-        self.datapath = datapath
         self.unit, self.channel = unit, channel
+        self.manufactureModel = manufactureModel
+        self.datapath = datapath
         self.des = arg
-        self.check_attr(**kwargs)
+        self.update_attr(**kwargs)
 
     def install_at(self, *position):
-        if isinstance(position[0], FENode):
+        if len(position) == 1 and isinstance(position[0], FENode):
             self.x, self.y, self.z = position[0].x, position[0].y, position[0].z
         elif len(position) == 3:
             self.x, self.y, self.z = position
             assert isinstance(self.x, (float, int))
             assert isinstance(self.y, (float, int))
             assert isinstance(self.z, (float, int))
+
+    def conn_unit(self, unit:NetworkUnit, channel):
+        #@TODO
+        if channel in unit.channel_sensor.key():
+            print("Channel exists")
+        else:
+            print("No channel")
 
 
 class DatProc(object):
