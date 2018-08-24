@@ -117,6 +117,7 @@ class PyElmt(object):
         self.__dict__[attrib]=elmt
         self.__dict__["{}_ob".format(attrib)]=elmt.openBrIM
         self.__dict__["{}_id".format(attrib)]=elmt._id
+        #@TODO
         """
         option #1, only one attribute is linked, the PyELMT. Then in the set_openbrim() method, use a try...block to find corresponding ob node.
         #2, in the interfaces.__init__, create a new class, much like the PyOpenBrIM, to accept the OB type and variables together.
