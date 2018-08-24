@@ -17,11 +17,11 @@ from BMS_BrIM.Py_Physical import *
 
 class MonitorExperiment(Document):
 
-    def __init__(self, ext_id, bridge, startDateTime, endDateTime, des=None):
+    def __init__(self, ext_id, bridge, start_datetime, end_datetime, des=None):
         _name = 'Experiment_{}'.format(bridge)
         self.bridge = bridge
-        self.start = dt.datetime(*self._prc_dt(startDateTime))
-        self.end = dt.datetime(*self._prc_dt(endDateTime))
+        self.start = dt.datetime(*self._prc_dt(start_datetime))
+        self.end = dt.datetime(*self._prc_dt(end_datetime))
         super(MonitorExperiment, self).__init__(_name, ext_id, des)
 
     @property
@@ -31,7 +31,8 @@ class MonitorExperiment(Document):
         print(" * until: {}".format(self.end))
         return self.end - self.start
 
-    def _prc_dt(self, datetime):
+    @staticmethod
+    def _prc_dt(datetime):
         """process of DateTime int transferred to to a list of dt objects,
         such as 201801010203 (AM 2:03, Jan 1st, 2018) to 2018,01,01,02,03.
         :returns:
@@ -44,17 +45,26 @@ class MonitorExperiment(Document):
 
 class NetworkUnit(PhysicalELMT):
 
-    def __init__(self, unit_id, *channel):
-        super(NetworkUnit, self).__init__('UnitClient', unit_id)
+    def __init__(self, unit_id, *channel, experiment=None):
+        super(NetworkUnit, self).__init__('NetworkUnit', unit_id)
+        self.channel: list = channel
+        self.experiment, self.experiment_id = self.experiment_install(experiment)
 
-    experiment: MonitorExperiment,
-    self.experiment = experiment
-    self.experiment_id = experiment._id
-    #@TODO
-    def channel_install(self):
+    def experiment_install(self, experiment: MonitorExperiment):
+        try:
+            self.experiment = experiment
+            self.experiment_id = experiment._id
+            return experiment, experiment._id
+        except AttributeError as e:
+            print("Error in NetworkUnit.experiment_install()")
+            print(e)
+
+    def channel_install(self, **channel_sensor):
         self.channel_sensor: dict
         for _c, _s in channel_sensor.items():
             assert isinstance(_c, str) and isinstance(_s, Sensor), TypeError
+            if _c not in self.channel:
+                print("! New channel <{}> added to {}".format(_c, self.name))
             self.channel_sensor[_c] = _s._id
 
 
@@ -63,13 +73,13 @@ class Sensor(PhysicalELMT):
     def __init__(self, sensor_id, sensor_type='Sensor',
                  x=0, y=0, z=0, direction=None,
                  unit: NetworkUnit = None, channel: str = None,
-                 manufactureModel=None,
+                 manufacture_model=None,
                  datapath: str = None, *arg, **kwargs):
         super(Sensor, self).__init__(sensor_type, sensor_id)
         self.x, self.y, self.z = x, y, z
         self.direction = direction
-        self.unit, self.channel = unit, channel
-        self.manufactureModel = manufactureModel
+        self.unit, self.channel = self.unit_install(unit, channel)
+        self.manufactureModel = manufacture_model
         self.datapath = datapath
         self.des = arg
         self.update_attr(**kwargs)
@@ -83,12 +93,13 @@ class Sensor(PhysicalELMT):
             assert isinstance(self.y, (float, int))
             assert isinstance(self.z, (float, int))
 
-    def conn_unit(self, unit:NetworkUnit, channel):
-        #@TODO
-        if channel in unit.channel_sensor.key():
+    def unit_install(self, unit: NetworkUnit, channel: str):
+        if channel in unit.channel:
             print("Channel exists")
         else:
-            print("No channel")
+            print("No channel, should define the channel first.")
+        self.unit, self.channel = unit, channel
+        return unit, channel
 
 
 class DatProc(object):

@@ -31,7 +31,7 @@ class PyElmt(object):
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
         self.db_config: dict = dict()  # dict(database=, table=, user=,...)
-        self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
+        self.openBrIM: dict or PyOpenBrIMElmt = dict()  # dict of eET.elements
 
     # MongoDB methods: setting; setter, getter;
     def set_mongo_doc(self):
@@ -53,7 +53,8 @@ class PyElmt(object):
             return _result
 
     def set_openbrim(self, ob_class: (OBPrmElmt, OBObjElmt), **attrib_dict: dict):
-        """attrib_dict is used to add other redundancy info, so don't update the element.__dict__ with it."""
+        """attrib_dict is used to add other redundancy info,
+        so don't update the element.__dict__ with it."""
         # get attributes required by the OpenBrIM type
         _required_attr: dict = _attr_pick(self, *ob_class._REQUIRE)
         # _openbrim_attrib = {**_required_attr, **attrib_dict}
@@ -110,6 +111,16 @@ class PyElmt(object):
         if 'table' not in kwargs.keys():
             print('The table/collection name is needed')
         self.db_config['table'] = kwargs['table']
+
+    def link_elmt(self, attrib, elmt:PyElmt):
+        """link the PyELMT to another PyELMT."""
+        self.__dict__[attrib]=elmt
+        self.__dict__["{}_ob".format(attrib)]=elmt.openBrIM
+        self.__dict__["{}_id".format(attrib)]=elmt._id
+        """
+        option #1, only one attribute is linked, the PyELMT. Then in the set_openbrim() method, use a try...block to find corresponding ob node.
+        #2, in the interfaces.__init__, create a new class, much like the PyOpenBrIM, to accept the OB type and variables together.
+        """
 
 
 class Document(object):
