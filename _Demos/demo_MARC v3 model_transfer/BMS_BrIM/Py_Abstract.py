@@ -21,7 +21,7 @@ _DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
                             Node=OBFENode)
 
 
-class AbstractELMT(PyElmt):
+class AbstractELMT(PyELMT):
 
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
@@ -32,7 +32,7 @@ class AbstractELMT(PyElmt):
         if not ob_class:
             ob_class = _DICT_OPENBRIM_CLASS[self.type]
             print("{}.openBrIM is of {}".format(self.name, ob_class))
-        _openbrim = PyElmt.set_openbrim(self, ob_class, **attrib_dict)
+        _openbrim = PyELMT.set_openbrim(self, ob_class, **attrib_dict)
         return _openbrim
 
 

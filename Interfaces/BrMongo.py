@@ -87,8 +87,8 @@ class ConnMongoDB(object):
         except mg.errors.DuplicateKeyError:
             print("This document in {} already exists".format(collection))
             print(" -", data)
-        except bson.errors.InvalidDocument:
-            print("Cannot encode object to {}".format(collection))
+        except bson.errors.InvalidDocument as e:
+            print("Cannot encode object to {}".format(collection), e)
             print(" -", data)
 
     def update_data(self, collection, id, **data):

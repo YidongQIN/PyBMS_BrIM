@@ -85,6 +85,8 @@ nodeBR[0].set_node_attr('tz', -1)
 nodeBR[0].set_node_attr('tx', -1)
 nodeBL[span_num.value].set_node_attr('tz', -1)
 nodeBL[span_num.value].set_node_attr('tz', -1)
+nodeBR[span_num.value].set_node_attr('tz', -1)
+nodeBR[span_num.value].set_node_attr('tz', -1)
 marc.fem_nodes.append(*nodeBL, *nodeBR, *nodeTL[1:], *nodeTR[1:])
 # 4. Structure Elements = Mechanical View
 bottomChordList=[]

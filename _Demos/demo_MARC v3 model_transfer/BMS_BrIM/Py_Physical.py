@@ -24,7 +24,7 @@ _DICT_GEO_CLASS = dict(Node=OBPoint,
                        BoltedPlate=BoltedPlateGeo,
                        Volume=OBVolume)
 
-class PhysicalELMT(PyElmt):
+class PhysicalELMT(PyELMT):
     """PhysicalELMT is used to represent real members of bridges.
     it contains parameters of the element, by init() or reading database.
     Thus it could exports geometry model, FEM model and database info
@@ -49,7 +49,7 @@ class PhysicalELMT(PyElmt):
         _ob_models = list()
         for _ob in ob_class_fem, ob_class_geo:
             # openBrIM is one of the PyELMT interfaces
-            _ob_elmt = PyElmt.set_openbrim(self, _ob, **attrib_dict)
+            _ob_elmt = PyELMT.set_openbrim(self, _ob, **attrib_dict)
             _ob_models.append(_ob_elmt)
         self.openBrIM = dict(zip(['fem', 'geo'], _ob_models))
         return self.openBrIM

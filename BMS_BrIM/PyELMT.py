@@ -18,7 +18,7 @@ import json
 from Interfaces import *
 
 
-class PyElmt(object):
+class PyELMT(object):
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """Basic mandatory attributes of PyELMT are type, id;
@@ -30,8 +30,8 @@ class PyElmt(object):
         else:
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
-        self.db_config: dict = dict()  # dict(database=, table=, user=,...)
-        self.openBrIM: dict or PyOpenBrIMElmt = dict()  # dict of eET.elements
+        self.db_config = dict()  # dict(database=, table=, user=,...)
+        self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
 
     # MongoDB methods: setting; setter, getter;
     def set_mongo_doc(self):
@@ -112,12 +112,11 @@ class PyElmt(object):
             print('The table/collection name is needed')
         self.db_config['table'] = kwargs['table']
 
-    def link_elmt(self, attrib, elmt:PyElmt):
+    def link_elmt(self, attrib, elmt):
         """link the PyELMT to another PyELMT."""
-        self.__dict__[attrib]=elmt
-        self.__dict__["{}_ob".format(attrib)]=elmt.openBrIM
-        self.__dict__["{}_id".format(attrib)]=elmt._id
-        #@TODO
+        self.__dict__[attrib] = elmt
+        self.__dict__["{}_ob".format(attrib)] = elmt.openBrIM
+        self.__dict__["{}_id".format(attrib)] = elmt._id
         """
         option #1, only one attribute is linked, the PyELMT. Then in the set_openbrim() method, use a try...block to find corresponding ob node.
         #2, in the interfaces.__init__, create a new class, much like the PyOpenBrIM, to accept the OB type and variables together.
@@ -190,6 +189,7 @@ def _attr_pick(elmt, *pick_list):
 
 
 def _attr_pop(elmt, *pop_list):
+    """pop attributes whose key is in the list, return the rest ones."""
     _d = dict()
     for _k, _v in elmt.__dict__.items():
         if (_k not in pop_list) and _v:
@@ -197,19 +197,37 @@ def _attr_pop(elmt, *pop_list):
     return _d
 
 
-def _attr_to_mongo_dict(elmt: PyElmt):
+def _attr_to_mongo_dict(elmt: PyELMT):
     """dump some of the attributes to dict.
-    the default pop out list is: 'openbrim','db_config'. """
-    return _attr_pop(elmt, 'openBrIM', 'db_config',
-                     'section_ob', 'section',
-                     'material_ob', 'material',
-                     'thick_prm_ob', 'thick_prm',
-                     'shape', 'shape_ob',
-                     'node1', 'node1_ob',
-                     'node2', 'node2_ob',
-                     'node3', 'node3_ob',
-                     'node4', 'node4_ob',
-                     )
+    typically, the _pop_list =['openBrIM', 'db_config',
+        'section_ob', 'section','material_ob', 'material',
+        'thick_prm_ob', 'thick_prm','shape', 'shape_ob',
+        'node1', 'node1_ob','node2', 'node2_ob','node3', 'node3_ob','node4', 'node4_ob',]"""
+
+    def is_unacceptable(one_item):
+        _unaccept_type = (PyELMT, PyOpenBrIMElmt)
+        if isinstance(one_item, _unaccept_type):
+            return True
+        return False
+
+    def should_pop(attribute_value):
+        if isinstance(attribute_value, (tuple, list)):
+            _to_list = list(attribute_value)
+            return is_unacceptable(_to_list[0])
+        return is_unacceptable(attribute_value)
+
+    def _pop_list(elmt):
+        _pop_key = ['db_config']
+        for _k, _v in elmt.__dict__.items():
+            if should_pop(_v):
+                _pop_key.append(_k)
+        print("pop list:", )
+        return _pop_key
+
+    _after_pop = _attr_pop(elmt, *_pop_list(elmt))
+    # print(_pop_list)
+    print(_after_pop)
+    return _after_pop
 
 # def parameter_format(k):
 #     if isinstance(k, int):
