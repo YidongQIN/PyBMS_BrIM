@@ -36,7 +36,7 @@ class PhysicalELMT(PyELMT):
         super(PhysicalELMT, self).__init__(elmt_type, elmt_id, elmt_name)
         self.material: Material = None
         self.section: Section = None
-        self.node: list = list()
+        # self.node: list = list()
         self.openBrIM = dict(fem=None, geo=None)
 
     def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
@@ -60,6 +60,7 @@ class PhysicalELMT(PyELMT):
             self.material_ob = material.openBrIM
             self.material_id = material._id
         else:
+            self.material = self.section.material
             self.material_ob = self.section.material_ob
             self.material_id = self.section.material_id
 
@@ -100,14 +101,14 @@ class Surface(PhysicalELMT):
     def __init__(self, node1, node2, node3, node4,
                  thick_prm, material,
                  deck_id=None, deck_name=None):
-        self.set_material(material)
+        super(Surface, self).__init__('Surface', deck_id, deck_name)
         # self.set_section(section)
         self.set_parameter('thick_prm', thick_prm)
+        self.set_material(material)
         self.link_node(node1, 1)
         self.link_node(node2, 2)
         self.link_node(node3, 3)
         self.link_node(node4, 4)
-        super(Surface, self).__init__('Surface', deck_id, deck_name)
         self.set_openbrim(OBFESurface, OBSurface)
 
 

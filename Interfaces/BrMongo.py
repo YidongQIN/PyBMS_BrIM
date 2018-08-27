@@ -76,7 +76,7 @@ class ConnMongoDB(object):
         return self.col_find_all(collection, _condition)
 
     def have_a_look(self, collection):
-        print("All documents in <{}> are:".format(collection))
+        print("Docs in <{}>:".format(collection))
         cursor = self.db[collection].find()
         for i in cursor:
             print('  - ' + str(i))
@@ -85,20 +85,20 @@ class ConnMongoDB(object):
         try:
             return self.db[collection].insert({**data})
         except mg.errors.DuplicateKeyError:
-            print("This document in {} already exists".format(collection))
+            print("#Existed doc in collection <{}>".format(collection))
             print(" -", data)
         except bson.errors.InvalidDocument as e:
-            print("Cannot encode object to {}".format(collection), e)
+            print("!Encoding object to {} error:".format(collection), e)
             print(" -", data)
 
     def update_data(self, collection, id, **data):
         """equals to: return self.db[collection].update({'_id': id}, _data, True)"""
         if self.find_by_kv(collection, '_id', id):
-            print('Find in {}, _id = {} in MongoDB'.format(collection, id))
+            print('Existed doc in <{}>, ._id={}'.format(collection, id))
             # later, maybe use findall to check if exist doc of same content
             return self.db[collection].update({'_id': id}, data, True)
         else:
-            print('Insert into MongoDB: <{}>._id={}'.format(collection, id))
+            print('New doc in <{}>, ._id={}'.format(collection, id))
             return self.insert_data(collection, **data)
 
     # below are methods for element, should not be use.

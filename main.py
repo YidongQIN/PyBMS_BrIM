@@ -1,20 +1,20 @@
 from BMS_BrIM import *
+from pprint import pprint
 
 # dataplt=DatProc('Test Data Plot', "c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\U113_ADC_A2.dat")
 testproj=ProjGroups('Test_Attr_POP')
 steel = Material(1, 'Steel', d="0.0000007345", E="29000")
-print(steel.__dict__)
 testproj.mat_group.append(steel)
 rec1=Shape(1, 'Rect 6*6', RectangleOBShape, 6, 6)
-rec2=Shape(2, 'Rect 6*6', RectangleOBShape, 6, 6, is_cut=True)
+rec2=Shape(2, 'Rect 5*5', RectangleOBShape, 5, 5, is_cut=True)
 sect = Section(11, 'BottomChord', rec1, rec2, material=steel)
-# sect = Section(11, 'BottomChord', rec1, rec2, material=steel)
 ttt=Parameter(13, 'DeckThickness', 4, 'Thickness')
 testproj.sec_group.append(rec1,rec2, sect)
 node1 = FENode(1, 0, 3, node_id=100)
 node2 = FENode(10, 22, 33, node_id=200)
 deck = Surface(node1, node2, node1, node2, ttt, steel, 20, 'TestDeck')
-
+testproj.fem_nodes.append(node1,node2)
+testproj.member_gp.append(deck)
 
 '''
 doc = Document('TestDoc', 1, 'Description of DOc')

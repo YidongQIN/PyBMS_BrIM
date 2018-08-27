@@ -44,7 +44,7 @@ class PyELMT(object):
                 _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
             else:
                 _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-                print("<{}> is in <{}>, ObjectID={}".format(self.name, _col, self._id))
+                print("{}._id is set to {} based on MongoDB doc".format(self.name, self._id))
 
     def get_mongo_doc(self, if_print=False):
         with ConnMongoDB(**self.db_config) as _db:
@@ -198,35 +198,38 @@ def _attr_pop(elmt, *pop_list):
 
 
 def _attr_to_mongo_dict(elmt: PyELMT):
-    """dump some of the attributes to dict.
-    typically, the _pop_list =['openBrIM', 'db_config',
-        'section_ob', 'section','material_ob', 'material',
-        'thick_prm_ob', 'thick_prm','shape', 'shape_ob',
-        'node1', 'node1_ob','node2', 'node2_ob','node3', 'node3_ob','node4', 'node4_ob',]"""
+    """dump some of the attributes to dict."""
 
     def is_unacceptable(one_item):
+        """object whose type is unaccecptable, like PyELMT or PyOpenBrIMElmt,
+        cannot be encoded into mongoDB."""
         _unaccept_type = (PyELMT, PyOpenBrIMElmt)
         if isinstance(one_item, _unaccept_type):
             return True
         return False
 
     def should_pop(attribute_value):
+        """attributes of PyELMT is complex.
+        If the elmt.attribute is only one object, judge it by is_unacceptable();
+        If the elmt.attribute is a collection (tuple or list, like shapes in Section), judge by its element(s)."""
         if isinstance(attribute_value, (tuple, list)):
             _to_list = list(attribute_value)
             return is_unacceptable(_to_list[0])
         return is_unacceptable(attribute_value)
 
     def _pop_list(elmt):
-        _pop_key = ['db_config']
+        """typically, the _pop_list =['openBrIM', 'db_config',
+        'section_ob', 'section','material_ob', 'material',
+        'thick_prm_ob', 'thick_prm','shape', 'shape_ob',
+        'node1', 'node1_ob','node2', 'node2_ob']"""
+        _pop_key = ['db_config', 'openBrIM']
         for _k, _v in elmt.__dict__.items():
             if should_pop(_v):
                 _pop_key.append(_k)
-        print("pop list:", )
+        _pop_key=list(set(_pop_key))
         return _pop_key
 
     _after_pop = _attr_pop(elmt, *_pop_list(elmt))
-    # print(_pop_list)
-    print(_after_pop)
     return _after_pop
 
 # def parameter_format(k):

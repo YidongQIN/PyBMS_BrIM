@@ -54,7 +54,7 @@ rect_Ver_In = Shape(4, 'Rect_Ver_In 5.75*5.75', RectangleOBShape,
                     Chord_width.value - VertiBeam_thickness.value, is_cut=True)
 # circle=1
 cir_Web = Shape(5, 'CircleWeb', OBCircle, WebRadius.value)
-# MARC.sec_group.append(rect_Ver_In,rect_Bot_In,rect_Out,rect_Top_In,cir_Web)
+marc.sec_group.append(rect_Ver_In,rect_Bot_In,rect_Out,rect_Top_In,cir_Web)
 # 2.2 bottom chord 6*6*0.375
 sect_bottom = Section(11, 'BottomChord', rect_Out, rect_Bot_In, material=steel)
 # 2.3 top chord 6*6*0.3125
