@@ -12,11 +12,11 @@ import numpy as np
 from BMS_BrIM.PyELMT import *
 
 
-class Sensor(OBObjElmt):
+class SensorLab(OBObjElmt):
     # base_node: FENode
 
     def __init__(self, sensor_id, sensor_type, des: str, database_config: dict):
-        super(Sensor, self).__init__('Sensor', sensor_id, D=des)
+        super(SensorLab, self).__init__('Sensor', sensor_id, D=des)
         self.id = sensor_id
         self.type = sensor_type
         self.name = '{}_{}'.format(sensor_type, sensor_id)
@@ -136,7 +136,7 @@ class Sensor(OBObjElmt):
         return node
 
 
-class Temperature(Sensor):
+class Temperature(SensorLab):
     def __init__(self, tp_id, des, database_config):
         super(Temperature, self).__init__(tp_id, 'Temperature', des, database_config)
 
@@ -158,7 +158,7 @@ class Temperature(Sensor):
         pass
 
 
-class StrainGauge(Sensor):
+class StrainGauge(SensorLab):
     def __init__(self, sg_id, des, database_config):
         super(StrainGauge, self).__init__(sg_id, 'strainGauge', des, database_config)
 
@@ -177,7 +177,7 @@ class StrainGauge(Sensor):
         return ss
 
 
-class Accelerometer(Sensor):
+class Accelerometer(SensorLab):
     def __init__(self, ac_id, des, database_config):
         super(Accelerometer, self).__init__(ac_id, 'accelerometer', des, database_config)
         # self.name = 'AC{}'.format(ac_id)
@@ -192,7 +192,7 @@ class Accelerometer(Sensor):
         return ac
 
 
-class Displacement(Sensor):
+class Displacement(SensorLab):
     def __init__(self, ds_id, des, database_config):
         super(Displacement, self).__init__(ds_id, 'Displacement', des, database_config)
         self.name = 'DS{}'.format(ds_id)

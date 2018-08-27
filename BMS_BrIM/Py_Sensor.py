@@ -15,13 +15,26 @@ import numpy as np
 from BMS_BrIM.Py_Physical import *
 
 
+class BridgeProject(Document):
+
+    def __init__(self, name, bridge_id, latitude, longitude, length, structural_type, des):
+        super(BridgeProject, self).__init__(name, 0, des)
+        # self._id=0 # relationship of bridgeid and ObjectId(=_id) in MongoDB?
+        self.bridge_id = bridge_id
+        self.latitude, self.longitude = latitude, longitude
+        self.length = length
+        self.structural_type = structural_type
+        if self.structural_type not in ['girder', 'arch', 'cable-stay', 'suspension']:
+            print('#Special bridge structural type')
+
+
 class MonitorExperiment(Document):
 
     def __init__(self, ext_id, bridge, start_datetime, end_datetime, des=None):
         _name = 'Experiment_{}'.format(bridge)
         self.bridge = bridge
-        self.start = dt.datetime(*self._prc_dt(start_datetime))
-        self.end = dt.datetime(*self._prc_dt(end_datetime))
+        self.start = dt.datetime(*self._format_datetime(start_datetime))
+        self.end = dt.datetime(*self._format_datetime(end_datetime))
         super(MonitorExperiment, self).__init__(_name, ext_id, des)
 
     @property
@@ -32,7 +45,7 @@ class MonitorExperiment(Document):
         return self.end - self.start
 
     @staticmethod
-    def _prc_dt(datetime):
+    def _format_datetime(datetime):
         """process of DateTime int transferred to to a list of dt objects,
         such as 201801010203 (AM 2:03, Jan 1st, 2018) to 2018,01,01,02,03.
         :returns:
@@ -74,32 +87,84 @@ class Sensor(PhysicalELMT):
                  x=0, y=0, z=0, direction=None,
                  unit: NetworkUnit = None, channel: str = None,
                  manufacture_model=None,
-                 datapath: str = None, *arg, **kwargs):
+                 datapath: str = None, ):
+        """sensor_id, sensor_type='Sensor', x=0, y=0, z=0, direction=None,
+        unit: NetworkUnit = None, channel: str = None,
+        manufacture_model=None,datapath: str = None"""
+        #@TODO
         super(Sensor, self).__init__(sensor_type, sensor_id)
-        self.x, self.y, self.z = x, y, z
+        self.x, self.y, self.z = self.install_position(x, y, z)
         self.direction = direction
-        self.unit, self.channel = self.unit_install(unit, channel)
+        self.unit, self.channel = self.unit_channel_install(unit, channel)
         self.manufactureModel = manufacture_model
         self.datapath = datapath
-        self.des = arg
-        self.update_attr(**kwargs)
+        # self.des = arg
+        # self.update_attr(**kwargs)
+        # self.set_openbrim(OBFENode, OBVolume)
+        # without geometry size cannot init geo model in sensor
 
-    def install_at(self, *position):
+    def install_position(self, *position):
+        """a FENode or 3 coordinates"""
         if len(position) == 1 and isinstance(position[0], FENode):
-            self.x, self.y, self.z = position[0].x, position[0].y, position[0].z
+            _x, _y, _z = position[0].x, position[0].y, position[0].z
         elif len(position) == 3:
-            self.x, self.y, self.z = position
-            assert isinstance(self.x, (float, int))
-            assert isinstance(self.y, (float, int))
-            assert isinstance(self.z, (float, int))
+            _x, _y, _z = position
+            assert isinstance(_x, (float, int))
+            assert isinstance(_y, (float, int))
+            assert isinstance(_z, (float, int))
+        else:
+            print("! Position Error {}".format(self.name))
+            return
+        return _x, _y, _z
 
-    def unit_install(self, unit: NetworkUnit, channel: str):
+    def unit_channel_install(self, unit: NetworkUnit, channel: str):
         if channel in unit.channel:
-            print("Channel exists")
+            print("Confirmed Channel: {}.{}->{}".format(unit.name, channel,self.name))
         else:
             print("No channel, should define the channel first.")
-        self.unit, self.channel = unit, channel
+        # self.unit, self.channel = unit, channel
         return unit, channel
+
+
+class TemperatureSensor(Sensor):
+
+    def __init__(self, sensor_id, x=0, y=0, z=0, direction=None,
+                 unit: NetworkUnit = None, channel: str = None,
+                 manufacture_model=None,
+                 datapath: str = None, *arg, **kwargs):
+        super(TemperatureSensor, self).__init__(sensor_id, 'TemperatureSensor',
+                                                x, y, z, direction,
+                                                unit, channel,
+                                                manufacture_model, datapath,
+                                                *arg, **kwargs)
+        pass
+
+
+class StrainGauge(Sensor):
+
+    def __init__(self):
+        super(StrainGauge, self).__init__()
+        pass
+
+    pass
+
+
+class Accelerometer(Sensor):
+
+    def __init__(self):
+        super(Accelerometer, self).__init__()
+        pass
+
+    pass
+
+
+class Displacemeter(Sensor):
+
+    def __init__(self):
+        super(Displacemeter, self).__init__()
+        pass
+
+    pass
 
 
 class DatProc(object):
@@ -132,9 +197,7 @@ class DatProc(object):
         sp = np.fft.fft(self.data)
         freq = np.fft.fftfreq(self.data.shape[-1])
         plt.subplot(212)
-        # plt.plot(sp)
         plt.plot(freq, sp.real, freq, sp.imag)
         plt.xlabel('Frequency')
         plt.ylabel('dB')
         plt.title('FFT of {}'.format(self.title))
-        # plt.show()

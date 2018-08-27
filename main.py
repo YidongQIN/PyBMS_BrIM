@@ -1,7 +1,16 @@
 from BMS_BrIM import *
-from pprint import pprint
 
 # dataplt=DatProc('Test Data Plot', "c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\U113_ADC_A2.dat")
+print("===Test on Sensor===")
+exp = MonitorExperiment(1, 'MARC', 201808251330, 201808271555, "not a real experiment")
+uc = NetworkUnit(22, 'ACD', 'BC', 'A4', experiment=exp)
+datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat'
+# new_ss = Sensor(20, 'SS', )
+new_ss=Sensor(20,'SS', 0, 0, 10, 'x',uc,'BC', 'mason', datpath)
+
+print(new_ss.__dict__)
+
+'''
 testproj=ProjGroups('Test_Attr_POP')
 steel = Material(1, 'Steel', d="0.0000007345", E="29000")
 testproj.mat_group.append(steel)
@@ -16,12 +25,9 @@ deck = Surface(node1, node2, node1, node2, ttt, steel, 20, 'TestDeck')
 testproj.fem_nodes.append(node1,node2)
 testproj.member_gp.append(deck)
 
-'''
 doc = Document('TestDoc', 1, 'Description of DOc')
 doc.update_attr(att1="the first attrib", update=True, datetime=20180822)
 doc.set_file(None)
-
-
 
 print("test LineCube")
 proj=OBProject('testLineCube')
@@ -31,14 +37,8 @@ proj.sub(lc)
 
 ss=Sensor(1, 'testSS', 'accelerometer', 10, -3, -3)
 print(ss.x)
-ss.install_at(0,1,1)
+ss.install_position(0,1,1)
 print(ss.x)
-
-print(ss.__dict__)
-# test Surface
-
-
-print("=== test AbstractELMT ===")
 
 # test Material
 print("==== test Material ====")
