@@ -1,14 +1,15 @@
 from BMS_BrIM import *
+from pprint import pprint
 
 # dataplt=DatProc('Test Data Plot', "c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\U113_ADC_A2.dat")
 print("===Test on Sensor===")
 exp = MonitorExperiment(1, 'MARC', 201808251330, 201808271555, "not a real experiment")
 uc = NetworkUnit(22, 'ACD', 'BC', 'A4', experiment=exp)
 datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\server backup\\20180327_161910_20\\U116_ADC_B2.dat'
-# new_ss = Sensor(20, 'SS', )
-new_ss=Sensor(20,'SS', 0, 0, 10, 'x',uc,'BC', 'mason', datpath)
+new_ss = Sensor(20, 'SS', y=10, )
+# new_ss=Sensor(20,'SS', 0, 0, 10, 'x',uc,'BC', 'mason', datpath)
 
-print(new_ss.__dict__)
+pprint(new_ss.__dict__)
 
 '''
 testproj=ProjGroups('Test_Attr_POP')

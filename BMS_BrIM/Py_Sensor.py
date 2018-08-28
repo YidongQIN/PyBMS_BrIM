@@ -83,15 +83,14 @@ class NetworkUnit(PhysicalELMT):
 
 class Sensor(PhysicalELMT):
 
-    def __init__(self, sensor_id, sensor_type='Sensor',
+    def __init__(self, sensor_id, sensor_type='Sensor', *,
                  x=0, y=0, z=0, direction=None,
                  unit: NetworkUnit = None, channel: str = None,
-                 manufacture_model=None,
-                 datapath: str = None, ):
+                 manufacture_model=None, datapath: str = None, ):
         """sensor_id, sensor_type='Sensor', x=0, y=0, z=0, direction=None,
         unit: NetworkUnit = None, channel: str = None,
         manufacture_model=None,datapath: str = None"""
-        #@TODO
+        # @TODO
         super(Sensor, self).__init__(sensor_type, sensor_id)
         self.x, self.y, self.z = self.install_position(x, y, z)
         self.direction = direction
@@ -105,23 +104,31 @@ class Sensor(PhysicalELMT):
 
     def install_position(self, *position):
         """a FENode or 3 coordinates"""
-        if len(position) == 1 and isinstance(position[0], FENode):
-            _x, _y, _z = position[0].x, position[0].y, position[0].z
-        elif len(position) == 3:
-            _x, _y, _z = position
-            assert isinstance(_x, (float, int))
-            assert isinstance(_y, (float, int))
-            assert isinstance(_z, (float, int))
-        else:
-            print("! Position Error {}".format(self.name))
+        try:
+            if len(position) == 1 and isinstance(position[0], FENode):
+                _x, _y, _z = position[0].x, position[0].y, position[0].z
+            elif len(position) == 3:
+                _x, _y, _z = position
+                assert isinstance(_x, (float, int))
+                assert isinstance(_y, (float, int))
+                assert isinstance(_z, (float, int))
+            else:
+                print("! Position Error {}".format(self.name))
+                return
+        except AttributeError:
+            print("Position not defined.")
             return
         return _x, _y, _z
 
     def unit_channel_install(self, unit: NetworkUnit, channel: str):
-        if channel in unit.channel:
-            print("Confirmed Channel: {}.{}->{}".format(unit.name, channel,self.name))
-        else:
-            print("No channel, should define the channel first.")
+        """"""
+        try:
+            if channel in unit.channel:
+                print("Confirmed Channel: {}.{}->{}".format(unit.name, channel, self.name))
+            else:
+                print("No channel, should define the channel first.")
+        except AttributeError:
+            print("Unit and channel are not defined.")
         # self.unit, self.channel = unit, channel
         return unit, channel
 
