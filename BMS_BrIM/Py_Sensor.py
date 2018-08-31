@@ -86,17 +86,16 @@ class Sensor(PhysicalELMT):
     def __init__(self, sensor_id, sensor_type='Sensor', *,
                  x=0, y=0, z=0, direction=None,
                  unit: NetworkUnit = None, channel: str = None,
-                 manufacture_model=None, datapath: str = None, ):
+                 manufacture_model=None, sensor_data=None, ):
         """sensor_id, sensor_type='Sensor', x=0, y=0, z=0, direction=None,
         unit: NetworkUnit = None, channel: str = None,
         manufacture_model=None,datapath: str = None"""
-        # @TODO
         super(Sensor, self).__init__(sensor_type, sensor_id)
         self.x, self.y, self.z = self.install_position(x, y, z)
         self.direction = direction
         self.unit, self.channel = self.unit_channel_install(unit, channel)
         self.manufactureModel = manufacture_model
-        self.datapath = datapath
+        self.data = self.store_data(sensor_data)  # maybe in the mongoDB ?
         # self.des = arg
         # self.update_attr(**kwargs)
         # self.set_openbrim(OBFENode, OBVolume)
@@ -129,22 +128,32 @@ class Sensor(PhysicalELMT):
                 print("No channel, should define the channel first.")
         except AttributeError:
             print("Unit and channel are not defined.")
-        # self.unit, self.channel = unit, channel
         return unit, channel
+
+    def store_data(self, sensor_data):
+        """store the data in a .dat file or MongoDB?"""
+        if isinstance(sensor_data, str):
+            assert re.match('.*\.dat', sensor_data)
+            print("Sensor {} data is store a the file:".format(self.name), sensor_data)
+            return np.loadtxt(sensor_data).tolist()
+        elif isinstance(sensor_data, list):
+            for _d in sensor_data:
+                assert isinstance(_d, (float, int))
+            print("Total number of sensor data is", len(sensor_data))
+            return sensor_data
 
 
 class TemperatureSensor(Sensor):
 
-    def __init__(self, sensor_id, x=0, y=0, z=0, direction=None,
+    def __init__(self, sensor_id,
+                 x=0, y=0, z=0, direction=None,
                  unit: NetworkUnit = None, channel: str = None,
                  manufacture_model=None,
-                 datapath: str = None, *arg, **kwargs):
+                 sensor_data: str = None):
         super(TemperatureSensor, self).__init__(sensor_id, 'TemperatureSensor',
-                                                x, y, z, direction,
-                                                unit, channel,
-                                                manufacture_model, datapath,
-                                                *arg, **kwargs)
-        pass
+                                                x=x, y=y, z=z, direction=direction,
+                                                unit=unit, channel=channel,
+                                                manufacture_model=manufacture_model, sensor_data=sensor_data)
 
 
 class StrainGauge(Sensor):
@@ -177,17 +186,16 @@ class Displacemeter(Sensor):
 class DatProc(object):
     """Get and process of sensor _data"""
 
-    def __init__(self, title, file_path):
+    def __init__(self, title, data_file):
         """Get .dat file in a particular path"""
         self.title = title
         try:
-            self.data = np.loadtxt(file_path)
+            self.data = np.loadtxt(data_file)
             # print(self.data.shape) # =(6000,)
         except OSError as e:
             print(e)
         plt.figure()
         plt.title(self.title + "and its FFT")
-
         self.plot()
         self.fourier()
         plt.tight_layout()
