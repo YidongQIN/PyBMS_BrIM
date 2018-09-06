@@ -5,7 +5,7 @@ from pprint import pprint
 print("===Test on Sensor===")
 exp = MonitorExperiment(1, 'MARC', 201808251330, 201808271555, "not a real experiment")
 uc = NetworkUnit(22, 'ACD', 'BC', 'A4', experiment=exp)
-datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180327_161910_20\\U117_ADC_B2.dat'
+datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\server backup\\20180327_161910_20\\U117_ADC_B2.dat'
 datalist=[0,12,13,15,18,19,25,24,26,3]
 new_ss = Sensor(20, 'SS', y=10, sensor_data=datalist)
 # new_ss = Sensor(20, 'SS', y=10, sensor_data=datpath)
