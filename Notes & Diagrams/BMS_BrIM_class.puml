@@ -1,0 +1,58 @@
+@startuml
+
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+Interface hasMongo{
+    object_id
+    mongo_config()
+    set_mongo()
+    get_mongo()
+    - {static} dump()
+}
+hasMongo -- PyELMT
+
+Interface hasOpenBrIM{
+    - ob_element:PyOpenBrIMELMT
+    set_ob_element()
+    get_ob_element()
+    sub()
+}
+
+Interface has_OpenBrIM_dict{
+    ob_element:dict
+}
+
+has_OpenBrIM_dict --|> hasOpenBrIM
+
+class PyELMT{
+    type
+    id
+    update()
+    link()
+}
+
+class AbstractELMT
+
+class PhysicalELMT
+
+' hide PhysicalELMT circle
+
+together {
+    class PyELMT
+    class AbstractELMT
+    class PhysicalELMT
+}
+
+' hasOpenBrIM -[hidden]-> AbstractELMT
+' has_OpenBrIM_dict -[hidden]-> PhysicalELMT
+
+AbstractELMT --|> PyELMT
+PhysicalELMT --|> PyELMT
+AbstractELMT --|> hasOpenBrIM
+PhysicalELMT --|> has_OpenBrIM_dict
+
+@enduml
