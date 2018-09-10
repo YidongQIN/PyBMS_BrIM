@@ -1,5 +1,8 @@
 @startuml
 
+' top to bottom direction
+left to right direction
+
 skinparam class {
     BackgroundColor White
     ArrowColor Black
@@ -11,22 +14,29 @@ Interface hasMongo{
     mongo_config()
     set_mongo()
     get_mongo()
-    - {static} dump()
+    - {static} argument_check()
 }
+
 hasMongo -- PyELMT
 
 Interface hasOpenBrIM{
-    - ob_element:PyOpenBrIMELMT
+    - et_element:PyOpenBrIMELMT
     set_ob_element()
     get_ob_element()
     sub()
+    - {static} argument_check()
+}
+
+Interface has_OpenBrIM_elmt{
+    ob_element:PyOpenBrIMELMT
 }
 
 Interface has_OpenBrIM_dict{
     ob_element:dict
 }
 
-has_OpenBrIM_dict --|> hasOpenBrIM
+hasOpenBrIM <|-- has_OpenBrIM_elmt
+hasOpenBrIM <|-- has_OpenBrIM_dict
 
 class PyELMT{
     type
@@ -35,24 +45,58 @@ class PyELMT{
     link()
 }
 
-class AbstractELMT
+class AbstractELMT{
+    name
+}
 
-class PhysicalELMT
+class PhysicalELMT{
+    view()
+}
 
 ' hide PhysicalELMT circle
 
 together {
     class PyELMT
-    class AbstractELMT
-    class PhysicalELMT
+    ' class AbstractELMT
+    ' class PhysicalELMT
+    Interface hasMongo
+    Interface hasOpenBrIM
 }
 
-' hasOpenBrIM -[hidden]-> AbstractELMT
-' has_OpenBrIM_dict -[hidden]-> PhysicalELMT
+' hasOpenBrIM -- hasMongo
 
-AbstractELMT --|> PyELMT
-PhysicalELMT --|> PyELMT
-AbstractELMT --|> hasOpenBrIM
-PhysicalELMT --|> has_OpenBrIM_dict
+PyELMT <|-- AbstractELMT
+PyELMT <|-- PhysicalELMT
+
+has_OpenBrIM_elmt <|-- AbstractELMT
+has_OpenBrIM_dict <|-- PhysicalELMT
+
+class Project
+class Group
+class Parameter
+class Shape
+class Section
+class Material
+class FENode
+
+AbstractELMT <|-- Project
+AbstractELMT <|-- Group
+AbstractELMT <|-- Parameter
+AbstractELMT <|-- Shape
+AbstractELMT <|-- Section
+AbstractELMT <|-- Material
+AbstractELMT <|-- FENode
+
+class Beam
+class Surface
+class Bolted_Plate
+class Volume
+class Sensor
+
+PhysicalELMT <|-- Beam
+PhysicalELMT <|-- Surface
+Surface <|-- Bolted_Plate
+PhysicalELMT <|-- Volume
+PhysicalELMT <|-- Sensor
 
 @enduml
