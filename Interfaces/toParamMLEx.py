@@ -13,7 +13,7 @@ these classes are not in ParamML, but
 
 import math
 
-from Interfaces.BrParamML import *
+from Interfaces.toParamMLBasic import *
 
 
 class RectangleOBShape(OBShape):

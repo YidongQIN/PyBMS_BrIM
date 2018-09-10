@@ -1,12 +1,16 @@
 @startuml
 
-' top to bottom direction
-left to right direction
+top to bottom direction
+' left to right direction
+
+skinparam shadowing false
+skinparam monochrome true
 
 skinparam class {
-    BackgroundColor White
-    ArrowColor Black
-    BorderColor Black
+
+    ' BackgroundColor White
+    ' ArrowColor Black
+    ' BorderColor Black
 }
 
 Interface hasMongo{
@@ -17,7 +21,7 @@ Interface hasMongo{
     - {static} argument_check()
 }
 
-hasMongo -- PyELMT
+hasMongo -up- PyELMT
 
 Interface hasOpenBrIM{
     - et_element:PyOpenBrIMELMT
@@ -35,8 +39,6 @@ Interface has_OpenBrIM_dict{
     ob_element:dict
 }
 
-hasOpenBrIM <|-- has_OpenBrIM_elmt
-hasOpenBrIM <|-- has_OpenBrIM_dict
 
 class PyELMT{
     type
@@ -63,13 +65,13 @@ together {
     Interface hasOpenBrIM
 }
 
-' hasOpenBrIM -- hasMongo
-
 PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
-
 has_OpenBrIM_elmt <|-- AbstractELMT
 has_OpenBrIM_dict <|-- PhysicalELMT
+
+hasOpenBrIM <|-- has_OpenBrIM_elmt
+hasOpenBrIM <|-- has_OpenBrIM_dict
 
 class Project
 class Group
@@ -79,6 +81,11 @@ class Section
 class Material
 class FENode
 
+together {
+    class Project
+    class Group
+}
+
 AbstractELMT <|-- Project
 AbstractELMT <|-- Group
 AbstractELMT <|-- Parameter
@@ -86,6 +93,8 @@ AbstractELMT <|-- Shape
 AbstractELMT <|-- Section
 AbstractELMT <|-- Material
 AbstractELMT <|-- FENode
+Shape -right- Section
+' Material -- Section
 
 class Beam
 class Surface
@@ -98,5 +107,8 @@ PhysicalELMT <|-- Surface
 Surface <|-- Bolted_Plate
 PhysicalELMT <|-- Volume
 PhysicalELMT <|-- Sensor
+
+' Beam -- Section
+' Beam -- Material
 
 @enduml
