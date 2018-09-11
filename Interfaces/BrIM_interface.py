@@ -13,7 +13,6 @@ the interfaces should have dumping/pickling/serialization function to organize d
 class BrIM_interface(object):
     """"""
 
-
     def _attr_to_mongo_dict(self):
         return {}
 
@@ -39,7 +38,6 @@ class BrIM_interface(object):
                 pass
         return _d
 
-
     def _attr_pop(self, *pop_list):
         """pop attributes out and return the rest."""
         _d = dict()
@@ -48,8 +46,19 @@ class BrIM_interface(object):
                 _d[_k] = _v
         return _d
 
+    def check_attrib(self, type):
+        _pick=list()
+        for _k, _v in self.__dict__.items():
+            if BrIM_interface.check_class(_v, type):
+                _pick.append(_k)
+        return _pick
+
+
     @staticmethod
-    def check_class(self):
+    def check_class(obj, type):
+        if isinstance(obj, type): return True
+        return False
+
 
 """
 def _attr_to_mongo_dict(self: PyELMT):
