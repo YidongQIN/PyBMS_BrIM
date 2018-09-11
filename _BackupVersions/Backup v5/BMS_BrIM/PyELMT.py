@@ -85,10 +85,10 @@ class PyELMT(object):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('<{}> changed by update_attr()'.format(self.name))
+                    print('<{}> changed by update()'.format(self.name))
                     print('* {} -> {}'.format(_k, _v))
             except KeyError:
-                print("<{}> new attribute by update_attr()".format(self.name))
+                print("<{}> new attribute by update()".format(self.name))
                 print('* {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
 
@@ -164,10 +164,10 @@ class Document(object):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('<{}> changed by update_attr()'.format(self.name))
+                    print('<{}> changed by update()'.format(self.name))
                     print(' .{} -> {}'.format(_k, _v))
             except KeyError:
-                print("<{}> new attribute by update_attr()".format(self.name))
+                print("<{}> new attribute by update()".format(self.name))
                 print(' .{} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
 
@@ -183,7 +183,7 @@ def _attr_pick(elmt, *pick_list):
         try:
             _d[_pick] = elmt.__dict__[_pick]
         except KeyError:
-            # print("PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
+            # print("PyELMT.attr_pick(): No '{}' in {}".format(_pick, elmt.name))
             pass
     return _d
 

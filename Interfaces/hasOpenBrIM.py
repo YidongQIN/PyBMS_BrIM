@@ -7,7 +7,7 @@ __author__ = 'Yidong QIN'
 
 """
 from Interfaces.toParamMLEx import *
-from Interfaces.BrIM_interface import BrIM_interface
+from Interfaces.BrIMInterface import BrIMInterface
 
 if __name__ == '__main__':
     pass

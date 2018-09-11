@@ -97,7 +97,7 @@ class Sensor(PhysicalELMT):
         self.manufactureModel = manufacture_model
         self.data = self.store_data(sensor_data)  # maybe in the mongoDB ?
         # self.des = arg
-        # self.update_attr(**kwargs)
+        # self.update(**kwargs)
         # self.set_openbrim(OBFENode, OBVolume)
         # without geometry size cannot init geo model in sensor
 

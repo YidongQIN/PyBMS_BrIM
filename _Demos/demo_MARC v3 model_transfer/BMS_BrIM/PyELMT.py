@@ -86,11 +86,11 @@ class PyElmt(object):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print("PyELMT.update_attr from MongoDB:")
+                    print("PyELMT.update from MongoDB:")
                     print('  <{}> Attribute changed!'.format(self.name))
                     print('  * {} -> {}'.format(_k, _v))
             except KeyError:
-                print("PyELMT.update_attr from MongoDB:")
+                print("PyELMT.update from MongoDB:")
                 print("  <{}> gets new attribute!".format(self.name))
                 print('  * {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
@@ -123,7 +123,7 @@ def _attr_pick(elmt, *pick_list):
         try:
             _d[_pick] = elmt.__dict__[_pick]
         except KeyError:
-            # print("PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
+            # print("PyELMT.attr_pick(): No '{}' in {}".format(_pick, elmt.name))
             pass
     return _d
 

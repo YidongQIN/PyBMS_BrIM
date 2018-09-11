@@ -1,18 +1,20 @@
 from BMS_BrIM import *
 from pprint import pprint
 
-# dataplt=DatProc('Test Data Plot', "c:\\Users\\yqin78\\Proj.Python\\PyOpenBrIM\\_data\\server backup\\20180302_141015_19\\U113_ADC_A2.dat")
-print("===Test on Sensor===")
+print("==Test of hasMongo Interface")
 exp = MonitorExperiment(1, 'MARC', 201808251330, 201808271555, "not a real experiment")
-uc = NetworkUnit(22, 'ACD', 'BC', 'A4', experiment=exp)
-datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\server backup\\20180327_161910_20\\U117_ADC_B2.dat'
-datalist=[0,12,13,15,18,19,25,24,26,3]
-new_ss = Sensor(20, 'SS', y=10, sensor_data=datalist)
+exp.set_mongo_config("Test","Test hasMongo")
+print("all attrib:\n\t",exp.__dict__)
+exp.set_mongo_doc()
+# uc = NetworkUnit(22, 'ACD', 'BC', 'A4', experiment=exp)
+# datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\server backup\\20180327_161910_20\\U117_ADC_B2.dat'
+# datalist=[0,12,13,15,18,19,25,24,26,3]
+# new_ss = Sensor(20, 'SS', y=10, sensor_data=datalist)
 # new_ss = Sensor(20, 'SS', y=10, sensor_data=datpath)
 # new_ss=Sensor(20,'SS', 0, 0, 10, 'x',uc,'BC', 'mason', datpath)
-pprint(new_ss.__dict__)
 
 '''
+
 testproj=ProjGroups('Test_Attr_POP')
 steel = Material(1, 'Steel', d="0.0000007345", E="29000")
 testproj.mat_group.append(steel)
@@ -28,7 +30,7 @@ testproj.fem_nodes.append(node1,node2)
 testproj.member_gp.append(deck)
 
 doc = Document('TestDoc', 1, 'Description of DOc')
-doc.update_attr(att1="the first attrib", update=True, datetime=20180822)
+doc.update(att1="the first attrib", update=True, datetime=20180822)
 doc.set_file(None)
 
 print("test LineCube")
