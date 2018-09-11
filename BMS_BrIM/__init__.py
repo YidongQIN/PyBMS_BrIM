@@ -4,18 +4,7 @@
 __author__ = 'Yidong QIN'
 
 """
-
-PyOBJ inherits from PyOB->PyPackOB and PyDB, as well as other software like PySAP2K in the future.
-and then is used for PyElement, PySensor or PyInspection.
-
-PyOpenBrIM->PyPackOB  PyDatabase  Py_other_interface...
-\__________________________________________/
-                     |
-                   *PyOBJ*
-                     |
-/------------------------------------------\ 
-PyElement   PySensor  PyInspection  Py...
-
+main code for the PyBMS_BrIM program.
 """
 from BMS_BrIM.PyELMT import *
 from BMS_BrIM.Py_Abstract import *
