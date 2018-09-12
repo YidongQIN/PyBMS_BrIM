@@ -18,8 +18,6 @@ class hasMongo(BrIMInterface):
 
     def _attr_to_mongo_dict(self):
         def is_unacceptable(one_item):
-            # _unaccept_type = (PyELMT, PyOpenBrIMElmt)
-
             if not isinstance(one_item, (str, int, float)):
                 return True
             return False

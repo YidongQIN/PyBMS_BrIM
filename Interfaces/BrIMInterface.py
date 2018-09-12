@@ -42,11 +42,8 @@ class BrIMInterface(object):
     def output(self, file_path):
             """write the attributes into JSON"""
             _j = json.dumps(self.__dict__, indent=2)
-            if not file_path:
-                file_path = "{}.json".format(self.name)
             with open(file_path, 'w') as _f:
                 _f.write(_j)
-            print("<{}> data stored in {}".format(self.name, file_path))
 
 
     def dumps(self):

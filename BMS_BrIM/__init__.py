@@ -4,7 +4,7 @@
 __author__ = 'Yidong QIN'
 
 """
-main code for the PyBMS_BrIM program.
+main code for the _PyBMS_BrIM program.
 """
 from BMS_BrIM.PyELMT import *
 from BMS_BrIM.Py_Abstract import *
