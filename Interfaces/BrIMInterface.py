@@ -40,11 +40,10 @@ class BrIMInterface(object):
             print("Unknown Data format")
 
     def output(self, file_path):
-            """write the attributes into JSON"""
-            _j = json.dumps(self.__dict__, indent=2)
-            with open(file_path, 'w') as _f:
-                _f.write(_j)
-
+        """write the attributes into JSON"""
+        _j = json.dumps(self.__dict__, indent=2)
+        with open(file_path, 'w') as _f:
+            _f.write(_j)
 
     def dumps(self):
         """dump self.__dict__ to str"""
@@ -96,8 +95,6 @@ class BrIMInterface(object):
             return True
         print(" # interface.check_class()", obj, "not type of", type)
         return False
-
-
 
 
 if __name__ == '__main__':

@@ -21,23 +21,8 @@ Interface hasMongo{
     - {static} argument_check()
 }
 
-hasMongo -up- PyELMT
+hasMongo -down- PyELMT
 
-Interface hasOpenBrIM{
-    - et_element:PyOpenBrIMELMT
-    set_ob_element()
-    get_ob_element()
-    sub()
-    - {static} argument_check()
-}
-
-Interface has_OpenBrIM_elmt{
-    ob_element:PyOpenBrIMELMT
-}
-
-Interface has_OpenBrIM_dict{
-    ob_element:dict
-}
 
 
 class PyELMT{
@@ -57,13 +42,29 @@ class PhysicalELMT{
 
 ' hide PhysicalELMT circle
 
-together {
-    class PyELMT
-    ' class AbstractELMT
-    ' class PhysicalELMT
-    Interface hasMongo
-    Interface hasOpenBrIM
+Interface hasOpenBrIM{
+    - et_element:PyOpenBrIMELMT
+    set_ob_element()
+    get_ob_element()
+    sub()
+    - {static} argument_check()
 }
+
+Interface has_OpenBrIM_elmt{
+    ob_element:PyOpenBrIMELMT
+}
+
+Interface has_OpenBrIM_dict{
+    ob_element:dict
+}
+
+'together {
+'    class PyELMT
+'    ' class AbstractELMT
+'    ' class PhysicalELMT
+'    Interface hasMongo
+'    Interface hasOpenBrIM
+'}
 
 PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
