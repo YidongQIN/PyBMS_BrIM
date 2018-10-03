@@ -10,7 +10,7 @@ Bridge inspection information
 from BMS_BrIM.PyELMT import *
 
 
-class Inspection(object):
+class Damage(object):
     def __init__(self):
         self.status='Commm'
 
@@ -19,7 +19,17 @@ class Inspection(object):
         self.status='IIIII'
         print(self.status)
 
+class Corrosion(Damage):
+    pass
 
+class Deformation(Damage):
+    pass
+
+class CoatingDamage(Damage):
+    pass
+
+class Loose(Damage):
+    pass
 
 if __name__ == '__main__':
     a = PyELMT
