@@ -1,0 +1,13 @@
+@startuml
+participant OpenBrIM as ob
+participant Python as py
+participant MongoDB as mg
+
+py -> ob: create ParamML file
+note over ob: OpenBrIM APP view
+note over ob: OpenBrIM examination
+ob --> py: update attributes
+py -> ob: re-create ParamML file
+
+py -> mg: store
+@enduml
