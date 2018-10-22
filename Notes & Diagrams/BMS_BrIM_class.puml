@@ -13,22 +13,20 @@ skinparam class {
     ' BorderColor Black
 }
 
-Interface hasMongo{
+Interface toMongo{
     object_id
     mongo_config()
     set_mongo()
     get_mongo()
-    - {static} argument_check()
 }
 
-hasMongo -- PyELMT
+toMongo -- PyELMT
 
 
 class PyELMT{
-    type
     id
+    type
     update()
-    link()
 }
 
 class AbstractELMT{
@@ -36,79 +34,72 @@ class AbstractELMT{
 }
 
 class PhysicalELMT{
-    view()
+    name
+    link()
 }
 
 ' hide PhysicalELMT circle
 
-Interface hasOpenBrIM{
-    - et_element:PyOpenBrIMELMT
+Interface toOpenBrIM{
+    ob_element:OpenBrIM_ELMT
     set_ob_element()
     get_ob_element()
-    sub()
-    - {static} argument_check()
+    {static} argument_check()
 }
 
-Interface has_OpenBrIM_elmt{
-    ob_element:PyOpenBrIMELMT
+Interface has_OpenBrIM_fem{
+    set_ob_fem()
 }
 
-Interface has_OpenBrIM_dict{
-    ob_element:dict
+Interface has_OpenBrIM_geo{
+    set_ob_geo()
 }
 
 'together {
 '    class PyELMT
-'    ' class AbstractELMT
-'    ' class PhysicalELMT
-'    Interface hasMongo
-'    Interface hasOpenBrIM
+'    class AbstractELMT
+'    class PhysicalELMT
+'    Interface toMongo
+'    Interface toOpenBrIM
 '}
 
 PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
-has_OpenBrIM_elmt <|-- AbstractELMT
-has_OpenBrIM_dict <|-- PhysicalELMT
+has_OpenBrIM_fem <|-- AbstractELMT
+has_OpenBrIM_fem <|-- PhysicalELMT
+has_OpenBrIM_geo <|-- PhysicalELMT
 
-hasOpenBrIM <|-- has_OpenBrIM_elmt
-hasOpenBrIM <|-- has_OpenBrIM_dict
+toOpenBrIM <|-- has_OpenBrIM_fem
+toOpenBrIM <|-- has_OpenBrIM_geo
 
-class Project
-class Group
-class Parameter
-class Shape
-class Section
-class Material
-class FENode
+' class Project
+' class Group
+' class Parameter
+' class Shape
+' class Section
+' class Material
+' class FENode
 
-'together {
-'    class Project
-'    class Group
-'}
 
-AbstractELMT <|-- Project
-AbstractELMT <|-- Group
-AbstractELMT <|-- Parameter
-AbstractELMT <|-- Shape
-AbstractELMT <|-- Section
-AbstractELMT <|-- Material
-AbstractELMT <|-- FENode
-Shape -- Section
-' Material -- Section
+' AbstractELMT <|-- Project
+' AbstractELMT <|-- Group
+' AbstractELMT <|-- Parameter
+' AbstractELMT <|-- Shape
+' AbstractELMT <|-- Section
+' AbstractELMT <|-- Material
+' AbstractELMT <|-- FENode
+' Shape -- Section
 
-class Beam
-class Surface
-class Bolted_Plate
-class Volume
-class Sensor
+' class Beam
+' class Surface
+' class Bolted_Plate
+' class Volume
+' class Sensor
 
-PhysicalELMT <|-- Beam
-PhysicalELMT <|-- Surface
-Surface <|-- Bolted_Plate
-PhysicalELMT <|-- Volume
-PhysicalELMT <|-- Sensor
-
-' Beam -- Section
-' Beam -- Material
+' PhysicalELMT <|-- Beam
+' PhysicalELMT <|-- Surface
+' Surface <|-- Bolted_Plate
+' PhysicalELMT <|-- Volume
+' PhysicalELMT <|-- Sensor
 
 @enduml
