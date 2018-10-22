@@ -13,7 +13,7 @@ skinparam class {
     ' BorderColor Black
 }
 
-Interface toMongo{
+class toMongo{
     object_id
     mongo_config()
     set_mongo()
@@ -27,40 +27,44 @@ class PyELMT{
     id
     type
     update()
+    link()
 }
 
 class AbstractELMT{
     name
+    view_fem()
 }
 
 class PhysicalELMT{
     name
-    link()
+    view_fem()
+    view_geo()
+
 }
 
 ' hide PhysicalELMT circle
 
-Interface toOpenBrIM{
+class toOpenBrIM{
     ob_element:OpenBrIM_ELMT
     set_ob_element()
     get_ob_element()
     {static} argument_check()
 }
 
-Interface has_OpenBrIM_fem{
-    set_ob_fem()
+class has_OpenBrIM_fem{
+    ob_fem_elmt
 }
 
-Interface has_OpenBrIM_geo{
-    set_ob_geo()
+class has_OpenBrIM_geo{
+    ob_geo_elmt
 }
 
 'together {
 '    class PyELMT
 '    class AbstractELMT
 '    class PhysicalELMT
-'    Interface toMongo
-'    Interface toOpenBrIM
+'    class toMongo
+'    class toOpenBrIM
 '}
 
 PyELMT <|-- AbstractELMT
