@@ -14,58 +14,42 @@ skinparam class {
 }
 
 class toMongo{
-    object_id
-    mongo_config()
     set_mongo()
     get_mongo()
 }
 
-toMongo -- PyELMT
-
-
 class PyELMT{
     id
     type
+    description*
     update()
-    link()
 }
 
 class AbstractELMT{
     name
-    view_fem()
 }
 
 class PhysicalELMT{
     name
-    view_fem()
-    view_geo()
-
+    material: Material
 }
 
 ' hide PhysicalELMT circle
 
 class toOpenBrIM{
-    ob_element:OpenBrIM_ELMT
-    set_ob_element()
-    get_ob_element()
+    openbrim_element: XML element
+    set_openbrim_element()
+    get_openbrim_element()
     {static} argument_check()
 }
 
 class has_OpenBrIM_fem{
-    ob_fem_elmt
+    openbrim_fem_elmt()
 }
 
 class has_OpenBrIM_geo{
-    ob_geo_elmt
+    openbrim_geo_elmt()
 }
-
-'together {
-'    class PyELMT
-'    class AbstractELMT
-'    class PhysicalELMT
-'    class toMongo
-'    class toOpenBrIM
-'}
 
 PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
@@ -75,35 +59,65 @@ has_OpenBrIM_geo <|-- PhysicalELMT
 
 toOpenBrIM <|-- has_OpenBrIM_fem
 toOpenBrIM <|-- has_OpenBrIM_geo
+toMongo -- PyELMT
 
-' class Project
+' class Project{}
 ' class Group
-' class Parameter
-' class Shape
-' class Section
-' class Material
-' class FENode
+class Parameter{
+    value: float
+}
+' class Shape{
+'     node_list[]
+' }
+class Section{
+    shape_node_list[]
+}
+class Material{
+    type
+    property_list[]: Parameter
+}
+class FENode{
+    x: Parameter
+    y: Parameter
+    z: Parameter
+    tx: Parameter
+    ty: Parameter
+    tz: Parameter
+    rx: Parameter
+    ry: Parameter
+    rz: Parameter
+}
 
 
 ' AbstractELMT <|-- Project
 ' AbstractELMT <|-- Group
-' AbstractELMT <|-- Parameter
+AbstractELMT <|-- Parameter
+AbstractELMT <|-- Section
+AbstractELMT <|-- Material
+AbstractELMT <|-- FENode
 ' AbstractELMT <|-- Shape
-' AbstractELMT <|-- Section
-' AbstractELMT <|-- Material
-' AbstractELMT <|-- FENode
 ' Shape -- Section
 
-' class Beam
-' class Surface
+class Beam{
+    fenode1: FENode
+    fenode2: FENode
+    section: Section
+    ' material: Material'
+}
+class Surface{
+    fenode[]: FENode
+    thickness: Parameter
+}
 ' class Bolted_Plate
-' class Volume
+class Volume{
+    fenode[]: FENode
+}
 ' class Sensor
 
-' PhysicalELMT <|-- Beam
-' PhysicalELMT <|-- Surface
+PhysicalELMT <|-- Beam
+PhysicalELMT <|-- Surface
 ' Surface <|-- Bolted_Plate
-' PhysicalELMT <|-- Volume
+PhysicalELMT <|-- Volume
 ' PhysicalELMT <|-- Sensor
 
 @enduml
