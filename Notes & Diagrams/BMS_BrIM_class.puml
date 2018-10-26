@@ -14,8 +14,9 @@ skinparam class {
 }
 
 class toMongo{
-    set_mongo()
-    get_mongo()
+    set_mongo_document()
+    get_mongo_document()
+    - argument_check()
 }
 
 class PyELMT{
@@ -40,7 +41,7 @@ class toOpenBrIM{
     openbrim_element: XML element
     set_openbrim_element()
     get_openbrim_element()
-    {static} argument_check()
+    - argument_check()
 }
 
 class has_OpenBrIM_fem{
@@ -64,7 +65,7 @@ toMongo -- PyELMT
 ' class Project{}
 ' class Group
 class Parameter{
-    value: float
+    value: number
 }
 ' class Shape{
 '     node_list[]
