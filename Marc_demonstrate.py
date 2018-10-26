@@ -33,7 +33,17 @@ marc.prm_group.append(Chord_width, Chord_depth,
 # 1.1 Steel for truss chord
 steel = Material(1, 'Steel', d="0.0000007345", E="29000", Nu="0.3", a="0.0000065", Fy="50", Fu="65")
 # 1.2 Concrete for deck
-concrete = Material(2, 'Concrete', d='0.0000002248', E="3604.9965", a="0.0000055", Fc28="4")
+
+concrete = Material(2,
+    'C4000Psi',
+    d='0.0000002248',
+    E="3604.9965",
+    a="0.0000055",
+    Fc28="4",
+    supplier='Georgia',
+    des='Concrete')
+
+
 marc.mat_group.append(steel, concrete)
 # 2. Sections
 # 2.1 Shapes

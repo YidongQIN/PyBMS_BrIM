@@ -1,6 +1,8 @@
 MD diagram
 ======
 
+# Process of Modeling
+
 ``` sequence
 participant Bridge as br
 participant Python as py
@@ -19,6 +21,10 @@ fe --> py: update attributes
 #py --> ob: re-create ParamML file
 py -> mg: store information
 ```
+
+
+# Highlight of XML
+
 ```xml
 <O D="Concrete" N="C4000Psi" T="Material" Type="concrete">
     <P D="Density" N="d" Role="Input" V="0.0000002248"/>
@@ -28,14 +34,20 @@ py -> mg: store information
 </O>
 ```
 
+
+# Model tranferring
+
 ```sequence
 participant Geometry Model as ge
 participant Python BrIM as py
 participant Finite Element Model as fe
-#participant OpenBrIM as ob
 
-
-ge -- py: call get_openbrim_element
-py -- fe: 
+note over ge: modification
+ge -- py: call get_openbrim_elmt()\nto parse XML element
+note over py: updating attributes
+py -- fe: call set_openbrim_elmt()\nto recreate ParamML element
+note over fe: overwrite FE model
 ```
+
+
 
