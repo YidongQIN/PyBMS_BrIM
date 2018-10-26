@@ -1,4 +1,5 @@
-md diagram
+MD diagram
+======
 
 ``` sequence
 participant Bridge as br
@@ -25,5 +26,16 @@ py -> mg: store information
     <P D="Coefficient of Thermal Expansion" N="a" Role="Input" V="0.0000055"/>
     <P D="Concrete Compressive Strength" N="Fc28" Role="Input" V="4"/>
 </O>
+```
+
+```sequence
+participant Geometry Model as ge
+participant Python BrIM as py
+participant Finite Element Model as fe
+#participant OpenBrIM as ob
+
+
+ge -- py: call get_openbrim_element
+py -- fe: 
 ```
 

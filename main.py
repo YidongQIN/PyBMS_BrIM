@@ -1,5 +1,9 @@
 from BMS_BrIM import *
-from pprint import pprint
+# from pprint import pprint
+
+n1=FENode(0,0,0)
+n2=FENode(0,0,10)
+one_col= Beam(n1, n2,'Col')
 
 print("==Test of hasMongo Interface")
 exp = MonitorExperiment(1, 'MARC', 201808251330, 201808271555, "not a real experiment")
