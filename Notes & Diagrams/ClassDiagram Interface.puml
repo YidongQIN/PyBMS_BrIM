@@ -6,13 +6,6 @@ top to bottom direction
 skinparam shadowing false
 skinparam monochrome true
 
-
-Interface toMongo{
-    set_mongo_document()
-    get_mongo_document()
-    - argument_check()
-}
-
 class PyELMT{
     id
     type
@@ -29,21 +22,25 @@ class PhysicalELMT{
     material: Material
 }
 
-' hide PhysicalELMT circle
+Interface toMongo{
+    mongo_document
+    set_mongo_document(): MongoDB
+    get_mongo_document(MongoDB)
+'    - attribute_check()
+}
 
 Interface toOpenBrIM{
-    openbrim_element: XML element
-    set_openbrim_element()
-    get_openbrim_element()
-    - argument_check()
+    set_openbrim_element(): OpenBrIM file
+    get_openbrim_element(OpenBrIM file)
+'    - attribute_check()
 }
 
 Interface has_OpenBrIM_fem{
-    openbrim_fem_elmt()
+    openbrim_fem_elmt
 }
 
 Interface has_OpenBrIM_geo{
-    openbrim_geo_elmt()
+    openbrim_geo_elmt
 }
 
 PyELMT <|-- AbstractELMT
@@ -54,6 +51,6 @@ has_OpenBrIM_geo <|-- PhysicalELMT
 
 toOpenBrIM <|-- has_OpenBrIM_fem
 toOpenBrIM <|-- has_OpenBrIM_geo
-toMongo -- PyELMT
+toMongo <|-- PyELMT
 
 @enduml
