@@ -13,7 +13,7 @@ skinparam class {
     ' BorderColor Black
 }
 
-class toMongo{
+Interface toMongo{
     set_mongo_document()
     get_mongo_document()
     - argument_check()
@@ -37,18 +37,18 @@ class PhysicalELMT{
 
 ' hide PhysicalELMT circle
 
-class toOpenBrIM{
+Interface toOpenBrIM{
     openbrim_element: XML element
     set_openbrim_element()
     get_openbrim_element()
     - argument_check()
 }
 
-class has_OpenBrIM_fem{
+Interface has_OpenBrIM_fem{
     openbrim_fem_elmt()
 }
 
-class has_OpenBrIM_geo{
+Interface has_OpenBrIM_geo{
     openbrim_geo_elmt()
 }
 

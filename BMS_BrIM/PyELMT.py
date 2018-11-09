@@ -13,7 +13,6 @@ Each PyELMT has 3 kinds of attributes:
 3. Interfaces, including a OpenBrIM interface, a MongoDB interface so far.
     Each Interface will be a combination of setter() and getter().
 """
-import json
 
 from Interfaces import *
 
@@ -32,8 +31,6 @@ class PyELMT(object):
         # two interfaces: Database and OpenBrIM
         self.db_config = dict()  # dict(database=, table=, user=,...)
         self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
-
-
 
     def set_openbrim(self, ob_class: (OBPrmElmt, OBObjElmt), **attrib_dict: dict):
         """attrib_dict is used to add other redundancy info,
@@ -75,8 +72,6 @@ class PyELMT(object):
                 print('* {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
 
-
-
     def _set_mysql_config(self, database, user, password, host='localhost', port=3306, **kwargs):
         """get db config and connect to MySQL"""
         self.db_config = {'user': user, 'password': password, 'database': database,
@@ -100,12 +95,11 @@ class Document(object):
     """Document only store in MongoDB or file, no OpenBrIm eET.
     The class name is not sure yet."""
 
-    def __init__(self, name:str, id:int=None, des:str=None):
+    def __init__(self, name: str, id: int = None, des: str = None):
         self.name = name
         self._id = id
         if des:
             self.des = des
-
 
     # def update_attr(self, **attributes_dict):
     #     for _k, _v in attributes_dict.items():
@@ -117,6 +111,63 @@ class Document(object):
     #             print("<{}> new attribute by update()".format(self.name))
     #             print(' .{} -> {}'.format(_k, _v))
     #         self.__dict__[_k] = _v
+
+
+def _attr_pick(elmt, *pick_list):
+    """keys are from the pick_list, and find corresponding attributes from the element.__dict__."""
+    _d = dict()
+    for _pick in pick_list:
+        try:
+            _d[_pick] = elmt.__dict__[_pick]
+        except KeyError:
+            # print("PyELMT._attr_pick(): No '{}' in {}".format(_pick, elmt.name))
+            pass
+    return _d
+
+
+def _attr_pop(elmt, *pop_list):
+    """pop attributes whose key is in the list, return the rest ones."""
+    _d = dict()
+    for _k, _v in elmt.__dict__.items():
+        if (_k not in pop_list) and _v:
+            _d[_k] = _v
+    return _d
+
+
+def _attr_to_mongo_dict(elmt: PyELMT):
+    """dump some of the attributes to dict."""
+
+    def is_unacceptable(one_item):
+        """object whose type is unaccecptable, like PyELMT or PyOpenBrIMElmt,
+        cannot be encoded into mongoDB."""
+        _unaccept_type = (PyELMT, PyOpenBrIMElmt)
+        if isinstance(one_item, _unaccept_type):
+            return True
+        return False
+
+    def should_pop(attribute_value):
+        """attributes of PyELMT is complex.
+        If the elmt.attribute is only one object, judge it by is_unacceptable();
+        If the elmt.attribute is a collection (tuple or list, like shapes in Section), judge by its element(s)."""
+        if isinstance(attribute_value, (tuple, list)):
+            _to_list = list(attribute_value)
+            return is_unacceptable(_to_list[0])
+        return is_unacceptable(attribute_value)
+
+    def _pop_list(elmt):
+        """typically, the _pop_list =['openBrIM', 'db_config',
+        'section_ob', 'section','material_ob', 'material',
+        'thick_prm_ob', 'thick_prm','shape', 'shape_ob',
+        'node1', 'node1_ob','node2', 'node2_ob']"""
+        _pop_key = ['db_config', 'openBrIM']
+        for _k, _v in elmt.__dict__.items():
+            if should_pop(_v):
+                _pop_key.append(_k)
+        _pop_key = list(set(_pop_key))
+        return _pop_key
+
+    _after_pop = _attr_pop(elmt, *_pop_list(elmt))
+    return _after_pop
 
 # def parameter_format(k):
 #     if isinstance(k, int):

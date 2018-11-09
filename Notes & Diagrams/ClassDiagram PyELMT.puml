@@ -1,0 +1,124 @@
+@startuml
+
+top to bottom direction
+' left to right direction
+
+skinparam shadowing false
+skinparam monochrome true
+
+skinparam class {
+
+    ' BackgroundColor White
+    ' ArrowColor Black
+    ' BorderColor Black
+}
+
+' Interface toMongo{
+'     set_mongo_document()
+'     get_mongo_document()
+'     - argument_check()
+' }
+
+class PyELMT{
+    id
+    type
+    description*
+    update()
+}
+
+class AbstractELMT{
+    name
+}
+
+class PhysicalELMT{
+    name
+    material: Material
+}
+
+' hide PhysicalELMT circle
+
+' Interface toOpenBrIM{
+'     openbrim_element: XML element
+'     set_openbrim_element()
+'     get_openbrim_element()
+'     - argument_check()
+' }
+
+' Interface has_OpenBrIM_fem{
+'     openbrim_fem_elmt()
+' }
+
+' Interface has_OpenBrIM_geo{
+'     openbrim_geo_elmt()
+' }
+
+PyELMT <|-- AbstractELMT
+PyELMT <|-- PhysicalELMT
+' has_OpenBrIM_fem <|-- AbstractELMT
+' has_OpenBrIM_fem <|-- PhysicalELMT
+' has_OpenBrIM_geo <|-- PhysicalELMT
+
+' toOpenBrIM <|-- has_OpenBrIM_fem
+' toOpenBrIM <|-- has_OpenBrIM_geo
+' toMongo -- PyELMT
+
+' class Project{}
+' class Group
+' class Parameter{
+'     value: number
+' }
+' class Shape{
+'     node_list[]
+' }
+
+class FENode{
+    x: Parameter
+    y: Parameter
+    z: Parameter
+    tx: Parameter
+    ty: Parameter
+    tz: Parameter
+    rx: Parameter
+    ry: Parameter
+    rz: Parameter
+}
+class Section{
+    shape_node_list[]
+}
+class Material{
+    type
+    property_list[]: Parameter
+}
+
+' AbstractELMT <|-- Project
+' AbstractELMT <|-- Group
+' AbstractELMT <|-- Parameter
+AbstractELMT <|-- Section
+AbstractELMT <|-- Material
+AbstractELMT <|-- FENode
+' AbstractELMT <|-- Shape
+' Shape -- Section
+
+class Beam{
+    fenode1: FENode
+    fenode2: FENode
+    section: Section
+    ' material: Material'
+}
+class Surface{
+    fenode[]: FENode
+    thickness: Parameter
+}
+' class Bolted_Plate
+class Volume{
+    fenode[]: FENode
+}
+' class Sensor
+
+PhysicalELMT <|-- Beam
+PhysicalELMT <|-- Surface
+' Surface <|-- Bolted_Plate
+PhysicalELMT <|-- Volume
+' PhysicalELMT <|-- Sensor
+
+@enduml

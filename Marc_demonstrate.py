@@ -10,7 +10,7 @@ Input all data into MongoDB.
 
 from BMS_BrIM import *
 
-marc = ProjGroups("marc_sensor")
+marc = ProjGroups("marc_demonstrate")
 # 0. Parameter
 # 0.1 Structural parameter
 span_num = Parameter(1, "span_num", 11)
