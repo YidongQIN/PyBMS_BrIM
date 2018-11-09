@@ -15,14 +15,12 @@ class PyELMT{
 class AbstractELMT{
     name
 }
+PyELMT <|-- AbstractELMT
 
 class PhysicalELMT{
     name
     material: Material
 }
-
-
-PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
 
 class FENode{
@@ -44,9 +42,11 @@ class Material{
     property_list[]: Parameter
 }
 
+
 AbstractELMT <|-- Section
 AbstractELMT <|-- Material
 AbstractELMT <|-- FENode
+
 
 class Beam{
     fenode1: FENode
@@ -57,7 +57,9 @@ class Surface{
     fenode[]: FENode
     thickness: Parameter
 }
-
+class Volume{
+    fenode[]: FENode
+}
 PhysicalELMT <|-- Beam
 PhysicalELMT <|-- Surface
 PhysicalELMT <|-- Volume
