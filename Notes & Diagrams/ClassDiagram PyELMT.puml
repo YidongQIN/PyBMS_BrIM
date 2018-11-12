@@ -53,7 +53,7 @@ class Beam{
     fenode2: FENode
     section: Section
 }
-class Surface{
+class Slab{
     fenode[]: FENode
     thickness: Parameter
 }
@@ -61,7 +61,7 @@ class Volume{
     fenode[]: FENode
 }
 PhysicalELMT <|-- Beam
-PhysicalELMT <|-- Surface
+PhysicalELMT <|-- Slab
 PhysicalELMT <|-- Volume
 
 @enduml

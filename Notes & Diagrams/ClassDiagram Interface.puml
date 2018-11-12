@@ -22,35 +22,35 @@ class PhysicalELMT{
     material: Material
 }
 
-Interface toMongo{
+Interface Mongo{
     mongo_document
-    set_mongo_document(): MongoDB
-    get_mongo_document(MongoDB)
+    export_mongo(): MongoDB document
+    import_mongo(MongoDB document)
 '    - attribute_check()
 }
 
-Interface toOpenBrIM{
-    set_openbrim_element(): OpenBrIM file
-    get_openbrim_element(OpenBrIM file)
+Interface OpenBrIM{
+    export_openbrim(): OpenBrIM file
+    import_openbrim(OpenBrIM file)
 '    - attribute_check()
 }
 
-Interface has_OpenBrIM_fem{
+Interface OpenBrIM_fem{
     openbrim_fem_elmt
 }
 
-Interface has_OpenBrIM_geo{
+Interface OpenBrIM_geo{
     openbrim_geo_elmt
 }
 
 PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
-has_OpenBrIM_fem <|-- AbstractELMT
-has_OpenBrIM_fem <|-- PhysicalELMT
-has_OpenBrIM_geo <|-- PhysicalELMT
+OpenBrIM_fem <|-- AbstractELMT
+OpenBrIM_fem <|-- PhysicalELMT
+OpenBrIM_geo <|-- PhysicalELMT
 
-toOpenBrIM <|-- has_OpenBrIM_fem
-toOpenBrIM <|-- has_OpenBrIM_geo
-toMongo <|-- PyELMT
+OpenBrIM <|-- OpenBrIM_fem
+OpenBrIM <|-- OpenBrIM_geo
+Mongo <|-- PyELMT
 
 @enduml
