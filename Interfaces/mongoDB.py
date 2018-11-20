@@ -1,17 +1,14 @@
-# usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 __author__ = 'Yidong QIN'
 
 """
-BrIM use database to store the information of elements.
-structural members, like beams, columns, are stored in NoSQL
-and non-structural members, such as sensor, etc.
 
 """
-
 import bson
 import pymongo as mg
+from Interfaces.toMongo import *
 
 
 class ConnMongoDB(object):
@@ -101,61 +98,58 @@ class ConnMongoDB(object):
             print('New doc in <{}>, ._id={}'.format(collection, id))
             return self.insert_data(collection, **data)
 
-    # below are methods for element, should not be use.
-    # Mongo focus on the methods of CURD in Mongo, not info process of element
-    '''''''''
-    def update_elmt(self, collection, elmt):
-        """first find, then update or insert"""
-        try:
-            if self.find_by_kv(collection, '_id', elmt.id):
-                print("Document <'_id'> = {} already exits".format(elmt.id))
+
+class hasMongo(object):
+
+    def __init__(self, _id):
+        self._id = _id
+
+    def _attr_to_mongo_dict(self):
+        def is_unacceptable(one_item):
+            if not isinstance(one_item, (str, int, float)):
+                return True
+            return False
+
+        def should_pop(attribute_value):
+            if isinstance(attribute_value, (tuple, list)):
+                _to_list = list(attribute_value)
+                return is_unacceptable(_to_list[0])
+            return is_unacceptable(attribute_value)
+
+        def _pop_list(elmt):
+            _pop_key = ['db_config', 'openBrIM']
+            for _k, _v in elmt.__dict__.items():
+                if should_pop(_v):
+                    _pop_key.append(_k)
+            _pop_key = list(set(_pop_key))
+            return _pop_key
+
+        _after_pop = self.attr_pop(self, *_pop_list(self))
+        return _after_pop
+
+    def set_mongo_config(self, database, table, host='localhost', port=27017):
+        """get db config and connect to MongoDB"""
+        self.db_config = {'database': database, 'table': table,
+                          'host': host, 'port': port, }
+
+    def set_mongo_doc(self):
+        """write info into the mongo.collection.document"""
+        with ConnMongoDB(**self.db_config) as _db:
+            _col = self.db_config['table']
+            if not self._id:
+                self._id = _db.insert_data(_col, **self._attr_to_mongo_dict())
+            elif not _db.find_by_kv(_col, 'name', self.name):
+                _ = _db.update_data(_col, self._id, **self._attr_to_mongo_dict())
             else:
-                print('New document will be inserted.')
-            self.update_data(collection, elmt.id, **self.modify_field_value(elmt))
-            # self.db[collection].update({'_id': elmt.__dict__['id']}, self.modify_field_value(elmt), True)
-        except AttributeError as e:
-            print("The elmt <{}> does not have a <'id'> attribute".format(elmt.name or elmt))
-            print(e)
+                _db.update_data(_col, self._id, **self._attr_to_mongo_dict())
+                print("{}._id is set to {} based on MongoDB doc".format(self.name, self._id))
 
-    def insert_elmt(self, collection, elmt):
-        """elmt has __dict__"""
-        self.insert_data(collection, **self.modify_field_value(elmt))
-
-    def delete_elmt(self, collection, elmt):
-        try:
-            if self.find_by_kv(collection, '_id', elmt.id):
-                self.db[collection].delete_one({'_id': elmt.id})
-                print('Successfully Delete the element whose id={}'.format(elmt.id))
-            else:
-                print('Cannot find such a document in Collection <{}> with id={}'.format(collection, elmt.id))
-        except:
-            print('Deleting element <{}> error'.format(elmt))
-            raise
-
-    @staticmethod
-    def modify_field_value(elmt, *pop_list):
-        """transfer the element to dict of attributes.
-                        no empty attribute and change 'id' to '_id'. """
-        from BMS_BrIM import ABrIMELMT
-        assert isinstance(elmt, ABrIMELMT.PyElmt)
-        field_value = dict()
-        for _key, _value in elmt.__dict__.items():
-            if _value:
-                field_value[_key] = _value
-        try:
-            field_value['_id'] = field_value['id']
-            print("Document's '_id' is {}".format(field_value['_id']))
-            field_value.pop('id')
-        except KeyError:
-            print("No '_id' field contained, will be assigned automatically")
-        for _pop in pop_list:
-            field_value.pop(_pop)
-        field_value.pop('openbrim')
-        field_value.pop('db_config')
-        return field_value
-    '''''''''
+    def get_mongo_doc(self, if_print=False):
+        with ConnMongoDB(**self.db_config) as _db:
+            _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
+            self.update(**_result)
+            return _result
 
 
-if __name__ == "__main__":
-    with ConnMongoDB('fours') as db:
-        db.have_a_look('Parameter')
+if __name__ == '__main__':
+    pass

@@ -1,0 +1,88 @@
+@startuml
+
+package Pattern{
+
+    note as N1
+        不同情境下采用了不同的Director即可获得不同的Product。
+        比如，另一个Director就可以建造没有PartB的一种Product。
+        builder.buildPartA()
+        builder.buildPartC()
+        builder.getResult()
+    end note
+
+    class Director{
+        builder: Builder
+        construct():
+        \tbuilder.buildPartA()
+        \tbuilder.buildPartB()
+        \tbuilder.buildPartC()
+        \treturu builder.getResult()
+
+    }
+
+    note as N2
+        construct()就是封装了Part的组建顺序，
+        隔离了用户与具体创建过程。
+    end note
+
+    N1 ... Director
+    Director ... N2
+
+    Director o-- Builder: command/guide/direct
+
+    abstract class Builder{
+        buildPartA()
+        buildPartB()
+        buildPartC()
+        getResult()
+    }
+
+    note as N_B
+        Builder的方法留空即可，
+        等到ConcreteBuilder再实现。
+    end note
+
+    N_B .. Builder
+
+    Builder <|-- ConcreteBuilder
+
+    class ConcreteBuilder{
+        buildPartA()
+        buildPartB()
+        buildPartC()
+        getResult(): return 一个复杂的Product
+    }
+
+    note as N_CB
+        根据情况设计多种ConcreteBuilder具体建造者。
+    end note
+
+    N_CB ... ConcreteBuilder
+
+    ConcreteBuilder - Product
+
+    class Product{
+        partA
+        partB
+        partC
+        A_setter()
+        A_getter()
+        B_setter()
+        B_getter()
+        C_setter()
+        C_getter()
+    }
+
+    note as N_P
+        Product有复杂的组件ABC组成，
+        各个组件有不同的setter/getter方法
+    end note
+
+    N_P .. Product
+}
+
+package Example{
+    class Meal
+}
+
+@enduml
