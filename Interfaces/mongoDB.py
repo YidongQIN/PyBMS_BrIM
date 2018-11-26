@@ -4,11 +4,12 @@
 __author__ = 'Yidong QIN'
 
 """
-
+问题是这个mongo与openbrim的逻辑不通。ob打包了一个elmt用于处理所有数据，而这个mongo直接操作了数据库，即直接在self上进行操作。
 """
 import bson
 import pymongo as mg
-from Interfaces.toMongo import *
+# from Interfaces.toMongo import *
+
 
 
 class ConnMongoDB(object):

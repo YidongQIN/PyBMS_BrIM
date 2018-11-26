@@ -4,9 +4,7 @@
 __author__ = 'Yidong QIN'
 
 """
-This is the base class for all the Interfaces of BMS_BrIM.
-As interfaces provide the PyELMT with interoperability with other software,
-the interfaces should have dumping/pickling/serialization function to organize data.
+This is the toolbox for Interfaces classes.
 """
 import json
 
