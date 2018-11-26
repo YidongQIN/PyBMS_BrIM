@@ -1,89 +1,105 @@
 @startuml
 
-package Pattern{
+skinparam shadowing false
+' skinparam monochrome true
 
-    note as N1
-        不同情境下采用了不同的Director即可获得不同的Product。
-        比如，另一个Director就可以建造没有PartB的一种Product。
+note as N1
+    不同情境下采用了不同的Director即可获得不同的Product。
+
+    比如，修改construct()函数得到另一个Director，
+    就生产没有PartB的一种Product：
+    construct():
         builder.buildPartA()
         builder.buildPartC()
-        builder.getResult()
-    end note
+        return builder.getResult()
+end note
 
-    class Director{
-        builder: Builder
-        construct():
-        \tbuilder.buildPartA()
-        \tbuilder.buildPartB()
-        \tbuilder.buildPartC()
-        \treturu builder.getResult()
+class Director{
+    builder: Builder
+    construct():
+    \tbuilder.buildPartA()
+    \tbuilder.buildPartB()
+    \tbuilder.buildPartC()
+    \treturn builder.getResult()
 
-    }
-
-    note as N2
-        construct()就是封装了Part的组建顺序，
-        隔离了用户与具体创建过程。
-    end note
-
-    N1 ... Director
-    Director ... N2
-
-    Director o-- Builder: command/guide/direct
-
-    abstract class Builder{
-        pdt = new Product()
-        buildPartA()
-        buildPartB()
-        buildPartC()
-        getResult()
-    }
-
-    note as N_B
-        Builder的方法留空即可，
-        等到ConcreteBuilder再实现。
-    end note
-
-    N_B .. Builder
-
-    Builder <|-- ConcreteBuilder
-
-    class ConcreteBuilder{
-        buildPartA()
-        buildPartB()
-        buildPartC()
-        getResult(): return 一个复杂的Product
-    }
-
-    note as N_CB
-        根据情况设计多种ConcreteBuilder具体建造者。
-    end note
-
-    N_CB ... ConcreteBuilder
-
-    ConcreteBuilder - Product
-
-    class Product{
-        partA
-        partB
-        partC
-        A_setter()
-        A_getter()
-        B_setter()
-        B_getter()
-        C_setter()
-        C_getter()
-    }
-
-    note as N_P
-        Product有复杂的组件ABC组成，
-        各个组件有不同的setter/getter方法
-    end note
-
-    N_P .. Product
 }
 
-package Example{
-    class Meal
+note as N_Dc
+    construct()依照一定次序调用buildPartX()，
+    即encapsulate封装了Part的组建顺序，
+    实现了用户与具体创建过程的隔离。
+end note
+
+' N1 ... Director
+N_Dc ... Director
+
+Director o-- Builder: command/guide/direct
+
+abstract class Builder{
+    pdt: Product
+    buildPartA()
+    buildPartB()
+    buildPartC()
+    getResult()
+    isHook() //HookMethod钩子方法
 }
+
+note as N_B
+    Builder只是抽象类，methods留空即可，
+    等到ConcreteBuilder再实现并override。
+end note
+
+N_B .. Builder
+
+Builder <|-- ConcreteBuilder
+
+note on link
+    钩子方法的通常设置
+    1. 在抽象Builder类中
+        isHook(){return False}
+    2. 在特定ConcreteBuilder中
+        isHook(){return True}
+        形成差异化。
+    3. 在Director中调用判断，以决定某个builderPart是否运行
+        if (! builder.isHook()):{
+            builder.buildPartX()
+        }
+end note
+
+class ConcreteBuilder{
+    pdt //继承pdt，亦可定义new Product
+    buildPartA():\n\tpdt.setterA()//调用Product的方法进行构造
+    buildPartB()
+    buildPartC()
+    getResult():\n\treturn pdt//返回一个复杂的Product
+    isHook() //覆写isHook()更加精确地控制建造过程
+}
+
+note as N_CB
+    根据情况，设计多种ConcreteBuilder具体建造者。
+end note
+
+ConcreteBuilder ... N_CB
+
+ConcreteBuilder - Product
+
+class Product{
+    partA
+    partB
+    partC
+    setterA()
+    getterA()
+    setterB()
+    getterB()
+    setterC()
+    getterC()
+}
+
+note as N_P
+    Product有复杂的组件A、B、C组成，
+    各个组件有不同的setter/getter方法
+end note
+
+Product ... N_P
 
 @enduml
