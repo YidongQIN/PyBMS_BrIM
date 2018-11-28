@@ -15,7 +15,7 @@ import numpy as np
 from BMS_BrIM.Py_Physical import *
 
 
-class BridgeProject(Document, hasMongo):
+class BridgeProject(Document):
 
     def __init__(self, name, bridge_id, latitude, longitude, length, structural_type, des):
         super(BridgeProject, self).__init__(name, 0, des)
@@ -28,7 +28,7 @@ class BridgeProject(Document, hasMongo):
             print('#Special bridge structural type')
 
 
-class MonitorExperiment(Document, hasMongo):
+class MonitorExperiment(Document):
 
     def __init__(self, ext_id, bridge, start_datetime, end_datetime, des=None):
         _name = 'Experiment_{}'.format(bridge)
@@ -97,7 +97,7 @@ class Sensor(PhysicalELMT):
         self.manufactureModel = manufacture_model
         self.data = self.store_data(sensor_data)  # maybe in the mongoDB ?
         # self.des = arg
-        # self.update(**kwargs)
+        # self.update_attr(**kwargs)
         # self.set_openbrim(OBFENode, OBVolume)
         # without geometry size cannot init geo model in sensor
 

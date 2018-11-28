@@ -8,7 +8,7 @@ Python Elements for BrIM.
 """
 
 from BMS_BrIM.PyELMT import *
-from Interfaces.toParamMLEx import *
+from Interfaces.BrParamMLEx import *
 
 # from BMS_BrIM.Py_Physical import PhysicalELMT
 

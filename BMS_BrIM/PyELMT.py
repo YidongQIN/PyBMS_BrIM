@@ -7,12 +7,13 @@ __author__ = 'Yidong QIN'
 PyELMT gets all interfaces' methods.
 Each PyELMT has 3 kinds of attributes:
 1. distinguished naming: type and _id.
-2. characteristic attr: depends on element typy.
-    For example, Material will have E=elastic modulel, d=density, etc.
+2. characteristic attr: depends on element typy. 
+    For example, Material will have E=elastic modulel, d=density, etc. 
     Whie Parameter will only have a value.
 3. Interfaces, including a OpenBrIM interface, a MongoDB interface so far.
     Each Interface will be a combination of setter() and getter().
 """
+import json
 
 from Interfaces import *
 
@@ -31,6 +32,25 @@ class PyELMT(object):
         # two interfaces: Database and OpenBrIM
         self.db_config = dict()  # dict(database=, table=, user=,...)
         self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
+
+    # MongoDB methods: setting; setter, getter;
+    def set_mongo_doc(self):
+        """write info into the mongo.collection.document"""
+        with ConnMongoDB(**self.db_config) as _db:
+            _col = self.db_config['table']
+            if not self._id:
+                self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
+            elif not _db.find_by_kv(_col, 'name', self.name):
+                _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+            else:
+                _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+                print("{}._id is set to {} based on MongoDB doc".format(self.name, self._id))
+
+    def get_mongo_doc(self, if_print=False):
+        with ConnMongoDB(**self.db_config) as _db:
+            _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
+            self.update_attr(_result)
+            return _result
 
     def set_openbrim(self, ob_class: (OBPrmElmt, OBObjElmt), **attrib_dict: dict):
         """attrib_dict is used to add other redundancy info,
@@ -65,12 +85,24 @@ class PyELMT(object):
         for _k, _v in attributes_dict.items():
             try:
                 if not _v == self.__dict__[_k]:
-                    print('<{}> changed by update()'.format(self.name))
+                    print('<{}> changed by update_attr()'.format(self.name))
                     print('* {} -> {}'.format(_k, _v))
             except KeyError:
-                print("<{}> new attribute by update()".format(self.name))
+                print("<{}> new attribute by update_attr()".format(self.name))
                 print('* {} -> {}'.format(_k, _v))
             self.__dict__[_k] = _v
+
+    def set_dbconfig(self, database, table, **db_config):
+        db_config['database'] = database
+        db_config['table'] = table
+        if self.type == 'Sensor':  # for now, only Sensor use MySQL
+            self._set_mysql_config(**db_config)
+        else:
+            self._set_mongo_config(**db_config)
+
+    def _set_mongo_config(self, database, table, host='localhost', port=27017):
+        """get db config and connect to MongoDB"""
+        self.db_config = {'host': host, 'port': port, 'database': database, 'table': table}
 
     def _set_mysql_config(self, database, user, password, host='localhost', port=3306, **kwargs):
         """get db config and connect to MySQL"""
@@ -95,22 +127,53 @@ class Document(object):
     """Document only store in MongoDB or file, no OpenBrIm eET.
     The class name is not sure yet."""
 
-    def __init__(self, name: str, id: int = None, des: str = None):
+    def __init__(self, name, id=None, des=None):
         self.name = name
         self._id = id
         if des:
             self.des = des
 
-    # def update_attr(self, **attributes_dict):
-    #     for _k, _v in attributes_dict.items():
-    #         try:
-    #             if not _v == self.__dict__[_k]:
-    #                 print('<{}> changed by update()'.format(self.name))
-    #                 print(' .{} -> {}'.format(_k, _v))
-    #         except KeyError:
-    #             print("<{}> new attribute by update()".format(self.name))
-    #             print(' .{} -> {}'.format(_k, _v))
-    #         self.__dict__[_k] = _v
+    def set_mongo_doc(self):
+        """write info into the mongo.collection.document"""
+        with ConnMongoDB(**self.db_config) as _db:
+            _col = self.db_config['table']
+            if not self._id:
+                self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
+            elif not _db.find_by_kv(_col, 'name', self.name):
+                _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+            else:
+                _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
+                print("<{}> is in <{}>, ObjectID={}".format(self.name, _col, self._id))
+
+    def get_mongo_doc(self, if_print=False):
+        with ConnMongoDB(**self.db_config) as _db:
+            _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
+            self.update_attr(_result)
+            return _result
+
+    def set_file(self, file_path=None):
+        """write the attributes into JSON"""
+        _j = json.dumps(self.__dict__, indent=2)
+        if not file_path:
+            file_path = "{}.json".format(self.name)
+        with open(file_path, 'w') as _f:
+            _f.write(_j)
+        print("<{}> data stored in {}".format(self.name, file_path))
+
+    def update_attr(self, **attributes_dict):
+        for _k, _v in attributes_dict.items():
+            try:
+                if not _v == self.__dict__[_k]:
+                    print('<{}> changed by update_attr()'.format(self.name))
+                    print(' .{} -> {}'.format(_k, _v))
+            except KeyError:
+                print("<{}> new attribute by update_attr()".format(self.name))
+                print(' .{} -> {}'.format(_k, _v))
+            self.__dict__[_k] = _v
+
+    def set_dbconfig(self, database, table, host='localhost', port=27017):
+        self.db_config = {'host': host, 'port': port,
+                          'database': database, 'table': table}
 
 
 def _attr_pick(elmt, *pick_list):
@@ -163,7 +226,7 @@ def _attr_to_mongo_dict(elmt: PyELMT):
         for _k, _v in elmt.__dict__.items():
             if should_pop(_v):
                 _pop_key.append(_k)
-        _pop_key = list(set(_pop_key))
+        _pop_key=list(set(_pop_key))
         return _pop_key
 
     _after_pop = _attr_pop(elmt, *_pop_list(elmt))
