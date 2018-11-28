@@ -113,10 +113,9 @@ for i in range(1, span_num.value):
                             beam_name='Web_{}_{}'.format(c, i)))
         webList.append(Beam(a[i + 1], b[i], sect_web, steel,
                             beam_name='Web_{}_{}'.format(c, i)))
-for _w in webList:
-    print(_w.name)
+# for _w in webList:
+#     print(_w.name)
 
-'''''
 z_beams = []
 for i in range(span_num.value):
     if (i % 2) == 0:
@@ -143,4 +142,3 @@ marc.member_gp.append(*bottomChordList, *topChordList, *verChordsList, *webList,
 
 ShowTree(marc.openBrIM)
 marc.openBrIM.save_project()
-'''''

@@ -7,10 +7,10 @@ __author__ = 'Yidong QIN'
 Bridge inspection information
 """
 
-from BMS_BrIM.PyELMT import *
+from BMS_BrIM.__PyELMT import *
 
 
-class Damage(object):
+class Inspection(object):
     def __init__(self):
         self.status='Commm'
 
@@ -19,17 +19,7 @@ class Damage(object):
         self.status='IIIII'
         print(self.status)
 
-class Corrosion(Damage):
-    pass
 
-class Deformation(Damage):
-    pass
-
-class CoatingDamage(Damage):
-    pass
-
-class Loose(Damage):
-    pass
 
 if __name__ == '__main__':
     a = PyELMT

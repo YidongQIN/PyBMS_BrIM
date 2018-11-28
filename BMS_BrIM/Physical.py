@@ -7,7 +7,7 @@ __author__ = 'Yidong QIN'
 Physical Elements
 """
 
-from BMS_BrIM.Py_Abstract import *
+from BMS_BrIM.Abstract import *
 
 _DICT_FEM_CLASS = dict(Node=OBFENode,
                        Line=OBFELine,

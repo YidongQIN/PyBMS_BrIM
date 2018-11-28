@@ -19,6 +19,7 @@ from Interfaces import *
 
 
 class PyELMT(object):
+    """PyELMT is the basic type of Pythyon centralized Model"""
 
     def __init__(self, elmt_type, elmt_id, elmt_name=None):
         """Basic mandatory attributes of PyELMT are type, id;
@@ -31,7 +32,7 @@ class PyELMT(object):
             self.name = elmt_type + '_' + str(elmt_id)
         # two interfaces: Database and OpenBrIM
         self.db_config = dict()  # dict(database=, table=, user=,...)
-        self.openBrIM: dict or PyOpenBrIMElmt  # dict of eET.elements
+        self.openBrIM: dict()  # dict of eET.elements=PyOpenBrIMElmt
 
     # MongoDB methods: setting; setter, getter;
     def set_mongo_doc(self):
@@ -93,24 +94,20 @@ class PyELMT(object):
             self.__dict__[_k] = _v
 
     def set_dbconfig(self, database, table, **db_config):
-        db_config['database'] = database
-        db_config['table'] = table
+
+        def _set_mongo_config(**db_config):
+            """get db config and connect to MongoDB"""
+            self.db_config.update(host='localhost', port=27017, **db_config)
+
+        def _set_mysql_config(**db_config):
+            """get db config and connect to MySQL"""
+            self.db_config.update(host='localhost', port=3306, **db_config)
+
+        self.db_config.update(database=database, table=table)
         if self.type == 'Sensor':  # for now, only Sensor use MySQL
-            self._set_mysql_config(**db_config)
+            _set_mysql_config(**db_config)
         else:
-            self._set_mongo_config(**db_config)
-
-    def _set_mongo_config(self, database, table, host='localhost', port=27017):
-        """get db config and connect to MongoDB"""
-        self.db_config = {'host': host, 'port': port, 'database': database, 'table': table}
-
-    def _set_mysql_config(self, database, user, password, host='localhost', port=3306, **kwargs):
-        """get db config and connect to MySQL"""
-        self.db_config = {'user': user, 'password': password, 'database': database,
-                          'host': host, 'port': port}
-        if 'table' not in kwargs.keys():
-            print('The table/collection name is needed')
-        self.db_config['table'] = kwargs['table']
+            _set_mongo_config(**db_config)
 
     def link_elmt(self, attrib, elmt):
         """link the PyELMT to another PyELMT."""
@@ -123,58 +120,43 @@ class PyELMT(object):
         """
 
 
-class Document(object):
+class Document(PyELMT):
     """Document only store in MongoDB or file, no OpenBrIm eET.
     The class name is not sure yet."""
 
-    def __init__(self, name, id=None, des=None):
-        self.name = name
+    def __init__(self, id, name):
+        self.type = "Document"
         self._id = id
-        if des:
-            self.des = des
+        self.name = name
+        self.set_openbrim()
+        #@TODO
 
-    def set_mongo_doc(self):
-        """write info into the mongo.collection.document"""
-        with ConnMongoDB(**self.db_config) as _db:
-            _col = self.db_config['table']
-            if not self._id:
-                self._id = _db.insert_data(_col, **_attr_to_mongo_dict(self))
-            elif not _db.find_by_kv(_col, 'name', self.name):
-                _ = _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-            else:
-                _db.update_data(_col, self._id, **_attr_to_mongo_dict(self))
-                print("<{}> is in <{}>, ObjectID={}".format(self.name, _col, self._id))
-
-    def get_mongo_doc(self, if_print=False):
-        with ConnMongoDB(**self.db_config) as _db:
-            _result = _db.find_by_kv(self.db_config['table'], '_id', self._id, if_print)
-            self.update_attr(_result)
-            return _result
-
-    def set_file(self, file_path=None):
+    def set_file(self, file_path="{}.json".format(self.name)):
         """write the attributes into JSON"""
         _j = json.dumps(self.__dict__, indent=2)
-        if not file_path:
-            file_path = "{}.json".format(self.name)
         with open(file_path, 'w') as _f:
             _f.write(_j)
         print("<{}> data stored in {}".format(self.name, file_path))
 
-    def update_attr(self, **attributes_dict):
-        for _k, _v in attributes_dict.items():
-            try:
-                if not _v == self.__dict__[_k]:
-                    print('<{}> changed by update_attr()'.format(self.name))
-                    print(' .{} -> {}'.format(_k, _v))
-            except KeyError:
-                print("<{}> new attribute by update_attr()".format(self.name))
-                print(' .{} -> {}'.format(_k, _v))
-            self.__dict__[_k] = _v
 
-    def set_dbconfig(self, database, table, host='localhost', port=27017):
-        self.db_config = {'host': host, 'port': port,
-                          'database': database, 'table': table}
+class Equipment(PyELMT):
 
+    def __init__(self, elmt_type, elmt_id, elmt_name=None):
+        super(Equipment, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.openBrIM={'geo': self.set_openbrim()}
+
+class Abstract(PyELMT):
+    def __init__(self, elmt_type, elmt_id, elmt_name=None):
+        super(Abstract, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.openBrIM={'fem': self.set_openbrim()}
+
+class Physical(PyELMT):
+
+    def __init__(self, elmt_type, elmt_id, elmt_name=None):
+        super(Abstract, self).__init__(elmt_type, elmt_id, elmt_name)
+        self.openBrIM={'fem': self.set_openbrim(),
+                       'geo': self.set_openbrim()}
+# Following are common methods
 
 def _attr_pick(elmt, *pick_list):
     """keys are from the pick_list, and find corresponding attributes from the element.__dict__."""
@@ -226,56 +208,8 @@ def _attr_to_mongo_dict(elmt: PyELMT):
         for _k, _v in elmt.__dict__.items():
             if should_pop(_v):
                 _pop_key.append(_k)
-        _pop_key=list(set(_pop_key))
+        _pop_key = list(set(_pop_key))
         return _pop_key
 
     _after_pop = _attr_pop(elmt, *_pop_list(elmt))
     return _after_pop
-
-# def parameter_format(k):
-#     if isinstance(k, int):
-#         return k
-#     elif isinstance(k, float):
-#         try:
-#             return int(k)
-#         except ValueError:
-#             return k
-#     elif isinstance(k, str):
-#         try:
-#             return float(k)
-#         except ValueError:
-#             return k
-#     else:
-#         from BMS_BrIM.Py_Abstract import Parameter
-#         if isinstance(k, Parameter):
-#             return k.value
-#         else:
-#             print("Error formatting parameter")
-#             print(type(k))
-#             return
-
-# class XY(object):
-#     def __init__(self, x=0, y=0):
-#         if x is not None:
-#             self.x = parameter_format(x)
-#         if y is not None:
-#             self.y = parameter_format(y)
-#
-#
-# class XYZ(object):
-#
-#     def __init__(self, x=0, y=0, z=0):
-#         if x is not None:
-#             self.x = parameter_format(x)
-#         if y is not None:
-#             self.y = parameter_format(y)
-#         if z is not None:
-#             self.z = parameter_format(z)
-#
-#
-# class RXYZ(object):
-#
-#     def __init__(self, rx=0, ry=0, rz=0):
-#         self.rx = rx
-#         self.ry = ry
-#         self.rz = rz

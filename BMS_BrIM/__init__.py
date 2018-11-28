@@ -6,11 +6,11 @@ __author__ = 'Yidong QIN'
 """
 main code for the _PyBMS_BrIM program.
 """
-from BMS_BrIM.PyELMT import *
-from BMS_BrIM.Py_Abstract import *
-from BMS_BrIM.Py_Physical import *
-from BMS_BrIM.Py_Damage import *
-from BMS_BrIM.Py_Sensor import *
+# from BMS_BrIM.__PyELMT import *
+from BMS_BrIM.Abstract import *
+from BMS_BrIM.Physical import *
+from BMS_BrIM._Damage import *
+from BMS_BrIM._Sensor import *
 # from BMS_BrIM.Py_Sensor_inLab_OB import *
 
 

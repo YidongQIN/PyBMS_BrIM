@@ -7,7 +7,7 @@ __author__ = 'Yidong QIN'
 Python Elements for BrIM. 
 """
 
-from BMS_BrIM.PyELMT import *
+from BMS_BrIM.__PyELMT import *
 from Interfaces.BrParamMLEx import *
 
 # from BMS_BrIM.Py_Physical import PhysicalELMT
@@ -28,7 +28,7 @@ class AbstractELMT(PyELMT):
     def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
         """abstract elements, such as material, section, load case"""
         super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        # self.openBrIM: PyOpenBrIMElmt = self.set_openbrim()
+        self.openBrIM: PyOpenBrIMElmt
 
     def set_openbrim(self, ob_class=None, **attrib_dict):
         if not ob_class:
@@ -148,7 +148,7 @@ class Group(AbstractELMT):
             # 1. self._sub.append;
             self._sub.append(_c)
             # 2. self.openBrIM sub();
-            from BMS_BrIM.Py_Physical import PhysicalELMT
+            from BMS_BrIM.Physical import PhysicalELMT
             if isinstance(_c, AbstractELMT):
                 self.openBrIM.sub(_c.openBrIM)
             elif isinstance(_c, PhysicalELMT):

@@ -12,7 +12,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import numpy as np
 
-from BMS_BrIM.Py_Physical import *
+from BMS_BrIM.Physical import *
 
 
 class BridgeProject(Document):
