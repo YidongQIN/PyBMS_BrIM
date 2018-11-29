@@ -21,18 +21,39 @@ from Interfaces import *
 class PyELMT(object):
     """PyELMT is the basic type of Pythyon centralized Model"""
 
-    def __init__(self, elmt_type, elmt_id, elmt_name=None):
+    def __init__(self, brim_type, brim_id, brim_name=None):
         """Basic mandatory attributes of PyELMT are type, id;
         the optional attribute is name."""
-        self._id = elmt_id
-        self.type = elmt_type
-        if elmt_name:
-            self.name = elmt_name
-        else:
-            self.name = elmt_type + '_' + str(elmt_id)
+        self._id = brim_id
+        self.type = brim_type
+        self.set_name(brim_name)
         # two interfaces: Database and OpenBrIM
         self.db_config = dict()  # dict(database=, table=, user=,...)
         self.openBrIM: dict()  # dict of eET.elements=PyOpenBrIMElmt
+
+    def set_name(self, brim_name=None):
+        """brim can be regarded as description"""
+        if brim_name:
+            self.name = brim_name
+        else:
+            self.name = brim_type + '_' + str(brim_id)
+
+    def link_elmt(self, attrib, elmt):
+        """link the PyELMT to another PyELMT."""
+        self.__dict__[attrib] = elmt
+        self.__dict__["{}_ob".format(attrib)] = elmt.openBrIM
+        self.__dict__["{}_id".format(attrib)] = elmt._id
+
+    def update_attr(self, **attributes_dict: dict):
+        for _k, _v in attributes_dict.items():
+            try:
+                if not _v == self.__dict__[_k]:
+                    print('<{}> changed by update_attr()'.format(self.name))
+                    print('* {} -> {}'.format(_k, _v))
+            except KeyError:
+                print("<{}> new attribute by update_attr()".format(self.name))
+                print('* {} -> {}'.format(_k, _v))
+            self.__dict__[_k] = _v
 
     # MongoDB methods: setting; setter, getter;
     def set_mongo_doc(self):
@@ -82,81 +103,142 @@ class PyELMT(object):
     def get_sap2k(self):
         pass
 
-    def update_attr(self, **attributes_dict: dict):
-        for _k, _v in attributes_dict.items():
-            try:
-                if not _v == self.__dict__[_k]:
-                    print('<{}> changed by update_attr()'.format(self.name))
-                    print('* {} -> {}'.format(_k, _v))
-            except KeyError:
-                print("<{}> new attribute by update_attr()".format(self.name))
-                print('* {} -> {}'.format(_k, _v))
-            self.__dict__[_k] = _v
-
     def set_dbconfig(self, database, table, **db_config):
-
-        def _set_mongo_config(**db_config):
-            """get db config and connect to MongoDB"""
-            self.db_config.update(host='localhost', port=27017, **db_config)
-
-        def _set_mysql_config(**db_config):
-            """get db config and connect to MySQL"""
-            self.db_config.update(host='localhost', port=3306, **db_config)
-
-        self.db_config.update(database=database, table=table)
         if self.type == 'Sensor':  # for now, only Sensor use MySQL
-            _set_mysql_config(**db_config)
+            self.db_config.update(host='localhost', port=3306)
         else:
-            _set_mongo_config(**db_config)
-
-    def link_elmt(self, attrib, elmt):
-        """link the PyELMT to another PyELMT."""
-        self.__dict__[attrib] = elmt
-        self.__dict__["{}_ob".format(attrib)] = elmt.openBrIM
-        self.__dict__["{}_id".format(attrib)] = elmt._id
-        """
-        option #1, only one attribute is linked, the PyELMT. Then in the set_openbrim() method, use a try...block to find corresponding ob node.
-        #2, in the interfaces.__init__, create a new class, much like the PyOpenBrIM, to accept the OB type and variables together.
-        """
+            self.db_config.update(host='localhost', port=27017)
+        self.db_config.update(database=database, table=table, **db_config)
 
 
-class Document(PyELMT):
+class DocumentELMT(PyELMT):
     """Document only store in MongoDB or file, no OpenBrIm eET.
     The class name is not sure yet."""
 
-    def __init__(self, id, name):
-        self.type = "Document"
-        self._id = id
-        self.name = name
-        self.set_openbrim()
-        #@TODO
+    def __init__(self, brim_type, brim_id, brim_name=None, file_path=None):
+        super(DocumentELMT, self).__init__(brim_type, brim_id, brim_name)
+        del self.openBrIM
+        self.set_file(file_path)
 
-    def set_file(self, file_path="{}.json".format(self.name)):
+    def set_file(self, file_path):
+        if file_path:
+            self.file_path = file_path
+            with open(self.file_path, 'r') as _f:
+                print(_f.read())
+        else:
+            print('No file path')
+
+    def get_file(self, file_path):
         """write the attributes into JSON"""
         _j = json.dumps(self.__dict__, indent=2)
-        with open(file_path, 'w') as _f:
+        with open("{}.json".format(self.name), 'w') as _f:
             _f.write(_j)
         print("<{}> data stored in {}".format(self.name, file_path))
 
 
-class Equipment(PyELMT):
+class EquipmentELMT(PyELMT):
 
-    def __init__(self, elmt_type, elmt_id, elmt_name=None):
-        super(Equipment, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM={'geo': self.set_openbrim()}
+    def __init__(self, brim_type, brim_id, brim_name=None):
+        super(EquipmentELMT, self).__init__(brim_type, brim_id, brim_name)
+        self.openBrIM = {'geo': self.set_openbrim()}
 
-class Abstract(PyELMT):
-    def __init__(self, elmt_type, elmt_id, elmt_name=None):
-        super(Abstract, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM={'fem': self.set_openbrim()}
 
-class Physical(PyELMT):
+class AbstractELMT(PyELMT):
+    _DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
+                                Parameter=OBPrmElmt,
+                                Shape=OBShape,
+                                Section=OBSection,
+                                Group=OBGroup,
+                                Project=OBProject,
+                                Unit=OBUnit,
+                                Text=OBText3D,
+                                Node=OBFENode)
 
-    def __init__(self, elmt_type, elmt_id, elmt_name=None):
-        super(Abstract, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM={'fem': self.set_openbrim(),
-                       'geo': self.set_openbrim()}
-# Following are common methods
+    def __init__(self, brim_type, brim_id=None, brim_name=None):
+        """abstract elements, such as material, section, load case"""
+        super(AbstractELMT, self).__init__(brim_type, brim_id, brim_name)
+        self.openBrIM = {'fem': None}
+
+    def set_openbrim(self, ob_class=None, **attrib_dict):
+        if not ob_class:
+            ob_class = AbstractELMT._DICT_OPENBRIM_CLASS[self.type]
+            print("{}.openBrIM is of {}".format(self.name, ob_class))
+        # _openbrim = PyELMT.set_openbrim(self, ob_class, **attrib_dict)
+        return super(AbstractELMT, self).set_openbrim(ob_class, **attrib_dict)
+
+
+class PhysicalELMT(PyELMT):
+    """PhysicalELMT is used to represent real members of bridges.
+    it contains parameters of the element, by init() or reading database.
+    Thus it could exports geometry model, FEM model and database info
+    later, some other methods may be added, such as SAP2K model method"""
+    _DICT_FEM_CLASS = dict(Node=OBFENode,
+                           Line=OBFELine,
+                           Beam=OBFELine,
+                           Truss=StraightBeamFEM,
+                           Surface=OBFESurface,
+                           BoltedPlate=OBFESurface,
+                           Volume=OBVolume)
+    _DICT_GEO_CLASS = dict(Node=OBPoint,
+                           Line=OBLine,
+                           Beam=OBLine,
+                           Truss=OBLine,
+                           Surface=OBSurface,
+                           BoltedPlate=BoltedPlateGeo,
+                           Volume=OBVolume)
+
+    def __init__(self, brim_type, brim_id, brim_name=None):
+        """real members of structure"""
+        super(PhysicalELMT, self).__init__(brim_type, brim_id, brim_name)
+        self.material: Material = None
+        self.section: Section = None
+        self.openBrIM = {'fem': None,
+                         'geo': None}
+
+    def set_openbrim(self, ob_class_fem=None, ob_class_geo=None, **attrib_dict):
+        if not ob_class_fem:
+            ob_class_fem = PhysicalELMT._DICT_FEM_CLASS[self.type]
+        if not ob_class_geo:
+            ob_class_geo = PhysicalELMT._DICT_FEM_CLASS[self.type]
+        # set fem openbrim model
+        _ob_models = list()
+        for _ob in ob_class_fem, ob_class_geo:
+            # openBrIM is one of the PyELMT interfaces
+            _ob_elmt = PyELMT.set_openbrim(self, _ob, **attrib_dict)
+            _ob_models.append(_ob_elmt)
+        self.openBrIM = dict(zip(['fem', 'geo'], _ob_models))
+        return self.openBrIM
+
+    def set_material(self, material):
+        """ openbrim & mongodb"""
+        if material:
+            self.material = material
+            # self.material_ob = material.openBrIM
+            # self.material_id = material._id
+        else:
+            self.material = self.section.material
+            # self.material_ob = self.section.material_ob
+            # self.material_id = self.section.material_id
+
+    def set_section(self, section):
+        self.section = section
+        # self.section_ob = section.openBrIM
+        # self.section_id = section._id
+
+    def set_parameter(self, p_name, parameter):
+        self.__dict__[p_name] = parameter
+        self.__dict__["{}_ob".format(p_name)] = parameter.openBrIM
+        self.__dict__["{}_id".format(p_name)] = parameter._id
+
+    def link_node(self, node, node_num):
+        """link to a Node"""
+        self.__dict__["node{}".format(node_num)] = node
+        self.__dict__["node{}_ob".format(node_num)] = node.openBrIM
+        self.__dict__["node{}_id".format(node_num)] = node._id
+        # self.nodeOB.append(node.openBrIM)
+
+
+# Following are common methods #
 
 def _attr_pick(elmt, *pick_list):
     """keys are from the pick_list, and find corresponding attributes from the element.__dict__."""

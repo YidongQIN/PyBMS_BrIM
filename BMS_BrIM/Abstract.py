@@ -10,32 +10,8 @@ Python Elements for BrIM.
 from BMS_BrIM.__PyELMT import *
 from Interfaces.BrParamMLEx import *
 
+
 # from BMS_BrIM.Py_Physical import PhysicalELMT
-
-_DICT_OPENBRIM_CLASS = dict(Material=OBMaterial,
-                            Parameter=OBPrmElmt,
-                            Shape=OBShape,
-                            Section=OBSection,
-                            Group=OBGroup,
-                            Project=OBProject,
-                            Unit=OBUnit,
-                            Text=OBText3D,
-                            Node=OBFENode)
-
-
-class AbstractELMT(PyELMT):
-
-    def __init__(self, elmt_type, elmt_id=None, elmt_name=None):
-        """abstract elements, such as material, section, load case"""
-        super(AbstractELMT, self).__init__(elmt_type, elmt_id, elmt_name)
-        self.openBrIM: PyOpenBrIMElmt
-
-    def set_openbrim(self, ob_class=None, **attrib_dict):
-        if not ob_class:
-            ob_class = _DICT_OPENBRIM_CLASS[self.type]
-            print("{}.openBrIM is of {}".format(self.name, ob_class))
-        _openbrim = PyELMT.set_openbrim(self, ob_class, **attrib_dict)
-        return _openbrim
 
 
 class Parameter(AbstractELMT):
@@ -221,7 +197,7 @@ class ProjGroups(AbstractELMT):
 
     def __init__(self, name, template='empty', **db_config):
         """project is a new MongoDB, so no id"""
-        super(ProjGroups, self).__init__('Project', elmt_id=0, elmt_name=name)
+        super(ProjGroups, self).__init__('Project', brim_id=0, brim_name=name)
         # self.template = template
         self.openBrIM = self.set_openbrim(OBProject, **{'template': template})
         # Project cannot append sub, only its groups can

@@ -1,21 +1,19 @@
 from BMS_BrIM import *
-# from pprint import pprint
 
-n1=FENode(0,0,0)
-n2=FENode(0,0,10)
-one_col= Beam(n1, n2,'Col')
+import collections
 
-print("==Test of hasMongo Interface")
-exp = MonitorExperiment(1, 'MARC', 201808251330, 201808271555, "not a real experiment")
-exp.set_mongo_config("Test","Test hasMongo")
-print("all attrib:\n\t",exp.__dict__)
-exp.set_mongo_doc()
-# uc = NetworkUnit(22, 'ACD', 'BC', 'A4', experiment=exp)
-# datpath = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\server backup\\20180327_161910_20\\U117_ADC_B2.dat'
-# datalist=[0,12,13,15,18,19,25,24,26,3]
-# new_ss = Sensor(20, 'SS', y=10, sensor_data=datalist)
-# new_ss = Sensor(20, 'SS', y=10, sensor_data=datpath)
-# new_ss=Sensor(20,'SS', 0, 0, 10, 'x',uc,'BC', 'mason', datpath)
+class newBrIMcollection(collections.UserDict):
+    pass
+
+class nnb(newBrIMcollection):
+    pass
+
+a=newBrIMcollection()
+print(a.__dict__)
+b=nnb()
+print(b.__dict__)
+
+
 
 '''
 

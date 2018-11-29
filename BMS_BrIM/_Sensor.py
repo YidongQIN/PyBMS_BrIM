@@ -15,7 +15,7 @@ import numpy as np
 from BMS_BrIM.Physical import *
 
 
-class BridgeProject(Document):
+class BridgeProject(DocumentELMT):
 
     def __init__(self, name, bridge_id, latitude, longitude, length, structural_type, des):
         super(BridgeProject, self).__init__(name, 0, des)
@@ -28,7 +28,7 @@ class BridgeProject(Document):
             print('#Special bridge structural type')
 
 
-class MonitorExperiment(Document):
+class MonitorExperiment(DocumentELMT):
 
     def __init__(self, ext_id, bridge, start_datetime, end_datetime, des=None):
         _name = 'Experiment_{}'.format(bridge)
