@@ -8,6 +8,7 @@ __author__ = 'Yidong QIN'
 """
 import collections
 import json
+import os
 
 
 class PyBrIM(collections.UserDict):
@@ -16,14 +17,15 @@ class PyBrIM(collections.UserDict):
         self._id = brim_id
         self.type = brim_type
         super(PyBrIM, self).__init__(**brim_data)
+        self.api=dict()
 
     def link(self, key: str, element):
         if isinstance(element, PyBrIM):
             self.__setitem__(key, element)
 
     def __str__(self):
-        return "{}_{}\n  ->{}".format(self.type, self._id,
-                                      super(PyBrIM, self).__str__())
+        return "#{}_{}~{}".format(self.type, self._id,
+                                  super(PyBrIM, self).__str__())
 
     def jsondumps(self):
         return json.dumps(self, indent=4, default=lambda obj: obj.__dict__)
@@ -59,29 +61,49 @@ class PyBrIM(collections.UserDict):
             except KeyError:
                 print('Cannot find attribute to del:', item)
 
+    # api are interfaces for other software
+    def setter_api(self):
+        """decorator for api.setter(): self.data -> other model"""
+        pass
+
+    def getter_api(self):
+        """decorator for api.getter(): other model -> self.data"""
+        pass
+
+
 
 class DocumentBrIM(PyBrIM):
 
-    def __init__(self, brim_id, brim_type, **brim_data):
-        super(DocumentBrIM, self).__init__(brim_id, brim_type, **brim_data)
+    def __init__(self, brim_id, brim_type, file_path, **brim_data):
+        if not os.path.isfile(file_path):
+            print('<<', file_path, ">> file not found")
+            # raise FileNotFoundError
+        super(DocumentBrIM, self).__init__(brim_id, brim_type,
+                                           **brim_data, file=file_path)
 
 
 class EquipmentBrIM(PyBrIM):
-    pass
+
+    def __init__(self, brim_id, brim_type, **brim_data):
+        super(EquipmentBrIM, self).__init__(brim_id, brim_type, **brim_data)
+        self.api['OpenBrIM_GEO']=None
 
 
 class AbstractBrIM(PyBrIM):
-    pass
 
+    def __init__(self, brim_id, brim_type, **brim_data):
+        super(AbstractBrIM, self).__init__(brim_id, brim_type, **brim_data)
+        self.api['OpenBrIM_FEM'] = None
 
 class PhysicalBrIM(PyBrIM):
-    pass
+
+    def __init__(self, brim_id, brim_type, **brim_data):
+        super(PhysicalBrIM, self).__init__(brim_id, brim_type, **brim_data)
+        self.api['OpenBrIM_FEM'] = None
+        self.api['OpenBrIM_GEO'] = None
 
 
 if __name__ == '__main__':
-    mat = PyBrIM(2, 'material', a=100, fc=999)
-    # print(mat.jsondumps())
-    test = PyBrIM(1, 'non-type', section='SECT', material='MAT')
-    test.link('material', mat)
-    print(test)
-    print(test.jsondumps())
+    mongo_4 = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\mongo_fourstory.txt'
+    doc = DocumentBrIM(3, 'ext', "adfasdf", read='Unread')
+    print(doc)
