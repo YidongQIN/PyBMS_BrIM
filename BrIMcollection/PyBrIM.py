@@ -35,12 +35,17 @@ class PyBrIM(collections.UserDict):
 
     # attributes can be used for getting information, but not recommended
     def __setattr__(self, key, value):
-        if key in ('_id', 'type', 'data'):
+        if key in ('_id', 'type', 'data', 'api'):
             # print('set default attr', key)
             super(PyBrIM, self).__setattr__(key, value)
         elif key in self.data.keys():
             print('set attr in .data items', key)
             super(PyBrIM, self).__setitem__(key, value)
+        elif key in self.api.keys():
+            print('@TODO set application interface', key)
+            # super(PyBrIM, self).__setitem__(key, value)
+            #@TODO
+            return
         else:
             print("New attribute:", key, "=", value)
             super(PyBrIM, self).__setitem__(key, value)
@@ -107,3 +112,5 @@ if __name__ == '__main__':
     mongo_4 = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\mongo_fourstory.txt'
     doc = DocumentBrIM(3, 'ext', "adfasdf", read='Unread')
     print(doc)
+    doc.api['ob']='Doc_No_OB'
+    print(doc.__dict__)
