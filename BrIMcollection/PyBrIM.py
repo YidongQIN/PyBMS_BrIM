@@ -14,6 +14,7 @@ import os
 class PyBrIM(collections.UserDict):
 
     def __init__(self, brim_id, brim_type, **brim_data):
+        """id is the name"""
         self._id = brim_id
         self.type = brim_type
         super(PyBrIM, self).__init__(**brim_data)
