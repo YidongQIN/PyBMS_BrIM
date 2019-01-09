@@ -18,10 +18,12 @@ class PyBrIM(collections.UserDict):
         self._id = brim_id
         self.type = brim_type
         super(PyBrIM, self).__init__(**brim_data)
-        self.api=dict()
+        self.api = dict()
 
     def link(self, key: str, element):
         if isinstance(element, PyBrIM):
+            self.__setitem__(key, element._id)
+        elif isinstance(element, (str, float, int)):
             self.__setitem__(key, element)
 
     def __str__(self):
@@ -45,7 +47,7 @@ class PyBrIM(collections.UserDict):
         elif key in self.api.keys():
             print('@TODO set application interface', key)
             # super(PyBrIM, self).__setitem__(key, value)
-            #@TODO
+            # @TODO
             return
         else:
             print("New attribute:", key, "=", value)
@@ -77,7 +79,6 @@ class PyBrIM(collections.UserDict):
         pass
 
 
-
 class DocumentBrIM(PyBrIM):
 
     def __init__(self, brim_id, brim_type, file_path, **brim_data):
@@ -87,12 +88,26 @@ class DocumentBrIM(PyBrIM):
         super(DocumentBrIM, self).__init__(brim_id, brim_type,
                                            **brim_data, file=file_path)
 
+    @staticmethod
+    def check_file_type(file, *extension):
+        """check if the file's extension == the given ext"""
+        ext = os.path.splitext(file)[-1].lower()
+        # print(extension)
+        # print(ext)
+        if ext in extension:
+            return True
+        elif ext[1:] in extension:
+            return True
+        else:
+            print('The extension', ext, 'is not in', extension)
+            return False
+
 
 class EquipmentBrIM(PyBrIM):
 
     def __init__(self, brim_id, brim_type, **brim_data):
         super(EquipmentBrIM, self).__init__(brim_id, brim_type, **brim_data)
-        self.api['OpenBrIM_GEO']=None
+        self.api['OpenBrIM_GEO'] = None
 
 
 class AbstractBrIM(PyBrIM):
@@ -101,17 +116,24 @@ class AbstractBrIM(PyBrIM):
         super(AbstractBrIM, self).__init__(brim_id, brim_type, **brim_data)
         self.api['OpenBrIM_FEM'] = None
 
+
 class PhysicalBrIM(PyBrIM):
 
-    def __init__(self, brim_id, brim_type, **brim_data):
+    def __init__(self, brim_id, brim_type, material=None, **brim_data):
         super(PhysicalBrIM, self).__init__(brim_id, brim_type, **brim_data)
         self.api['OpenBrIM_FEM'] = None
         self.api['OpenBrIM_GEO'] = None
+        self.set_material(material)
+
+    def set_material(self, material):
+        if material:
+            assert isinstance(material, AbstractBrIM)
+            self.link('material', material)
 
 
 if __name__ == '__main__':
     mongo_4 = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\mongo_fourstory.txt'
     doc = DocumentBrIM(3, 'ext', "adfasdf", read='Unread')
     print(doc)
-    doc.api['ob']='Doc_No_OB'
+    doc.api['ob'] = 'Doc_No_OB'
     print(doc.__dict__)

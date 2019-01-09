@@ -11,7 +11,7 @@ from BrIMcollection.PyBrIM import *
 
 class Parameter(AbstractBrIM):
 
-    def __init__(self, id, para_name, para_value):
+    def __init__(self, para_name, para_value, id=None):
         super(Parameter, self).__init__(id, 'Parameter')
         self['name'] = para_name
         self['value'] = para_value
@@ -26,7 +26,7 @@ class Material(AbstractBrIM):
                           Fy="Steel Yield Strength",
                           Fu="Steel Ultimate Strength")
 
-    def __init__(self, id, mat_type, **mat_property):
+    def __init__(self, mat_type, id=None, **mat_property):
         """id is name, mat_type is 'Steel','Concrete', etc."""
         super(Material, self).__init__(id, mat_type, **mat_property)
 
@@ -36,25 +36,80 @@ class Material(AbstractBrIM):
             if _v:
                 print(' - ', _k, '=', _v)
 
+
 class Shape(AbstractBrIM):
 
-    def __init__(self, id, shape_type, *node_list):
-        super(Shape, self).__init__(id, shape_type)
-        #@TODO
+    def __init__(self, shape_type, id=None, **shape_data):
+        super(Shape, self).__init__(id, shape_type, **shape_data)
+
+
+class ShapePolygon(Shape):
+
+    def __init__(self, *node_list, id=None):
+        super(ShapePolygon, self).__init__(id, 'Polygon')
+        for i in range(len(node_list)):
+            assert isinstance(node_list[i], tuple), "Polygon Corner should be tuple."
+            assert len(node_list[i]) == 2, "Polygon Corner has two coordinates."
+            self['node_{}'.format(i + 1)] = node_list[i]
+
+
+class ShapeRectangle(ShapePolygon):
+
+    def __init__(self, width, length, id=None):
+        assert isinstance(width, (int, float))
+        assert isinstance(length, (int, float))
+        super(ShapeRectangle, self).__init__((0, 0), (width, 0), (width, length), (0, length), id=id)
+
+
+class ShapeCircle(Shape):
+
+    def __init__(self, radius, id=None):
+        assert isinstance(radius, (int, float))
+        super(ShapeCircle, self).__init__(id, 'Circle', radius=radius)
+
 
 class Section(AbstractBrIM):
 
-    def __init__(self, id, *shape, material=None):
-        super(Section, self).__init__(id,'Section')
-        self['material']=material
-        for _s in shape:
-            self[]
+    def __init__(self, *shape, material=None, id=None):
+        super(Section, self).__init__(id, 'Section')
+        self.link('material', material)
+        for i in range(len(shape)):
+            self.link('shape{}'.format(i + 1), shape[i])
+
+
+class FENode(AbstractBrIM):
+
+    def __init__(self, x, y, z, tx=0, ty=0, tz=0, rx=0, ry=0, rz=0, id=None):
+        super(FENode, self).__init__(id, 'FENode')
+        self['x'] = x
+        self['y'] = y
+        self['z'] = z
+        self['tx'] = tx
+        self['ty'] = ty
+        self['tz'] = tz
+        self['rx'] = rx
+        self['ry'] = ry
+        self['rz'] = rz
+
+
+class Group(AbstractBrIM):
+    """"""
+
+    def __init__(self, group_id, *group_memeber, **kwargs):
+        super(Group, self).__init__(group_id, 'Group', **kwargs)
+        # @TODO what is the purpose of being a 'Group'?
+        print(group_memeber)
+
 
 if __name__ == '__main__':
-    p1 = Parameter(1, 'test_P', 20)
-    print(p1.__dict__)
-    print(p1.name)
-    m1=Material('steel1','Steel', a=100, fc=599, fu=1111)
-    # print(m1.__dict__)
-    # print(m1.a)
-    m1.show_mat_property()
+    m1 = Material('ccc', a=0.1, fc=30)
+    sp1 = ShapePolygon((0, 0), (10, 0), (10, 10), (0, 10))
+    rec = ShapeRectangle(12, 8)
+    sp2 = ShapeCircle(6)
+    sec1 = Section(sp1, material=m1)
+    n1 = FENode(0, 0, 0, tz=-1)
+    print(n1)
+    # print(sp1)
+    # print(rec)
+    # print(sp2)
+    # print(sec1)
