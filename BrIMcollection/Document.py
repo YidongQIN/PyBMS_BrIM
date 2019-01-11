@@ -102,6 +102,40 @@ class SensorData(DocumentBrIM):
         plt.title('FFT of {}'.format(self._id))
 
 
+class InspectionRecord(DocumentBrIM):
+
+    def __init__(self, brim_id, damage_type, file_path):
+        super(InspectionRecord, self).__init__(brim_id, damage_type, file_path)
+
+
+class Corrosion(InspectionRecord):
+
+    def __init__(self, brim_id, condition, file_path):
+        super(Corrosion, self).__init__(brim_id, 'Corrosion', file_path)
+        self['condition'] = condition
+
+
+class Deformation(InspectionRecord):
+
+    def __init__(self, brim_id, condition, file_path):
+        super(Deformation, self).__init__(brim_id, 'Deformation', file_path)
+        self['condition'] = condition
+
+
+class CoatingDamage(InspectionRecord):
+
+    def __init__(self, brim_id, condition, file_path):
+        super(CoatingDamage, self).__init__(brim_id, 'CoatingDamage', file_path)
+        self['condition'] = condition
+
+
+class Loose(InspectionRecord):
+
+    def __init__(self, brim_id, condition, file_path):
+        super(Loose, self).__init__(brim_id, 'Loose', file_path)
+        self['condition'] = condition
+
+
 if __name__ == '__main__':
     media1 = Media('c:\\Users\\yqin78\\Downloads\\xxx.md', 8)
     print(media1)

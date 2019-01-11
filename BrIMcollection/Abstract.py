@@ -95,10 +95,17 @@ class FENode(AbstractBrIM):
 class Group(AbstractBrIM):
     """"""
 
-    def __init__(self, group_id, *group_memeber, **kwargs):
+    def __init__(self, group_id, *group_member, **kwargs):
         super(Group, self).__init__(group_id, 'Group', **kwargs)
         # @TODO what is the purpose of being a 'Group'?
-        print(group_memeber)
+        print(group_member)
+
+
+class Condition(AbstractBrIM):
+
+    def __init__(self, condition_rate, inspection):
+        super(Condition, self).__init__(None, 'Condition', condition=condition_rate, inspection=inspection)
+        #@TODO physical.link(condition) ?
 
 
 if __name__ == '__main__':
