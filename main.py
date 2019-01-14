@@ -7,6 +7,7 @@ cs=Condition(1, i1,i2,i3,i4)
 # print(cs.data)
 print(cs.calc_condition_state())
 print(cs.ColorRGBhex(cs.condition))
+cs.show()
 
 '''
 

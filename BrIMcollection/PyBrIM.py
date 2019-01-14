@@ -33,8 +33,16 @@ class PyBrIM(collections.UserDict):
             self.__setitem__(key, element)
 
     def __str__(self):
-        return "#{}_{}~{}".format(self.type, self._id,
-                                  super(PyBrIM, self).__str__())
+        return "<{}>#{}".format(self.type, self._id)
+
+    def show(self):
+        print('===Element Detail===')
+        print(self)
+        for _k, _v in self.data.items():
+            print('  .{} : {}'.format(_k, str(_v)))
+        for _k, _v in self.api.items():
+            print('  @{} -> {}'.format(_k, str(_v)))
+        print('=====')
 
     def jsondumps(self):
         return json.dumps(self, indent=4, default=lambda obj: obj.__dict__)

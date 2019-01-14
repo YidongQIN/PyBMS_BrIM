@@ -138,4 +138,6 @@ class Loose(InspectionRecord):
 
 if __name__ == '__main__':
     media1 = Media('c:\\Users\\yqin78\\Downloads\\xxx.md', 8)
-    print(media1)
+    # print(media1)
+    cd=CoatingDamage('cd1', 4, 'c:\\Users\\yqin78\\Downloads\\285-0067-0-Bridge-2017-12-04.pdf')
+    print(cd)

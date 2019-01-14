@@ -98,7 +98,7 @@ class Group(AbstractBrIM):
 
     def __init__(self, group_id, *group_member, **kwargs):
         super(Group, self).__init__(group_id, 'Group', **kwargs)
-        self.append(group_member)
+        self.append(*group_member)
 
     def unify_attrib(self, key, new_value):
         for m in self:
@@ -128,18 +128,18 @@ class Condition(AbstractBrIM):
         return self.condition
 
     @staticmethod
-    def ColorRGBhex(condition_state, good=1, severe=4):
+    def ColorRGBhex(condition_state, good=9, severe=0):
         """input a condition_state,
-        good ~ start = FF0000
-        severe ~ end = 00FF00
-        return interpolation between FF0000 and 00FF00"""
-        start = [255, 0, 0]  # FF0000
-        end = [0, 255, 0]  # 00FF00
+        good ~ start = 00FF00
+        severe ~ end = FF0000
+        interpolation between FF0000 and 00FF00
+        :return color representing the condition of element"""
+        start = (0, 255, 0)  # 00FF00
+        end = (255, 0, 0)  # FF0000
         color = [0, 0, 0]
         for i in range(3):
             itp = start[i] + (end[i] - start[i]) / (severe - good) * (condition_state - good)
             color[i] = hex(int(itp))[2:].zfill(2).upper()
-        # print("#"+''.join(color))
         return "#" + ''.join(color)
 
 
@@ -150,10 +150,7 @@ if __name__ == '__main__':
     sp2 = ShapeCircle(6)
     sec1 = Section(sp1, material=m1)
     n1 = FENode(0, 0, 0, tz=-1)
-    print(n1)
     gp = Group('group', m1, sp1, sp2, sec1)
+    # print(gp.__dict__)
     print(gp)
-    print(sp1)
-    print(rec)
-    print(sp2)
-    print(sec1)
+    gp.show()
