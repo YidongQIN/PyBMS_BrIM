@@ -15,14 +15,20 @@ class PyBrIM(collections.UserDict):
 
     def __init__(self, brim_id, brim_type, **brim_data):
         """id is the name"""
-        self._id = brim_id
         self.type = brim_type
+        self._id = self.default_id(brim_id)
         super(PyBrIM, self).__init__(**brim_data)
         self.api = dict()
 
-    def link(self, key: str, element):
+    def default_id(self, brim_id):
+        if not brim_id:
+            return self.type
+        return brim_id
+
+    def link(self, key: (str, int), element):
         if isinstance(element, PyBrIM):
-            self.__setitem__(key, element._id)
+            # self.__setitem__(key, element._id)
+            self.__setitem__(key, element)
         elif isinstance(element, (str, float, int)):
             self.__setitem__(key, element)
 
@@ -35,6 +41,11 @@ class PyBrIM(collections.UserDict):
 
     def __iter__(self):
         return iter(self.data.items())
+
+    def append(self, *elements):
+        """act like a list"""
+        for i in range(len(elements)):
+            self.link(i + 1, elements[i])
 
     # attributes can be used for getting information, but not recommended
     def __setattr__(self, key, value):

@@ -6,6 +6,7 @@ __author__ = 'Yidong QIN'
 """
 Python BrIM for Abstract element
 """
+
 from BrIMcollection.PyBrIM import *
 
 
@@ -93,19 +94,53 @@ class FENode(AbstractBrIM):
 
 
 class Group(AbstractBrIM):
-    """"""
+    """the purpose of grouping brim elements is to unify particular attribute or api"""
 
     def __init__(self, group_id, *group_member, **kwargs):
         super(Group, self).__init__(group_id, 'Group', **kwargs)
-        # @TODO what is the purpose of being a 'Group'?
-        print(group_member)
+        self.append(group_member)
+
+    def unify_attrib(self, key, new_value):
+        for m in self:
+            m[key] = new_value
+
+    def unify_api(self, api_name, new_api):
+        for a in self.api:
+            a[api_name] = new_api
 
 
 class Condition(AbstractBrIM):
 
-    def __init__(self, condition_rate, inspection):
-        super(Condition, self).__init__(None, 'Condition', condition=condition_rate, inspection=inspection)
-        #@TODO physical.link(condition) ?
+    def __init__(self, condition_state=1, *inspection):
+        super(Condition, self).__init__(None, 'Condition', condition=condition_state)
+        self.append(*inspection)
+
+    def calc_condition_state(self):
+        for _insp in self.data.values():
+            try:
+                self['condition'] = max(_insp['condition'], self['condition'])
+            except AttributeError:
+                # print('calculating condition state of', self._id)
+                pass
+            except TypeError:
+                # print('calculating condition state of', self._id)
+                pass
+        return self.condition
+
+    @staticmethod
+    def ColorRGBhex(condition_state, good=1, severe=4):
+        """input a condition_state,
+        good ~ start = FF0000
+        severe ~ end = 00FF00
+        return interpolation between FF0000 and 00FF00"""
+        start = [255, 0, 0]  # FF0000
+        end = [0, 255, 0]  # 00FF00
+        color = [0, 0, 0]
+        for i in range(3):
+            itp = start[i] + (end[i] - start[i]) / (severe - good) * (condition_state - good)
+            color[i] = hex(int(itp))[2:].zfill(2).upper()
+        # print("#"+''.join(color))
+        return "#" + ''.join(color)
 
 
 if __name__ == '__main__':
@@ -116,7 +151,9 @@ if __name__ == '__main__':
     sec1 = Section(sp1, material=m1)
     n1 = FENode(0, 0, 0, tz=-1)
     print(n1)
-    # print(sp1)
-    # print(rec)
-    # print(sp2)
-    # print(sec1)
+    gp = Group('group', m1, sp1, sp2, sec1)
+    print(gp)
+    print(sp1)
+    print(rec)
+    print(sp2)
+    print(sec1)

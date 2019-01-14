@@ -1,19 +1,12 @@
-from BMS_BrIM import *
-
-import collections
-
-class newBrIMcollection(collections.UserDict):
-    pass
-
-class nnb(newBrIMcollection):
-    pass
-
-a=newBrIMcollection()
-print(a.__dict__)
-b=nnb()
-print(b.__dict__)
-
-
+from BrIMcollection import *
+i1=Corrosion('c1', 2, "c:\\Users\\yqin78\\Downloads\\cor22.jpg")
+i2=CoatingDamage('cd',1, 'c:\\Users\\yqin78\\Downloads\\coatingdamage11.jpg')
+i3=Deformation('dfm', 2, 'c:\\Users\\yqin78\\Downloads\\deformation33.jpg')
+i4=Loose('lll', 3, 'c:\\Users\\yqin78\\Downloads\\loose44.jpg')
+cs=Condition(1, i1,i2,i3,i4)
+# print(cs.data)
+print(cs.calc_condition_state())
+print(cs.ColorRGBhex(cs.condition))
 
 '''
 
