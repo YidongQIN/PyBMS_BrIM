@@ -137,7 +137,9 @@ class Loose(InspectionRecord):
 
 
 if __name__ == '__main__':
-    media1 = Media('c:\\Users\\yqin78\\Downloads\\xxx.md', 8)
-    # print(media1)
-    cd=CoatingDamage('cd1', 4, 'c:\\Users\\yqin78\\Downloads\\285-0067-0-Bridge-2017-12-04.pdf')
-    print(cd)
+    cd=CoatingDamage('cd1', 4, 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\inspectionPic\\285-0067-0-Bridge-2017-12-04.pdf')
+    i1 = Corrosion('c1', 2, "c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\inspectionPic\\cor22.jpg")
+    i2 = CoatingDamage('cd', 1, 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\inspectionPic\\coatingdamage11.jpg')
+    i3 = Deformation('dfm', 2, 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\inspectionPic\\deformation33.jpg')
+    i4 = Loose('lll', 3, 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\inspectionPic\\loose44.jpg')
+    cs = Condition(1, i1, i2, i3, i4)
