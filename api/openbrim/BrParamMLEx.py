@@ -13,8 +13,6 @@ these classes are not in ParamML, but
 
 import math
 
-from Interfaces.BrParamML import *
-
 
 class RectangleOBShape(OBShape):
     _REQUIRE = ['name', 'length', 'width']
