@@ -12,6 +12,7 @@ these classes are not in ParamML, but
 '''
 
 import math
+
 from api.openbrim.ParamML import *
 
 
@@ -66,7 +67,7 @@ class CubeGeo(OBVolume):
         self.move_to(x, y, z)
 
 
-class BoltedPlateGeo(OBObjElmt):
+class BoltedPlateGeo(Oelmt):
     _REQUIRE = ['name', 'length', 'width', 'thick',
                 'diameter', 'xclearance', 'yclearance',
                 'column', 'row', 'material']
@@ -106,13 +107,13 @@ class BoltedPlateGeo(OBObjElmt):
                                 radius=self.diameter / 2,
                                 x=self.xclearance + i * self.x_sp,
                                 y=self.yclearance + j * self.y_sp)
-                hole.sub(OBPrmElmt('IsCutout', 1))
+                hole.sub(Pelmt('IsCutout', 1))
                 holes.append(hole)
         plate_def.sub(*holes)
         return plate_def
 
 
-class PlateFEM(OBObjElmt):
+class PlateFEM(Oelmt):
     """FEM model of plate, either normal plate or bolted plate"""
     _REQUIRE = ['name', 'length', 'width', 'thick']
 
@@ -137,7 +138,7 @@ class PlateFEM(OBObjElmt):
             return OBGroup(self.name, n1, n2, n3, n4, fes)
 
 
-class StraightBeamGeo(OBObjElmt):
+class StraightBeamGeo(Oelmt):
     """beam with rectangle cross-section, accept length and 3 direction parameters instead of 2 points"""
     _REQUIRE = ['name', 'length', 'section']
 
@@ -157,7 +158,7 @@ class StraightBeamGeo(OBObjElmt):
         return line
 
 
-class StraightBeamFEM(OBObjElmt):
+class StraightBeamFEM(Oelmt):
     """FEM for rectangle section beam"""
     _REQUIRE = ['name', 'length', 'width', 'thick']
 
