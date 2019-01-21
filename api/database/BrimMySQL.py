@@ -9,7 +9,7 @@ Sensor information are in the MySQL database in lab.
 import mysql.connector as mc
 
 
-class ConnMySQL(object):
+class brimMySQL(object):
 
     def __init__(self, database, user, password, host, port, **kwargs):
         self.database = database

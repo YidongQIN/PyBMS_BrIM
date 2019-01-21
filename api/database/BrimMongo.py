@@ -14,7 +14,7 @@ import bson
 import pymongo as mg
 
 
-class ConnMongoDB(object):
+class brimMongo(object):
 
     def __init__(self, database, host='localhost', port=27017, **kwargs):
         self.host = host
@@ -157,5 +157,5 @@ class ConnMongoDB(object):
 
 
 if __name__ == "__main__":
-    with ConnMongoDB('fours') as db:
+    with brimMongo('fours') as db:
         db.have_a_look('Parameter')

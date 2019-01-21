@@ -5,13 +5,14 @@ __author__ = 'Yidong QIN'
 
 '''
 Further development on ParamML to simplify the input of OpenBrIM/ParamML.
-Class structure is same as the BrParamML.py, the only difference is that 
+Class structure is same as the ParamML.py, the only difference is that 
 these classes are not in ParamML, but 
 1. Different shapes for section;
 2. Basic forms of members, like straight beam.
 '''
 
 import math
+from api.openbrim.ParamML import *
 
 
 class RectangleOBShape(OBShape):

@@ -6,6 +6,7 @@ __author__ = 'Yidong QIN'
 '''
 Object-oriented programming for OpenBrIM.
 Directly to ParamML transfer.
+the attribute .elmt is XML Element Tree
 '''
 
 import re
@@ -14,7 +15,7 @@ import xml.etree.ElementTree as eET
 import prettytable as pt
 
 
-class PyOpenBrIMElmt(object):
+class OpenBrIMelmt(object):
     """basic class for ParamML file of OpenBrIM"""
 
     def __init__(self, tag_o_p, name, **attrib_dict):
@@ -25,8 +26,8 @@ class PyOpenBrIMElmt(object):
         for _k, _v in attrib_dict.items():
             if _v !="":
                 _attributes[_k] = str(_v)
-        self.elmt = eET.Element(tag_o_p, **_attributes)
         self.name = name
+        self.elmt = eET.Element(tag_o_p, **_attributes)
 
     def parse_xmlfile(self, xml_path):
         """ read a xml_file"""
@@ -42,7 +43,7 @@ class PyOpenBrIMElmt(object):
 
     def attach_to(self, parent):
         """attach this element to parent element(s)"""
-        for _parent in PyOpenBrIMElmt.to_elmt_list(parent):
+        for _parent in OpenBrIMelmt.to_elmt_list(parent):
             _parent.append(self.elmt)
 
     def show_info(self, if_sub=False):
@@ -54,7 +55,7 @@ class PyOpenBrIMElmt(object):
     def sub(self, *child):
         """add one or a list of child elements as sub elmt"""
         # children=list(child)
-        for a in PyOpenBrIMElmt.to_elmt_list(*child):
+        for a in OpenBrIMelmt.to_elmt_list(*child):
             self.elmt.append(a)
 
     def show_sub(self):
@@ -90,7 +91,7 @@ class PyOpenBrIMElmt(object):
 
     def copy_attrib_from(self, elmt, *attrib_key_list):
         """copy from an element the attributes in the dict"""
-        _temp = PyOpenBrIMElmt.to_ob_elmt(elmt)
+        _temp = OpenBrIMelmt.to_ob_elmt(elmt)
         if not attrib_key_list:
             self.set_attrib(**_temp.attrib)
         else:
@@ -123,7 +124,7 @@ class PyOpenBrIMElmt(object):
         """only the sub nodes, no sub-sub nodes"""
         _results = []
         for _one_elmt in self.elmt:
-            if PyOpenBrIMElmt.match_attribute(_one_elmt, **attributes):
+            if OpenBrIMelmt.match_attribute(_one_elmt, **attributes):
                 _results.append(_one_elmt)
         return _results
 
@@ -132,7 +133,7 @@ class PyOpenBrIMElmt(object):
         # results is a list[] of elements
         _results = []
         for any_elmt in self.elmt.iter():
-            if PyOpenBrIMElmt.match_attribute(any_elmt, **attributes):
+            if OpenBrIMelmt.match_attribute(any_elmt, **attributes):
                 _results.append(any_elmt)
         return _results
 
@@ -148,7 +149,7 @@ class PyOpenBrIMElmt(object):
     def del_sub(self, tag='O or P', **attrib_dict):
         _elmt_to_del = []
         for _child in self.elmt:
-            if PyOpenBrIMElmt.match_tag(_child, tag) and PyOpenBrIMElmt.match_attribute(_child, **attrib_dict):
+            if OpenBrIMelmt.match_tag(_child, tag) and OpenBrIMelmt.match_attribute(_child, **attrib_dict):
                 _elmt_to_del.append(_child)
         for _d in _elmt_to_del:
             self.elmt.remove(_d)
@@ -158,7 +159,7 @@ class PyOpenBrIMElmt(object):
         elmt_to_del = []
         confirm = False
         for _child in self.elmt:
-            if PyOpenBrIMElmt.match_tag(_child, tag) and PyOpenBrIMElmt.match_attribute(_child, **attrib_dict):
+            if OpenBrIMelmt.match_tag(_child, tag) and OpenBrIMelmt.match_attribute(_child, **attrib_dict):
                 elmt_to_del.append(_child)
         # list all elmt to be deleted
         if elmt_to_del:
@@ -179,7 +180,7 @@ class PyOpenBrIMElmt(object):
 
     def verify_tag(self, tag):
         """verify the tag (OBJECT or PARAMETER) with the input"""
-        verified = PyOpenBrIMElmt.match_tag(self.elmt, tag)
+        verified = OpenBrIMelmt.match_tag(self.elmt, tag)
         if verified:
             print('"{}".tag is {}'.format(self.name, tag))
         else:
@@ -188,7 +189,7 @@ class PyOpenBrIMElmt(object):
 
     def verify_attributes(self, **attrib_dict):
         """verify the attributes with the inputted attributes dict"""
-        verified = PyOpenBrIMElmt.match_attribute(self.elmt, **attrib_dict)
+        verified = OpenBrIMelmt.match_attribute(self.elmt, **attrib_dict)
         if verified:
             print('"{}" attributes match'.format(self.name))
         else:
@@ -226,11 +227,11 @@ class PyOpenBrIMElmt(object):
     def to_elmt_list(*elmts):
         """format PyOpenBrIM object or element to a [list of et.element]"""
         if isinstance(elmts, list):
-            elmt_list = list(map(PyOpenBrIMElmt.to_ob_elmt, elmts))
+            elmt_list = list(map(OpenBrIMelmt.to_ob_elmt, elmts))
         elif isinstance(elmts, tuple):
-            elmt_list = list(map(PyOpenBrIMElmt.to_ob_elmt, list(elmts)))
+            elmt_list = list(map(OpenBrIMelmt.to_ob_elmt, list(elmts)))
         else:
-            elmt_list = [PyOpenBrIMElmt.to_ob_elmt(elmts)]
+            elmt_list = [OpenBrIMelmt.to_ob_elmt(elmts)]
         return elmt_list
 
     @staticmethod
@@ -238,7 +239,7 @@ class PyOpenBrIMElmt(object):
         """make sure PyOpenBrIM instance has been transferred into et.element"""
         if isinstance(elmt, eET.Element):
             return elmt
-        elif isinstance(elmt, PyOpenBrIMElmt):
+        elif isinstance(elmt, OpenBrIMelmt):
             return elmt.elmt
         else:
             print(
@@ -247,7 +248,7 @@ class PyOpenBrIMElmt(object):
     @staticmethod
     def prm_to_value(elmt):
         """PARAMETER to its value"""
-        if isinstance(elmt, OBPrmElmt):
+        if isinstance(elmt, Pelmt):
             return elmt.value
         elif isinstance(elmt, (int, float)):
             return elmt
@@ -257,7 +258,7 @@ class PyOpenBrIMElmt(object):
     @staticmethod
     def prm_to_name(elmt):
         """PARAMETER to its name, maybe used when refer?"""
-        if isinstance(elmt, OBPrmElmt):
+        if isinstance(elmt, Pelmt):
             return elmt.get_attrib('N')
         elif isinstance(elmt, str):
             return elmt
@@ -265,7 +266,7 @@ class PyOpenBrIMElmt(object):
             print('{} is not a <P>')
 
 
-class OBObjElmt(PyOpenBrIMElmt):
+class Oelmt(OpenBrIMelmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
     _REQUIRE=['name']
 
@@ -276,7 +277,7 @@ class OBObjElmt(PyOpenBrIMElmt):
         attributes are in format of dict.
         """
         self.type = ob_type
-        super(OBObjElmt, self).__init__('O', name, T=ob_type, **obj_attrib)
+        super(Oelmt, self).__init__('O', name, T=ob_type, **obj_attrib)
 
     # def sub(self, *child):
     #     """add one or a list of child elements as sub elmt"""
@@ -285,23 +286,23 @@ class OBObjElmt(PyOpenBrIMElmt):
     #         self.elmt.append(a)
 
     def sub_new_par(self, par_name, par_value):
-        self.sub(OBPrmElmt(par_name, par_value))
+        self.sub(Pelmt(par_name, par_value))
 
     def new_parameter(self, par_name, par_value, des='', role='', par_type=''):
         """sometimes, a just one OBJECT need the PARAMETER \n
         its better to define it when the OBJECT created.\n
         Example: <O> Circle need a <P> N="Radius" V="WebRadius". """
-        self.sub(OBPrmElmt(par_name, par_value, des, role, par_type))
+        self.sub(Pelmt(par_name, par_value, des, role, par_type))
 
     def extend(self, extend_from):
-        if isinstance(extend_from, OBObjElmt):
+        if isinstance(extend_from, Oelmt):
             self.elmt.attrib['T'] = extend_from.elmt.attrib['T']
             self.elmt.attrib['Extends'] = extend_from.elmt.attrib['N']
 
     def refer_elmt(self, elmt, refer_name):
-        if isinstance(elmt, PyOpenBrIMElmt):
-            self.sub(OBPrmElmt(refer_name, elmt.name,
-                               ob_type=elmt.get_attrib('T'), role=''))
+        if isinstance(elmt, OpenBrIMelmt):
+            self.sub(Pelmt(refer_name, elmt.name,
+                           ob_type=elmt.get_attrib('T'), role=''))
 
     def move_to(self, new_x, new_y, new_z):
         self.set_attrib(X=new_x, Y=new_y, Z=new_z)
@@ -321,7 +322,7 @@ class OBObjElmt(PyOpenBrIMElmt):
     #         print('Value Error for cosine of {}'.format(self.name))
 
 
-class OBPrmElmt(PyOpenBrIMElmt):
+class Pelmt(OpenBrIMelmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
     _REQUIRE = ['name', 'value', 'ob_type']
 
@@ -340,15 +341,15 @@ class OBPrmElmt(PyOpenBrIMElmt):
                 self.value = int(self.value)
         except ValueError:
             self.value = str(value)
-        super(OBPrmElmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=ob_type)
+        super(Pelmt, self).__init__('P', _name, V=self.value, D=des, UT=ut, UC=uc, Role=role, T=ob_type)
 
     def sub(self, *child):
-        super(OBPrmElmt, self).sub()
+        super(Pelmt, self).sub()
         print("BrParamML.OBPrmELMT cannot sub child elements.s")
         raise TypeError
 
 
-class OBProject(OBObjElmt):
+class OBProject(Oelmt):
     _REQUIRE = ['name', ]
 
     def __init__(self, name, template='SI'):
@@ -406,7 +407,7 @@ class OBProject(OBObjElmt):
         print('Project is saved @ "{}".'.format(out_path))
 
 
-class OBMaterial(OBObjElmt):
+class OBMaterial(Oelmt):
     _DESDICT = dict(d="Density",
                     E="modulus of Elasticity",
                     a="Coefficient of Thermal Expansion",
@@ -450,7 +451,7 @@ class OBMaterial(OBObjElmt):
         print(tb)
 
 
-class OBSection(OBObjElmt):
+class OBSection(Oelmt):
     """section mandatory attribute is name.\n
     use a parameter to refer to a Material element."""
     _REQUIRE = ['name', 'material_ob']
@@ -458,17 +459,17 @@ class OBSection(OBObjElmt):
     def __init__(self, name, material_ob=None, *shape_ob):
         super(OBSection, self).__init__('Section', name)
         if isinstance(material_ob, OBMaterial):
-            self.sub(OBPrmElmt('Material', material_ob.name, ob_type='Material', des='Material_{}'.format(self.name)))
+            self.sub(Pelmt('Material', material_ob.name, ob_type='Material', des='Material_{}'.format(self.name)))
         self.sub(*shape_ob)
 
     def sect_property(self, **properties):
         """parameters generally mechanical characters, \n
         such as Ax, Iy, Iz, \n """
         for _property_name, _property_value in properties.items():
-            self.elmt.append(OBPrmElmt(_property_name, str(_property_value)))
+            self.elmt.append(Pelmt(_property_name, str(_property_value)))
 
 
-class OBShape(OBObjElmt):
+class OBShape(Oelmt):
     _REQUIRE = ['name', 'points']
 
     def __init__(self, name, *point_ob):
@@ -477,19 +478,19 @@ class OBShape(OBObjElmt):
 
     def is_cutout(self, y_n=True):
         if y_n:
-            self.sub(OBPrmElmt("IsCutout", "1", role="Input"))
+            self.sub(Pelmt("IsCutout", "1", role="Input"))
 
 
-class OBCircle(OBObjElmt):
+class OBCircle(Oelmt):
     _REQUIRE = ['name', 'radius']
 
     def __init__(self, name, radius, x=0, y=0, ):
         super(OBCircle, self).__init__('Circle', name, X=str(x), Y=str(y))
         self.radius = radius
-        self.sub(OBPrmElmt('Radius', radius))
+        self.sub(Pelmt('Radius', radius))
 
 
-class OBUnit(OBObjElmt):
+class OBUnit(Oelmt):
     _REQUIRE = ['name']
 
     def __init__(self, name,
@@ -511,16 +512,16 @@ class OBUnit(OBObjElmt):
                                      temperature=temperature_unit)
 
 
-class OBExtends(OBObjElmt):
+class OBExtends(Oelmt):
 
     def __init__(self, extends_from_ob):
-        if isinstance(extends_from_ob, OBObjElmt):
+        if isinstance(extends_from_ob, Oelmt):
             super(OBExtends, self).__init__(extends_from_ob.elmt.attrib['T'], Extends=extends_from_ob.elmt.attrib['N'])
         else:
             print('Should be extended from a OBJECT')
 
 
-class OBGroup(OBObjElmt):
+class OBGroup(Oelmt):
     _REQUIRE = ['name', 'id']
 
     def __init__(self, name, *elmt_ob_list):
@@ -535,7 +536,7 @@ class OBGroup(OBObjElmt):
         return len(self.elmt)
 
 
-class OBFENode(OBObjElmt):
+class OBFENode(Oelmt):
     _REQUIRE = ['name', 'x', 'y', 'z',
                 'tx', 'ty', 'tz',
                 'rx', 'ry', 'rz']
@@ -588,7 +589,7 @@ class OBFENode(OBObjElmt):
             print('{} is not a Point OBObject'.format(point_ob))
 
 
-class OBFELine(OBObjElmt):
+class OBFELine(Oelmt):
     _REQUIRE = ['name', 'node1_ob', 'node2_ob', 'section_ob']
 
     def __init__(self, node1_ob, node2_ob, section_ob, beta_angle=0, name=''):
@@ -613,7 +614,7 @@ class OBFELine(OBObjElmt):
         self.n2 = node
 
 
-class OBFESurface(OBObjElmt):
+class OBFESurface(Oelmt):
     _REQUIRE = ['name', 'node1_ob', 'node2_ob', 'node3_ob', 'node4_ob', 'thick_prm_ob', 'material_ob']
 
     def __init__(self, node1_ob, node2_ob, node3_ob, node4_ob, thick_prm_ob, material_ob, name=''):
@@ -630,7 +631,7 @@ class OBFESurface(OBObjElmt):
         self.refer_elmt(material_ob, 'Material')
 
 
-class OBPoint(OBObjElmt):
+class OBPoint(Oelmt):
     """T=Point
     Mandatory attribute: X, Y, Z"""
     _REQUIRE = ['name', 'x', 'y', 'z']
@@ -663,7 +664,7 @@ class OBPoint(OBObjElmt):
                 print('WARNING: Z Coordinate is NOT a number.')
 
 
-class OBLine(OBObjElmt):
+class OBLine(Oelmt):
     """T=Line, Two points and one section needed."""
     _REQUIRE = ['name', 'node1_ob', 'node2_ob', 'section_ob']
 
@@ -707,12 +708,12 @@ class OBLine(OBObjElmt):
             self.sub(section_ob)
         elif isinstance(section_ob, str):
             print('{} section is not a SECTION object'.format(self.name))
-            self.sub(OBPrmElmt('Section', section_ob))
+            self.sub(Pelmt('Section', section_ob))
         else:
             print('No Section.')
 
 
-class OBSurface(OBObjElmt):
+class OBSurface(Oelmt):
     _REQUIRE = ['name', 'node1_ob', 'node2_ob', 'node3_ob', 'node4_ob', 'thick_prm_ob', 'material_ob']
 
     def __init__(self, node1_ob, node2_ob, node3_ob, node4_ob, thick_prm_ob=None, material_ob=None, name=''):
@@ -754,12 +755,12 @@ class OBSurface(OBObjElmt):
 
     def thick_par(self, thick_par):
         # if isinstance(thick_par, PrmElmt) and PyOpenBrIMElmt.match_attribute(thick_par.elmt, N='Thickness'):
-        if isinstance(thick_par, OBPrmElmt):
-            self.sub(OBPrmElmt('Thickness', thick_par.elmt.attrib['N'], role=''))
+        if isinstance(thick_par, Pelmt):
+            self.sub(Pelmt('Thickness', thick_par.elmt.attrib['N'], role=''))
         elif isinstance(thick_par, (float, int)):
-            self.sub(OBPrmElmt("Thickness", str(thick_par)))
+            self.sub(Pelmt("Thickness", str(thick_par)))
         elif isinstance(thick_par, str):
-            self.sub(OBPrmElmt("Thickness", thick_par))
+            self.sub(Pelmt("Thickness", thick_par))
         else:
             print("{} requires a PARAMETER @N=Thickness.".format(self.name))
 
@@ -768,31 +769,31 @@ class OBSurface(OBObjElmt):
         But in Surface it should be a parameter that refer to the Material Object\n
         not mandatory"""
         if isinstance(mat_ob, OBMaterial):
-            self.sub(OBPrmElmt('Material', mat_ob.elmt.attrib['N'],
-                               ob_type='Material',
-                               role='',
-                               des='Material_Surface_{}'.format(self.name)))
+            self.sub(Pelmt('Material', mat_ob.elmt.attrib['N'],
+                           ob_type='Material',
+                           role='',
+                           des='Material_Surface_{}'.format(self.name)))
         elif isinstance(mat_ob, str):
             # print('Material of Surface <{}> is a string, please make sure'.format(self.name))
-            self.sub(OBPrmElmt('Material', mat_ob,
-                               ob_type='Material',
-                               role='',
-                               des='Material_Surface_{}'.format(self.name)))
+            self.sub(Pelmt('Material', mat_ob,
+                           ob_type='Material',
+                           role='',
+                           des='Material_Surface_{}'.format(self.name)))
         else:
             print("{} requires an OBJECT of Material.".format(self.name))
 
     def change_thick(self, thickness, des='', role='', par_type='Surface_Thickness', ut='', uc=''):
         """thickness parameter of Surface.\n Only thickness is mandatory"""
         self.check_del_sub('P', N="Thickness")
-        self.sub(OBPrmElmt("Thickness", str(thickness), des, role, par_type, ut, uc))
+        self.sub(Pelmt("Thickness", str(thickness), des, role, par_type, ut, uc))
 
     def change_material(self, material, des='', role='', name='SurfaceMaterial', ut='', uc=''):
         """material parameter of Surface.\n Only material is mandatory"""
         self.check_del_sub('P', T="Material")
-        self.sub(OBPrmElmt(name, material, des, role, 'Material', ut, uc))
+        self.sub(Pelmt(name, material, des, role, 'Material', ut, uc))
 
 
-class OBVolume(OBObjElmt):
+class OBVolume(Oelmt):
     _REQUIRE = ['name', 'surface1_ob', 'surface2_ob']
 
     def __init__(self, surface1_ob, surface2_ob, name=''):
@@ -803,7 +804,7 @@ class OBVolume(OBObjElmt):
         self.sub(OBSurface(point1, point2, point3, point4))
 
 
-class OBText3D(OBObjElmt):
+class OBText3D(Oelmt):
     def __init__(self, text, x, y, z, size=5):
         super(OBText3D, self).__init__('Text3D', '', Label=text, FontSize=str(size))
         self.sub(OBPoint(x, y, z))
@@ -816,7 +817,7 @@ class ShowTree(object):
 
     def __init__(self, result):
         print("\n|.... ElementTree Start")
-        self.elmts = PyOpenBrIMElmt.to_elmt_list(result)
+        self.elmts = OpenBrIMelmt.to_elmt_list(result)
         for one_branch in self.elmts:
             ShowTree.branch(one_branch, 0)
         print("|.... ElementTree End\n")
@@ -840,7 +841,7 @@ class ShowTable(object):
     """this class is used to show search results in format of table"""
 
     def __init__(self, result):
-        self.elmts = PyOpenBrIMElmt.to_elmt_list(result)
+        self.elmts = OpenBrIMelmt.to_elmt_list(result)
         self.result_obj = eET.Element("", {})
         self.result_par = eET.Element("", {})
         self.classify_elmts()
