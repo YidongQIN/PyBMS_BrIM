@@ -10,9 +10,7 @@ class PyELMTDB(PyBrIM):
 if __name__ =='__main__':
     mongo_4 = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\mongo_fourstory.txt'
     doc = PyELMTDB(3, 'ext', na="adfasdf", read='Unread')
-
-    doc.api['ob'] = 'Doc_No_OB'
-
+    doc.api['OpenBrIM'].show_info()
 
 '''
 

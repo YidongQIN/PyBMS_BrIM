@@ -6,5 +6,8 @@ __author__ = 'Yidong QIN'
 """
 
 """
+from api.database.BrimMongo import *
+from api.database.BrimMySQL import *
+
 if __name__ == '__main__':
     pass

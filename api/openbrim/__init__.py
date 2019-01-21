@@ -4,7 +4,6 @@
 __author__ = 'Yidong QIN'
 
 
-from api.openbrim.OpenBrIM import *
 from api.openbrim.ParamML import *
 from api.openbrim.ParamML_ext import *
 

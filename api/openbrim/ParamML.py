@@ -17,6 +17,8 @@ import prettytable as pt
 
 class OpenBrIMelmt(object):
     """basic class for ParamML file of OpenBrIM"""
+    # how naive I was! should inherit from eET.Element.
+    # However, just try hand at Python programing.
 
     def __init__(self, tag_o_p, name, **attrib_dict):
         if name:
@@ -28,6 +30,9 @@ class OpenBrIMelmt(object):
                 _attributes[_k] = str(_v)
         self.name = name
         self.elmt = eET.Element(tag_o_p, **_attributes)
+
+    # def __str__(self):
+    #     return self.elmt.__str__
 
     def parse_xmlfile(self, xml_path):
         """ read a xml_file"""
@@ -907,3 +912,7 @@ class ShowTable(object):
             tb.add_row(row)
         print('\n Table of Result PARAMetER')
         print(tb)
+
+
+if __name__ =="__main__":
+    root=OpenBrIMelmt('O','root', )
