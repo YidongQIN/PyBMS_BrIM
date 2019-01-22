@@ -8,20 +8,45 @@ skinparam monochrome true
 class PyELMT{
     id
     type
-    description*
-    update()
 }
 
 class AbstractELMT{
-    name
+
 }
 PyELMT <|-- AbstractELMT
 
 class PhysicalELMT{
-    name
+
     material: Material
 }
 PyELMT <|-- PhysicalELMT
+
+class Document{
+
+}
+
+PyELMT <|-- Document
+
+class Defect {
+    location: PhysicalELMT
+    condition: Int
+    picture
+}
+
+PhysicalELMT -- Defect
+
+Document <|-- Defect
+
+class Crack {
+}
+
+class Loose {
+}
+
+Defect <|-- Crack
+Defect <|-- Loose
+
+@enduml
 
 class FENode{
     x: Parameter
@@ -63,5 +88,3 @@ class Volume{
 PhysicalELMT <|-- Beam
 PhysicalELMT <|-- Slab
 PhysicalELMT <|-- Volume
-
-@enduml
