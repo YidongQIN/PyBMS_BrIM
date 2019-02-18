@@ -5,7 +5,7 @@ class PyELMTDB(PyBrIM):
 
     def __init__(self, brim_id, brim_type, **brim_data):
         super(PyELMTDB, self).__init__(brim_id, brim_type, **brim_data)
-        self.api['OpenBrIM']=OpenBrIMelmt('P', 'OBP', value=10)
+        self.api['OpenBrIM']=ParamMLelmt('P', 'OBP', value=10)
 
 if __name__ =='__main__':
     mongo_4 = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\mongo_fourstory.txt'

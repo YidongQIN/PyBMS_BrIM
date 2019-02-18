@@ -12,5 +12,4 @@ from BrIMcollection.Physical import *
 from BrIMcollection.Equipment import *
 
 if __name__ == '__main__':
-
-    pass
+    print(dir())

@@ -7,7 +7,10 @@ __author__ = 'Yidong QIN'
 
 """
 # from api.openbrim import *
-import api.openbrim as ob
-import api.database as db
+# import api.openbrim as ob
+# import api.database as db
+
+import api.rootAPI
+
 if __name__ == '__main__':
     pass

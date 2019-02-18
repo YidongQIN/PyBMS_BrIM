@@ -190,10 +190,3 @@ class LineCubeOB(OBGroup):
         _box.move_to(0, 0, -cube_thick / 2)
         super(LineCubeOB, self).__init__(name, _line, _box)
 
-
-def direction_cos(x, y, z) -> tuple:
-    square_root = math.sqrt(x ** 2 + y ** 2 + z ** 2)
-    # cos_x = x / square_root
-    # cos_y = y / square_root
-    # cos_z = z / square_root
-    return x / square_root, y / square_root, z / square_root

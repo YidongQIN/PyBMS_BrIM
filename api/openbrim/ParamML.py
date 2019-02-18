@@ -15,7 +15,7 @@ import xml.etree.ElementTree as eET
 import prettytable as pt
 
 
-class OpenBrIMelmt(object):
+class ParamMLelmt(object):
     """basic class for ParamML file of OpenBrIM"""
     # how naive I was! should inherit from eET.Element.
     # However, just try hand at Python programing.
@@ -48,7 +48,7 @@ class OpenBrIMelmt(object):
 
     def attach_to(self, parent):
         """attach this element to parent element(s)"""
-        for _parent in OpenBrIMelmt.to_elmt_list(parent):
+        for _parent in ParamMLelmt.to_elmt_list(parent):
             _parent.append(self.elmt)
 
     def show_info(self, if_sub=False):
@@ -60,7 +60,7 @@ class OpenBrIMelmt(object):
     def sub(self, *child):
         """add one or a list of child elements as sub elmt"""
         # children=list(child)
-        for a in OpenBrIMelmt.to_elmt_list(*child):
+        for a in ParamMLelmt.to_elmt_list(*child):
             self.elmt.append(a)
 
     def show_sub(self):
@@ -96,7 +96,7 @@ class OpenBrIMelmt(object):
 
     def copy_attrib_from(self, elmt, *attrib_key_list):
         """copy from an element the attributes in the dict"""
-        _temp = OpenBrIMelmt.to_ob_elmt(elmt)
+        _temp = ParamMLelmt.to_ob_elmt(elmt)
         if not attrib_key_list:
             self.set_attrib(**_temp.attrib)
         else:
@@ -129,7 +129,7 @@ class OpenBrIMelmt(object):
         """only the sub nodes, no sub-sub nodes"""
         _results = []
         for _one_elmt in self.elmt:
-            if OpenBrIMelmt.match_attribute(_one_elmt, **attributes):
+            if ParamMLelmt.match_attribute(_one_elmt, **attributes):
                 _results.append(_one_elmt)
         return _results
 
@@ -138,7 +138,7 @@ class OpenBrIMelmt(object):
         # results is a list[] of elements
         _results = []
         for any_elmt in self.elmt.iter():
-            if OpenBrIMelmt.match_attribute(any_elmt, **attributes):
+            if ParamMLelmt.match_attribute(any_elmt, **attributes):
                 _results.append(any_elmt)
         return _results
 
@@ -154,7 +154,7 @@ class OpenBrIMelmt(object):
     def del_sub(self, tag='O or P', **attrib_dict):
         _elmt_to_del = []
         for _child in self.elmt:
-            if OpenBrIMelmt.match_tag(_child, tag) and OpenBrIMelmt.match_attribute(_child, **attrib_dict):
+            if ParamMLelmt.match_tag(_child, tag) and ParamMLelmt.match_attribute(_child, **attrib_dict):
                 _elmt_to_del.append(_child)
         for _d in _elmt_to_del:
             self.elmt.remove(_d)
@@ -164,7 +164,7 @@ class OpenBrIMelmt(object):
         elmt_to_del = []
         confirm = False
         for _child in self.elmt:
-            if OpenBrIMelmt.match_tag(_child, tag) and OpenBrIMelmt.match_attribute(_child, **attrib_dict):
+            if ParamMLelmt.match_tag(_child, tag) and ParamMLelmt.match_attribute(_child, **attrib_dict):
                 elmt_to_del.append(_child)
         # list all elmt to be deleted
         if elmt_to_del:
@@ -185,7 +185,7 @@ class OpenBrIMelmt(object):
 
     def verify_tag(self, tag):
         """verify the tag (OBJECT or PARAMETER) with the input"""
-        verified = OpenBrIMelmt.match_tag(self.elmt, tag)
+        verified = ParamMLelmt.match_tag(self.elmt, tag)
         if verified:
             print('"{}".tag is {}'.format(self.name, tag))
         else:
@@ -194,7 +194,7 @@ class OpenBrIMelmt(object):
 
     def verify_attributes(self, **attrib_dict):
         """verify the attributes with the inputted attributes dict"""
-        verified = OpenBrIMelmt.match_attribute(self.elmt, **attrib_dict)
+        verified = ParamMLelmt.match_attribute(self.elmt, **attrib_dict)
         if verified:
             print('"{}" attributes match'.format(self.name))
         else:
@@ -232,11 +232,11 @@ class OpenBrIMelmt(object):
     def to_elmt_list(*elmts):
         """format PyOpenBrIM object or element to a [list of et.element]"""
         if isinstance(elmts, list):
-            elmt_list = list(map(OpenBrIMelmt.to_ob_elmt, elmts))
+            elmt_list = list(map(ParamMLelmt.to_ob_elmt, elmts))
         elif isinstance(elmts, tuple):
-            elmt_list = list(map(OpenBrIMelmt.to_ob_elmt, list(elmts)))
+            elmt_list = list(map(ParamMLelmt.to_ob_elmt, list(elmts)))
         else:
-            elmt_list = [OpenBrIMelmt.to_ob_elmt(elmts)]
+            elmt_list = [ParamMLelmt.to_ob_elmt(elmts)]
         return elmt_list
 
     @staticmethod
@@ -244,7 +244,7 @@ class OpenBrIMelmt(object):
         """make sure PyOpenBrIM instance has been transferred into et.element"""
         if isinstance(elmt, eET.Element):
             return elmt
-        elif isinstance(elmt, OpenBrIMelmt):
+        elif isinstance(elmt, ParamMLelmt):
             return elmt.elmt
         else:
             print(
@@ -271,7 +271,7 @@ class OpenBrIMelmt(object):
             print('{} is not a <P>')
 
 
-class Oelmt(OpenBrIMelmt):
+class Oelmt(ParamMLelmt):
     """Sub-class of PyOpenBrIMElmt for tag <O>"""
     _REQUIRE=['name']
 
@@ -305,7 +305,7 @@ class Oelmt(OpenBrIMelmt):
             self.elmt.attrib['Extends'] = extend_from.elmt.attrib['N']
 
     def refer_elmt(self, elmt, refer_name):
-        if isinstance(elmt, OpenBrIMelmt):
+        if isinstance(elmt, ParamMLelmt):
             self.sub(Pelmt(refer_name, elmt.name,
                            ob_type=elmt.get_attrib('T'), role=''))
 
@@ -327,7 +327,7 @@ class Oelmt(OpenBrIMelmt):
     #         print('Value Error for cosine of {}'.format(self.name))
 
 
-class Pelmt(OpenBrIMelmt):
+class Pelmt(ParamMLelmt):
     """Sub-class of PyOpenBrIMElmt for tag <P>"""
     _REQUIRE = ['name', 'value', 'ob_type']
 
@@ -822,7 +822,7 @@ class ShowTree(object):
 
     def __init__(self, result):
         print("\n|.... ElementTree Start")
-        self.elmts = OpenBrIMelmt.to_elmt_list(result)
+        self.elmts = ParamMLelmt.to_elmt_list(result)
         for one_branch in self.elmts:
             ShowTree.branch(one_branch, 0)
         print("|.... ElementTree End\n")
@@ -846,7 +846,7 @@ class ShowTable(object):
     """this class is used to show search results in format of table"""
 
     def __init__(self, result):
-        self.elmts = OpenBrIMelmt.to_elmt_list(result)
+        self.elmts = ParamMLelmt.to_elmt_list(result)
         self.result_obj = eET.Element("", {})
         self.result_par = eET.Element("", {})
         self.classify_elmts()
@@ -915,4 +915,4 @@ class ShowTable(object):
 
 
 if __name__ =="__main__":
-    root=OpenBrIMelmt('O','root', )
+    root=ParamMLelmt('O', 'root', )
