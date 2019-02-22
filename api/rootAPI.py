@@ -9,6 +9,7 @@ __author__ = 'Yidong QIN'
 import json
 
 import api.openbrim as ob
+import api.database as db
 
 
 class BrimAPI(object):
@@ -16,8 +17,8 @@ class BrimAPI(object):
     def __init__(self, brim_data, config):
         """init is config"""
         self._check_dict(brim_data)
-        self.info = self._mapping(brim_data, self.map)
         self._check_dict(config)
+        self.info = self._mapping(brim_data, self.map)
         self.interface = self._connect(config)
 
     def _check_dict(self, data_dict):
@@ -56,7 +57,7 @@ class BrimAPI(object):
             except KeyError as e:
                 # greed or?
                 # _info[_k]=_v
-                print('Missing attriubte mapping', e)
+                print('Missing attribute mapping', e)
         return _info
 
     def _process(self):
@@ -81,6 +82,7 @@ class openbrim_api(BrimAPI):
         """to connect OpenBrIM"""
         self.map = {'name': 'N', 'type': 'T'}
         #@TODO change the type? need ad map of BrIMcollection.type -> ParamML.type
+
         super(openbrim_api, self).__init__(brim_data, config=None)
 
     def _connect(self, config):
