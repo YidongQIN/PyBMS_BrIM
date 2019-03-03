@@ -4,7 +4,7 @@
 __author__ = 'Yidong QIN'
 
 """
-
+the api root is linked to brimcollection.api[]
 """
 import json
 
