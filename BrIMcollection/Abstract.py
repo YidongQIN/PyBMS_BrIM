@@ -128,7 +128,7 @@ class Condition(AbstractBrIM):
         return self.condition
 
     @staticmethod
-    def ColorRGBhex(condition_state, good=9, severe=0):
+    def ColorRGB_hex(condition_state, good=9, severe=0):
         """input a condition_state,
         good ~ start = 00FF00
         severe ~ end = FF0000
