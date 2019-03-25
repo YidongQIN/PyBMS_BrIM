@@ -35,9 +35,9 @@ class brimMongo(object):
             print("----- Error Value: {}".format(exc_val))
             print("----- Error is at: {}".format(exc_tb))
 
-    def new_db(self, new_db_name):
-        self.db_name = new_db_name
-        self.db = self.client[self.db_name]
+    def gridfs(self, fs_name='Photo'):
+        """create / connect to the GridFS collections"""
+        self.fs = GridFS(self.db, fs_name)
 
     def col_find_one(self, collection, condition, if_print):
         """ if the condition is not just one field"""
@@ -101,31 +101,22 @@ class brimMongo(object):
             return self.insert_data(collection, **data)
 
     def insert_file(self, pic_path, file_name):
-        db = self.db
-        fs = GridFS(db, 'Photo')
         with open(pic_path, 'rb') as image:
-            data=image.read()
-            id=fs.put(data, filename=file_name)
-            print(id)
+            data = image.read()
+            id = self.fs.put(data, filename=file_name)
+            print(file_name, '._id =', id)
 
-    def get_file(self,file_name, save_path):
-        db = self.db
-        fs = GridFS(db, 'Photo')
-        file = fs.get_version(file_name, 0)
+    def get_file(self, file_name, save_path):
+        file = self.fs.get_version(file_name, 0)
         data = file.read()
-        out = open(save_path, 'wb')
-        out.write(data)
-        out.close()
+        with open(save_path, 'wb') as out:
+            out.write(data)
 
     def delFile(self, Obj_Id):
-        db = self.db
-        fs = GridFS(db, 'Photo')
-        fs.delete(Obj_Id)
+        self.fs.delete(Obj_Id)
 
     def listName(self):
-        db = self.db
-        fs = GridFS(db, 'Photo')
-        print(fs.list())
+        print(self.fs.list())
 
     # below are methods for element, should not be use.
     # Mongo focus on the methods of CURD in Mongo, not info process of element
@@ -188,8 +179,10 @@ if __name__ == "__main__":
 
     with brimMongo('fours') as db:
         db.have_a_look('Parameter')
+        db.gridfs('TestPh')
         db.insert_file(pic_src, 'test_gridfs')
 
     with brimMongo('fours') as db:
+        db.gridfs('TestPh')
+        db.listName()
         db.get_file('test_gridfs', pic_sv)
-
