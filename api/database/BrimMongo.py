@@ -12,19 +12,18 @@ and non-structural members, such as sensor, etc.
 
 import bson
 import pymongo as mg
+from gridfs import *
 
 
 class brimMongo(object):
 
-    def __init__(self, database, host='localhost', port=27017, **kwargs):
+    def __init__(self, database, table=None, host='localhost', port=27017):
         self.host = host
         self.port = port
-        self.db_name = database
-        if 'table' in kwargs.keys():
-            self.collection = kwargs['table']
         self.client = mg.MongoClient(self.host, self.port)
+        self.db_name = database
+        self.tb_name = table
         self.db = self.client[self.db_name]
-        # print("MongoDB connected.\n -  <{}> has collections of:\n\t{}".format(self.db_name, self.db.collection_names(False)))
 
     def __enter__(self, new_db_name=None):
         return self
@@ -101,6 +100,33 @@ class brimMongo(object):
             print('New doc in <{}>, ._id={}'.format(collection, id))
             return self.insert_data(collection, **data)
 
+    def insert_file(self, pic_path, file_name):
+        db = self.db
+        fs = GridFS(db, 'Photo')
+        with open(pic_path, 'rb') as image:
+            data=image.read()
+            id=fs.put(data, filename=file_name)
+            print(id)
+
+    def get_file(self,file_name, save_path):
+        db = self.db
+        fs = GridFS(db, 'Photo')
+        file = fs.get_version(file_name, 0)
+        data = file.read()
+        out = open(save_path, 'wb')
+        out.write(data)
+        out.close()
+
+    def delFile(self, Obj_Id):
+        db = self.db
+        fs = GridFS(db, 'Photo')
+        fs.delete(Obj_Id)
+
+    def listName(self):
+        db = self.db
+        fs = GridFS(db, 'Photo')
+        print(fs.list())
+
     # below are methods for element, should not be use.
     # Mongo focus on the methods of CURD in Mongo, not info process of element
     '''''''''
@@ -157,5 +183,13 @@ class brimMongo(object):
 
 
 if __name__ == "__main__":
+    pic_src = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\MARCpic\\Photos_1.jpg'
+    pic_sv = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\MARCpic\\new_Photos_1.jpg'
+
     with brimMongo('fours') as db:
         db.have_a_look('Parameter')
+        db.insert_file(pic_src, 'test_gridfs')
+
+    with brimMongo('fours') as db:
+        db.get_file('test_gridfs', pic_sv)
+
