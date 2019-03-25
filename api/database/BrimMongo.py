@@ -101,15 +101,24 @@ class brimMongo(object):
             return self.insert_data(collection, **data)
 
     def insert_file(self, pic_path, file_name):
+        """read the pic in path, and insert into Mongo as the file_name"""
         with open(pic_path, 'rb') as image:
             data = image.read()
             id = self.fs.put(data, filename=file_name)
             print(file_name, '._id =', id)
 
-    def get_file(self, file_name, save_path):
+    def get_file(self, file_name, save_folder, new_name=None):
+        """:file_name is the name in MongoDB GridFS collection,
+        save_folder is where to store the pic as a new file,
+        if new_name is not assigned, the file_name is used for the new file."""
         file = self.fs.get_version(file_name, 0)
         data = file.read()
+        if new_name:
+            save_path = save_folder + new_name + '.png'
+        else:
+            save_path = save_folder + file_name + '.png'
         with open(save_path, 'wb') as out:
+            print(save_path)
             out.write(data)
 
     def delFile(self, Obj_Id):
@@ -175,7 +184,7 @@ class brimMongo(object):
 
 if __name__ == "__main__":
     pic_src = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\MARCpic\\Photos_1.jpg'
-    pic_sv = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\MARCpic\\new_Photos_1.jpg'
+    pic_sv = 'c:\\Users\\yqin78\\Proj.Python\\PyBMS_BrIM\\_data\\MARCpic\\'
 
     with brimMongo('fours') as db:
         db.have_a_look('Parameter')
@@ -185,4 +194,4 @@ if __name__ == "__main__":
     with brimMongo('fours') as db:
         db.gridfs('TestPh')
         db.listName()
-        db.get_file('test_gridfs', pic_sv)
+        db.get_file('test_gridfs', pic_sv, 'read from gridfs')
