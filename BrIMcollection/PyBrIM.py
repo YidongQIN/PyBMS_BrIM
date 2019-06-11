@@ -134,7 +134,7 @@ class AbstractBrIM(PyBrIM):
     def __init__(self, brim_id, brim_type, **brim_data):
         super(AbstractBrIM, self).__init__(brim_id, brim_type, **brim_data)
         self.api['OpenBrIM_FEM'] = None
-
+# 
 
 class PhysicalBrIM(PyBrIM):
 

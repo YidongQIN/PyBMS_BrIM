@@ -1,29 +1,30 @@
-@startuml
+@startuml BrIM
 
 top to bottom direction
-' left to right direction
+scale 1200*600
 
+skinparam backgroundColor transparent
 skinparam shadowing false
-skinparam monochrome true
+skinparam DefaultFontName Consolas
 
 skinparam class {
-
-    ' BackgroundColor White
-    ' ArrowColor Black
-    ' BorderColor Black
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
 }
 
-Interface toMongo{
-    set_mongo_document()
-    get_mongo_document()
-    - argument_check()
+Interface MongoDB{
+    mongo_db
+    export_mg()
+    import_mg()
+    ' - argument_check()
 }
 
 class PyELMT{
     id
     type
-    description*
-    update()
+    ' description*
+    ' update()
 }
 
 class AbstractELMT{
@@ -31,87 +32,99 @@ class AbstractELMT{
 }
 
 class PhysicalELMT{
-    name
+    ' name
     material: Material
 }
 
 ' hide PhysicalELMT circle
 
-Interface toOpenBrIM{
-    openbrim_element: XML element
-    set_openbrim_element()
-    get_openbrim_element()
-    - argument_check()
+Interface OpenBrIM{
+    ' openbrim_element: XML element
+    export_ob()
+    import_ob()
+    ' - argument_check()
 }
 
-Interface has_OpenBrIM_fem{
-    openbrim_fem_elmt()
+Interface OpenBrIM_fem{
+    fem_elmt: XML
 }
 
-Interface has_OpenBrIM_geo{
-    openbrim_geo_elmt()
+Interface OpenBrIM_geo{
+    geo_elmt: XML
 }
 
 PyELMT <|-- AbstractELMT
 PyELMT <|-- PhysicalELMT
-has_OpenBrIM_fem <|-- AbstractELMT
-has_OpenBrIM_fem <|-- PhysicalELMT
-has_OpenBrIM_geo <|-- PhysicalELMT
+OpenBrIM_fem <|.. AbstractELMT
+OpenBrIM_fem <|.. PhysicalELMT
+OpenBrIM_geo <|.. PhysicalELMT
 
-toOpenBrIM <|-- has_OpenBrIM_fem
-toOpenBrIM <|-- has_OpenBrIM_geo
-toMongo -- PyELMT
+OpenBrIM <|-- OpenBrIM_fem
+OpenBrIM <|-- OpenBrIM_geo
+MongoDB <|.. PyELMT
 
 ' class Project{}
 ' class Group
-class Parameter{
-    value: number
-}
-' class Shape{
-'     node_list[]
+' class Parameter{
+'     value: number
 ' }
-class Section{
-    shape_node_list[]
-}
-class Material{
-    type
-    property_list[]: Parameter
-}
+' class Shape{
+'     node_list[ ]
+' }
+
 class FENode{
-    x: Parameter
-    y: Parameter
-    z: Parameter
-    tx: Parameter
-    ty: Parameter
-    tz: Parameter
-    rx: Parameter
-    ry: Parameter
-    rz: Parameter
+    x
+    y
+    z
+    fixity
+    ' x: Parameter
+    ' y: Parameter
+    ' z: Parameter
+    ' tx: Parameter
+    ' ty: Parameter
+    ' tz: Parameter
+    ' rx: Parameter
+    ' ry: Parameter
+    ' rz: Parameter
 }
 
+class Material{
+    type
+    ' property[ ]: Parameter
+    property[ ]
+}
+
+class Section{
+    shape_node[ ]
+}
 
 ' AbstractELMT <|-- Project
 ' AbstractELMT <|-- Group
-AbstractELMT <|-- Parameter
+' AbstractELMT <|-- Parameter
+AbstractELMT <|-- FENode
 AbstractELMT <|-- Section
 AbstractELMT <|-- Material
-AbstractELMT <|-- FENode
 ' AbstractELMT <|-- Shape
 ' Shape -- Section
 
 class Beam{
-    fenode1: FENode
-    fenode2: FENode
-    section: Section
+    fenode[2]
+    section
+    ' fenode1: FENode
+    ' fenode2: FENode
+    ' section: Section
     ' material: Material'
 }
 class Surface{
-    fenode[]: FENode
-    thickness: Parameter
+    fenode[ ]
+    thickness
+    ' fenode[ ]: FENode
+    ' thickness: Parameter
 }
 ' class Bolted_Plate
 class Volume{
-    fenode[]: FENode
+    fenode[ ]
+    material
 }
 ' class Sensor
 
@@ -120,5 +133,7 @@ PhysicalELMT <|-- Surface
 ' Surface <|-- Bolted_Plate
 PhysicalELMT <|-- Volume
 ' PhysicalELMT <|-- Sensor
+
+FENode -- Beam
 
 @enduml
