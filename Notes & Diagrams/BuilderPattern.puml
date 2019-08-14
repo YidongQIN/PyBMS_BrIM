@@ -1,18 +1,8 @@
-@startuml
+@startuml Builder Pattern Illustration
 
 skinparam shadowing false
 ' skinparam monochrome true
-
-note as N1
-    不同情境下采用了不同的Director即可获得不同的Product。
-
-    比如，修改construct()函数得到另一个Director，
-    就生产没有PartB的一种Product：
-    construct():
-        builder.buildPartA()
-        builder.buildPartC()
-        return builder.getResult()
-end note
+Title 建造者模式 Builder Pattern
 
 class Director{
     builder: Builder
@@ -21,35 +11,48 @@ class Director{
     \tbuilder.buildPartB()
     \tbuilder.buildPartC()
     \treturn builder.getResult()
-
 }
 
-note as N_Dc
-    construct()依照一定次序调用buildPartX()，
-    即encapsulate封装了Part的组建顺序，
-    实现了用户与具体创建过程的隔离。
+note left of Director
+  construct()依照一定次序调用buildPartX()，
+  即encapsulate封装了Part的组建顺序，
+  实现了用户与具体创建过程的隔离。
+
+  不同情境下，用户采用了不同的 Director 即可获得不同的 Product。
+
+  比如，修改construct()函数得到另一个Director，
+  就生产没有PartB的一种Product：
+  construct():
+    builder.buildPartA()
+    builder.buildPartC()
+    return builder.getResult()
+
+  有时候，Director 不需要实例化。
+  即使实例化，因为传入的类是抽象的 Builder，
+  也就意味着可以接收各种继承自 Builder 的 ConcreteBuilder。
 end note
 
-' N1 ... Director
-N_Dc ... Director
-
-Director o-- Builder: command/guide/direct
+Director o-> Builder: command/guide/direct
 
 abstract class Builder{
-    pdt: Product
+    pdt: Product //new 一个 Product() 作为属性
     buildPartA()
     buildPartB()
     buildPartC()
     getResult()
-    isHook() //HookMethod钩子方法
+    isHook()
+    ' //HookMethod钩子方法
 }
 
-note as N_B
-    Builder只是抽象类，methods留空即可，
-    等到ConcreteBuilder再实现并override。
-end note
+note right of Builder
+    Builder只是抽象 abstract 类，
+    有时可以是接口类 Interface。
 
-N_B .. Builder
+    所以，method 留空即可。
+
+    等到 ConcreteBuilder 再实现、并override，
+    用以实现 product 的复杂属性（各个部件）的生成。
+end note
 
 Builder <|-- ConcreteBuilder
 
@@ -57,7 +60,7 @@ note on link
     钩子方法的通常设置
     1. 在抽象Builder类中
         isHook(){return False}
-    2. 在特定ConcreteBuilder中
+    2. 在特定 ConcreteBuilder 中
         isHook(){return True}
         形成差异化。
     3. 在Director中调用判断，以决定某个builderPart是否运行
@@ -67,19 +70,33 @@ note on link
 end note
 
 class ConcreteBuilder{
-    pdt //继承pdt，亦可定义new Product
-    buildPartA():\n\tpdt.setterA()//调用Product的方法进行构造
+    pdt: Product
+    .. @override ..
+    buildPartA()
+    \tpdt.setterA() //调用Product的方法进行构造
     buildPartB()
     buildPartC()
-    getResult():\n\treturn pdt//返回一个复杂的Product
-    isHook() //覆写isHook()更加精确地控制建造过程
+    getResult()
+    \treturn pdt //返回一个复杂的Product
+    isHook()
 }
 
-note as N_CB
-    根据情况，设计多种ConcreteBuilder具体建造者。
+note left of ConcreteBuilder
+    根据情况，通过覆写父类/Interface 的方法，
+    采用多种参数，
+    实现多种 ConcreteBuilder 具体建造者。
+
+    ConcreteBuilder 总是会绑定一个 Product，
+    所以实际上调用了 Product 提供的 setter/getter 方法。
 end note
 
-ConcreteBuilder ... N_CB
+note bottom of ConcreteBuilder
+如何分辨/设计？
+一定实例化的是 ConcreteBuilder。
+Director 可能实例化。
+Builder 是抽象类或接口，一定没有实例。
+Product 是结果，是最后生成的。
+end note
 
 ConcreteBuilder - Product
 
@@ -95,11 +112,30 @@ class Product{
     getterC()
 }
 
-note as N_P
-    Product有复杂的组件A、B、C组成，
-    各个组件有不同的setter/getter方法
+note bottom of Product
+    Product有复杂的组件 A、B、C 组成，
+    各个组件有不同的 setter/getter 方法
 end note
 
-Product ... N_P
+legend
+以“去电脑店装机”做个示意：
+顾客 = Client
+电脑店老板 = Director
+电脑部件 = Builder
+装机小哥A = ConcreteBuilderA
+装机小哥B = ConcreteBuilderB
+成品电脑 = Product
+
+最终调用的 __main__:
+di = new Director()
+bd_a = new ConcreteBuilderA()
+bd_b = new ConcreteBuilderB()
+// 店里有老板和装机小哥A 和 B
+di.construct(bd_a)
+// 老板指挥装机小哥A
+Product computer = bd_a.getResult()
+// 装机小哥A把成品电脑拿出来
+// 装机小哥B的组装可以和A不一样
+endlegend
 
 @enduml

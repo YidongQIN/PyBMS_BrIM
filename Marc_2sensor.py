@@ -8,9 +8,9 @@ MARC Bridge with sensors.
 Input all data into MongoDB.
 """
 
-from BMS_BrIM import *
+from BrIMcollection import *
 
-marc = ProjGroups("marc_sensor")
+marc = Group("marc_sensor")
 # 0. Parameter
 # 0.1 Structural parameter
 span_num = Parameter(1, "span_num", 11)
@@ -74,11 +74,11 @@ for i in range(span_num.value + 1):
         FENode(i * x_spacing.value,
                y_spacing.value,
                0,
-               node_name="NodeBL_{}".format(i))
+               id="NodeBL_{}".format(i))
     )
-    nodeBR.append(FENode(i * x_spacing.value, 0, 0, node_name="NodeBR_{}".format(i)))
-    nodeTL.append(FENode(i * x_spacing.value, y_spacing.value, z_height.value, node_name="NodeTL_{}".format(i)))
-    nodeTR.append(FENode(i * x_spacing.value, 0, z_height.value, node_name="NodeTR_{}".format(i)))
+    nodeBR.append(FENode(i * x_spacing.value, 0, 0, id="NodeBR_{}".format(i)))
+    nodeTL.append(FENode(i * x_spacing.value, y_spacing.value, z_height.value, id="NodeTL_{}".format(i)))
+    nodeTR.append(FENode(i * x_spacing.value, 0, z_height.value, id="NodeTR_{}".format(i)))
 nodeBL[0].set_node_attr('tz', -1)
 nodeBL[0].set_node_attr('tx', -1)
 nodeBR[0].set_node_attr('tz', -1)
@@ -92,43 +92,43 @@ marc.fem_nodes.append(*nodeBL, *nodeBR, *nodeTL[1:], *nodeTR[1:])
 bottomChordList=[]
 for i in range(span_num.value):
     bottomChordList.append(Beam(nodeBL[i], nodeBL[i + 1], sect_bottom, steel,
-                         beam_name="Bot_L_{}".format(i)))
+                         id="Bot_L_{}".format(i)))
     bottomChordList.append(Beam(nodeBR[i], nodeBR[i + 1], sect_bottom, steel,
-                         beam_name="Bot_R_{}".format(i)))
+                         id="Bot_R_{}".format(i)))
 topChordList = []
 for i in range(1, span_num.value):
     topChordList.append(Beam(nodeTL[i], nodeTL[i + 1], sect_top, steel,
-                         beam_name="Top_L_{}".format(i)))
+                         id="Top_L_{}".format(i)))
     topChordList.append(Beam(nodeTR[i], nodeTR[i + 1], sect_top, steel,
-                         beam_name="Top_R_{}".format(i)))
+                         id="Top_R_{}".format(i)))
 verChordsList = []
 for i in range(1, span_num.value + 1):
     for (a, b) in [(nodeBL, nodeBR), (nodeTR, nodeBR), (nodeTR, nodeTL), (nodeBL, nodeTL)]:
         verChordsList.append(Beam(a[i],b[i],sect_vert,steel,
-                                  beam_name='Ver_{}'.format(i)))
+                                  id='Ver_{}'.format(i)))
 webList = []
 for i in range(1, span_num.value):
     for (a, b, c) in [(nodeBL, nodeTL, "BL/TL"), (nodeBR, nodeTR,"BR/TR"), (nodeTL, nodeTR, "TL/TR"), (nodeTR, nodeTL, "TR\\TL")]:
         webList.append(Beam(a[i], b[i + 1], sect_web, steel,
-                            beam_name='Web_{}_{}'.format(c, i)))
+                            id='Web_{}_{}'.format(c, i)))
         webList.append(Beam(a[i + 1], b[i], sect_web, steel,
-                            beam_name='Web_{}_{}'.format(c, i)))
+                            id='Web_{}_{}'.format(c, i)))
 # for _w in webList:
 #     print(_w.name)
 
 z_beams = []
 for i in range(span_num.value):
     if (i % 2) == 0:
-        z_beams.append(Beam(nodeBL[i], nodeBR[i + 1], sect_bottom, steel, beam_name="Bot_L_{}".format(i)))
+        z_beams.append(Beam(nodeBL[i], nodeBR[i + 1], sect_bottom, steel, id="Bot_L_{}".format(i)))
     else:
-        z_beams.append(Beam(nodeBL[i + 1], nodeBR[i], sect_bottom, steel, beam_name="Bot_L_{}".format(i)))
+        z_beams.append(Beam(nodeBL[i + 1], nodeBR[i], sect_bottom, steel, id="Bot_L_{}".format(i)))
 
 first_seg = [Beam(nodeBL[0], nodeBR[0], sect_bottom, steel,
-                  beam_name="first_seg_Bot"),
+                  id="first_seg_Bot"),
              Beam(nodeBL[0], nodeTL[1], sect_bottom, steel,
-                  beam_name="first_seg_Left"),
+                  id="first_seg_Left"),
              Beam(nodeBR[0], nodeTR[1], sect_bottom, steel,
-                  beam_name="first_seg_Right")]
+                  id="first_seg_Right")]
 decks=[]
 for i in range(span_num.value):
     decks.append(
@@ -138,7 +138,6 @@ for i in range(span_num.value):
 marc.member_gp.append(*bottomChordList, *topChordList, *verChordsList, *webList, *z_beams, *first_seg, *decks)
 
 # 5. Equipments = Geometry View
-
 
 ShowTree(marc.openBrIM)
 marc.openBrIM.save_project()
