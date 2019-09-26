@@ -4,6 +4,7 @@ venv/
 .gitattributes
 __pycache__
 marc_design.xml
+.editorconfig
 *.xml
 *.png
 *.pdf
